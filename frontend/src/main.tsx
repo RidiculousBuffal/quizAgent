@@ -7,13 +7,11 @@ import {BrowserRouter} from "react-router";
 import {App} from "antd";
 
 createRoot(document.getElementById('root')!).render(
-    <StrictMode>
-        <LogtoProvider config={logtoConfig}>
-            <BrowserRouter>
-                <App>
-                    <MyApp></MyApp>
-                </App>
-            </BrowserRouter>
-        </LogtoProvider>
-    </StrictMode>,
+    <LogtoProvider config={logtoConfig}>
+        <BrowserRouter>
+            <App>
+                <MyApp></MyApp>
+            </App>
+        </BrowserRouter>
+    </LogtoProvider>
 )
