@@ -1,9 +1,19 @@
 import {StrictMode} from 'react'
 import {createRoot} from 'react-dom/client'
-import App from './App.tsx'
+import MyApp from './MyApp.tsx'
+import {logtoConfig} from './config/logtoConfig.ts'
+import {LogtoProvider} from "@logto/react";
+import {BrowserRouter} from "react-router";
+import {App} from "antd";
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
-        <App/>
+        <LogtoProvider config={logtoConfig}>
+            <BrowserRouter>
+                <App>
+                    <MyApp></MyApp>
+                </App>
+            </BrowserRouter>
+        </LogtoProvider>
     </StrictMode>,
 )
