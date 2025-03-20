@@ -6,6 +6,7 @@ import cn.dev33.satoken.util.SaResult;
 import com.dhu.dhusoftware.Const.Auth;
 import com.dhu.dhusoftware.config.LogtoConfig;
 import com.dhu.dhusoftware.pojo.User;
+import com.dhu.dhusoftware.service.UserService;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
@@ -27,7 +28,7 @@ public class AuthController {
 
     private final LogtoConfig logtoConfig;
     @Autowired
-    private com.dhu.dhusoftware.mapper.UserMapper userMapper;
+    private UserService userService;
 
     // 构造方法注入
     public AuthController(LogtoConfig logtoConfig) {
@@ -45,13 +46,13 @@ public class AuthController {
             Claims claims = Jwts.parser().verifyWith(publicKey).requireIssuer(logtoConfig.getIssuer()) // 验证发行者
                     .requireAudience(logtoConfig.getAppId()).build().parseSignedClaims(token).getPayload();
             String userId = claims.get("sub", String.class); // 用户 ID
-            Map<String, String> user = (Map<String,String>) claims.get("user", Map.class);
+            Map<String, String> user = (Map<String, String>) claims.get("user", Map.class);
             String avatar = user.get("avatar");
             String email = user.get("primaryEmail");
             String username = user.get("username");
             StpUtil.login(userId); // 这里的 userId 是 Logto 返回的 `sub`
-            User u = new User(userId,username , email,avatar );
-            userMapper.addUser(u);
+            User u = new User(userId, username, email, avatar);
+            userService.saveOrUpdateUser(u);
             return SaResult.ok().setCode(Auth.SUCCESS_CODE).setData(StpUtil.getTokenValue());
         } catch (SignatureException e) {
             return SaResult.ok().setCode(Auth.FAILURE_CODE).setMsg(Auth.VERIFY_ERROR);
