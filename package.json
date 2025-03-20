@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@logto/react": "^4.0.4"
+  }
+}
