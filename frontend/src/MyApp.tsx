@@ -4,6 +4,7 @@ import Callback from "./pages/home/callback.tsx";
 import Dashboard from "./pages/home/DashBoard.tsx";
 import HomePage from "./pages/home/HomePage.tsx";
 import ProtectedRoute from "./components/auth/protectedRoute.tsx";
+import {DebugFloater} from "./components/debug/debugButton.tsx";
 
 // Protected route component
 
@@ -19,6 +20,7 @@ function MyApp() {
             />
             <Route path="*" element={<Navigate to="/"/>}/>
         </Routes>
+        <DebugFloater></DebugFloater>
     </>
 }
 
