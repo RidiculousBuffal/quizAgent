@@ -3058,6 +3058,11 @@ attr-accept@^2.2.2:
   resolved "https://registry.yarnpkg.com/attr-accept/-/attr-accept-2.2.5.tgz#d7061d958e6d4f97bf8665c68b75851a0713ab5e"
   integrity sha512-0bDNnY/u6pPwHDMoF0FieU354oBi0a8rD9FcsLwzcGWbc8KS8KPIi7y+s13OlVY+gMWc/9xEMUgNE6Qm8ZllYQ==
 
+auto-zustand-selectors-hook@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/auto-zustand-selectors-hook/-/auto-zustand-selectors-hook-3.0.1.tgz#81bbf3dedff4ba0ab779318598470795464af923"
+  integrity sha512-BJHzxqdVPd0GKjieej0eALqUjXlb8SnDskeKXR85f0rEzErsXB3ttVOOZWy3IpMDle/F5F6ESAHm4tGsYP2hRw==
+
 available-typed-arrays@^1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/available-typed-arrays/-/available-typed-arrays-1.0.7.tgz#a5cc375d6a03c2efc87a553f3e0b1522def14846"
