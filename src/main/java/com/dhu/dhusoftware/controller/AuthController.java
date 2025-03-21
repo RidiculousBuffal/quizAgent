@@ -1,10 +1,11 @@
-package com.dhu.dhusoftware.cotroller;
+package com.dhu.dhusoftware.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
 
 import cn.dev33.satoken.util.SaResult;
-import com.dhu.dhusoftware.Const.Auth;
+
 import com.dhu.dhusoftware.config.LogtoConfig;
+import com.dhu.dhusoftware.constant.Auth;
 import com.dhu.dhusoftware.pojo.User;
 import com.dhu.dhusoftware.service.UserService;
 import com.fasterxml.jackson.databind.JsonMappingException;
