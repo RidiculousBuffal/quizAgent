@@ -4,7 +4,7 @@
 
 "@logto/browser@^3.0.4":
   version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@logto/browser/-/browser-3.0.4.tgz#cd9d7793a93e4a01500bc7141c512807991ec91c"
+  resolved "https://registry.npmjs.org/@logto/browser/-/browser-3.0.4.tgz"
   integrity sha512-s12BoIQFCwoJgIBdhdkI/DzTaSgB5Z11ma+b89yX075QNCmUukeW/GuZ3B19LgkA5XVwYw5WHBSbklBzy17NoQ==
   dependencies:
     "@logto/client" "^3.0.4"
@@ -13,7 +13,7 @@
 
 "@logto/client@^3.0.4":
   version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@logto/client/-/client-3.0.4.tgz#a32c2a5749935727226d4e4d0dfa712b4a0ec2e9"
+  resolved "https://registry.npmjs.org/@logto/client/-/client-3.0.4.tgz"
   integrity sha512-XXM665zdOa8Ek1juE0xzW3hBPHVJkiaKKie0jiT7WPDYOk1fnqEaWrw594vqKFp1p0onZRgYhqKNBKUynsmb6g==
   dependencies:
     "@logto/js" "^5.0.3"
@@ -23,7 +23,7 @@
 
 "@logto/js@^5.0.3":
   version "5.0.3"
-  resolved "https://registry.yarnpkg.com/@logto/js/-/js-5.0.3.tgz#e2c8bad24a430ec64dd346d9cc317458441fd387"
+  resolved "https://registry.npmjs.org/@logto/js/-/js-5.0.3.tgz"
   integrity sha512-JzfTW/EG40Qc2JokM2LdJM/6MR6wqfSf60aO4sqtc5XrWAawXYoBY+deBpbABm6S2t2BhGLTTlca4d24OacUkA==
   dependencies:
     "@silverhand/essentials" "^2.9.2"
@@ -31,7 +31,7 @@
 
 "@logto/react@^4.0.4":
   version "4.0.4"
-  resolved "https://registry.yarnpkg.com/@logto/react/-/react-4.0.4.tgz#b4a08f358acf77bfa5bdd311c4e807d5fb1a6b88"
+  resolved "https://registry.npmjs.org/@logto/react/-/react-4.0.4.tgz"
   integrity sha512-QprGF3fM2GxC0gT5UUs8nBAE67yixMc9ZRY24abMiSbsGRLTBln/pkMPYDaLmquiQA0kI56pWU0v9l285v+FYw==
   dependencies:
     "@logto/browser" "^3.0.4"
@@ -39,12 +39,12 @@
 
 "@silverhand/essentials@^2.9.2":
   version "2.9.2"
-  resolved "https://registry.yarnpkg.com/@silverhand/essentials/-/essentials-2.9.2.tgz#ffccfb9b7f164a8cbc819a3f1798734ff19206a9"
+  resolved "https://registry.npmjs.org/@silverhand/essentials/-/essentials-2.9.2.tgz"
   integrity sha512-bD+82D9Dfa1F5xX1kfdR5ODIoJS41NOxTuHx4shVS5A4/ayEG+ZplpDDjB19fsa7kZXgSgD75R4sUCXjm88x6w==
 
 camelcase-keys@^9.1.3:
   version "9.1.3"
-  resolved "https://registry.yarnpkg.com/camelcase-keys/-/camelcase-keys-9.1.3.tgz#6367b2f9ec5724af541f58f0dcfee9b200022e5c"
+  resolved "https://registry.npmjs.org/camelcase-keys/-/camelcase-keys-9.1.3.tgz"
   integrity sha512-Rircqi9ch8AnZscQcsA1C47NFdaO3wukpmIRzYcDOrmvgt78hM/sj5pZhZNec2NM12uk5vTwRHZ4anGcrC4ZTg==
   dependencies:
     camelcase "^8.0.0"
@@ -54,30 +54,35 @@ camelcase-keys@^9.1.3:
 
 camelcase@^8.0.0:
   version "8.0.0"
-  resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-8.0.0.tgz#c0d36d418753fb6ad9c5e0437579745c1c14a534"
+  resolved "https://registry.npmjs.org/camelcase/-/camelcase-8.0.0.tgz"
   integrity sha512-8WB3Jcas3swSvjIeA2yvCJ+Miyz5l1ZmB6HFb9R1317dt9LCQoswg/BGrmAmkWVEszSrrg4RwmO46qIm2OEnSA==
 
 jose@^5.2.2:
   version "5.10.0"
-  resolved "https://registry.yarnpkg.com/jose/-/jose-5.10.0.tgz#c37346a099d6467c401351a9a0c2161e0f52c4be"
+  resolved "https://registry.npmjs.org/jose/-/jose-5.10.0.tgz"
   integrity sha512-s+3Al/p9g32Iq+oqXxkW//7jk2Vig6FF1CFqzVXoTUXt2qz89YWbL+OwS17NFYEvxC35n0FKeGO2LGYSxeM2Gg==
 
 js-base64@^3.7.4:
   version "3.7.7"
-  resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-3.7.7.tgz#e51b84bf78fbf5702b9541e2cb7bfcb893b43e79"
+  resolved "https://registry.npmjs.org/js-base64/-/js-base64-3.7.7.tgz"
   integrity sha512-7rCnleh0z2CkXhH67J8K1Ytz0b2Y+yxTPL+/KOJoa20hfnVQ/3/T6W/KflYI4bRHRagNeXeU2bkNGI3v1oS/lw==
 
 map-obj@5.0.0:
   version "5.0.0"
-  resolved "https://registry.yarnpkg.com/map-obj/-/map-obj-5.0.0.tgz#126c98596b63927d7360f287cccc67177aa1938b"
+  resolved "https://registry.npmjs.org/map-obj/-/map-obj-5.0.0.tgz"
   integrity sha512-2L3MIgJynYrZ3TYMriLDLWocz15okFakV6J12HXvMXDHui2x/zgChzg1u9mFFGbbGWE+GsLpQByt4POb9Or+uA==
 
 quick-lru@^6.1.1:
   version "6.1.2"
-  resolved "https://registry.yarnpkg.com/quick-lru/-/quick-lru-6.1.2.tgz#e9a90524108629be35287d0b864e7ad6ceb3659e"
+  resolved "https://registry.npmjs.org/quick-lru/-/quick-lru-6.1.2.tgz"
   integrity sha512-AAFUA5O1d83pIHEhJwWCq/RQcRukCkn/NSm2QsTEMle5f2hP0ChI2+3Xb051PZCkLryI/Ir1MVKviT2FIloaTQ==
+
+react@>=16.8.0:
+  version "19.0.0"
+  resolved "https://registry.npmjs.org/react/-/react-19.0.0.tgz"
+  integrity sha512-V8AVnmPIICiWpGfm6GLzCR/W5FXLchHop40W4nXBmdlEceh16rCN8O8LNWm5bh5XUX91fh7KpA+W0TgMKmgTpQ==
 
 type-fest@^4.3.2:
   version "4.37.0"
-  resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-4.37.0.tgz#7cf008bf77b63a33f7ca014fa2a3f09fd69e8937"
+  resolved "https://registry.npmjs.org/type-fest/-/type-fest-4.37.0.tgz"
   integrity sha512-S/5/0kFftkq27FPNye0XM1e2NsnoD/3FS+pBmbjmmtLT6I+i344KoOf7pvXreaFsDamWeaJX55nczA1m5PsBDg==
