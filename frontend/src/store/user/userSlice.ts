@@ -5,7 +5,7 @@ import type {StateCreator} from 'zustand/vanilla';
 import {MiddlewareTypes} from "../baseType.ts";
 
 export type user = {
-    userId: string,
+    userId: string | undefined,
     userName: string,
     userEmail: string | undefined,
     userAvatar: string | undefined
@@ -13,7 +13,7 @@ export type user = {
 
 export interface UserSlice {
     user: user | null,
-    setUserData: (userData: user) => void
+    setUserData: (userData: user | null) => void
 }
 
 export const createUserSlice: StateCreator<
@@ -23,7 +23,7 @@ export const createUserSlice: StateCreator<
     UserSlice> = (set, get) => (
     {
         user: null,
-        setUserData: (userData: user) => {
+        setUserData: (userData: user | null) => {
             set({user: userData})
         }
     }

@@ -34,3 +34,5 @@ build/
 
 node_modules
 ./frontend/.env
+
+./src/main/resources/application.yaml

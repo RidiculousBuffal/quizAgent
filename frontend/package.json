@@ -35,6 +35,7 @@
     "antd-style": "^3.7.1",
     "auto-zustand-selectors-hook": "^3.0.1",
     "dayjs": "^1.11.13",
+    "immer": "^10.1.1",
     "lucide-react": "^0.469.0",
     "pdfjs-dist": "3.4.120",
     "react": "^18.3.1",
