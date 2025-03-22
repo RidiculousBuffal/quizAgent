@@ -28,14 +28,14 @@ interface MultipleChoiceEditProps {
 
 // 单个可排序选项组件
 const SortableOption = ({
-                            option,
-                            onTextChange,
-                            onRemove,
-                            onToggleExclusive,
-                            isExclusive,
-                            canDelete
-                        }: {
-    option: { id: number; text: string; value: string };
+    option,
+    onTextChange,
+    onRemove,
+    onToggleExclusive,
+    isExclusive,
+    canDelete
+}: {
+    option: { id: number; text: string; value: string | number };
     onTextChange: (id: number, text: string) => void;
     onRemove: (id: number) => void;
     onToggleExclusive: (id: number) => void;

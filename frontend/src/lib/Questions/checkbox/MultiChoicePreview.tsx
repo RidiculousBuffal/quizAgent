@@ -13,11 +13,11 @@ interface MultipleChoicePreviewProps {
 }
 
 const MultipleChoicePreviewComponent: React.FC<MultipleChoicePreviewProps> = ({
-                                                                                  question,
-                                                                                  value = [],
-                                                                                  onChange,
-                                                                                  showValidation = false
-                                                                              }) => {
+    question,
+    value = [],
+    onChange,
+    showValidation = false
+}) => {
     const [otherValue, setOtherValue] = useState('');
     const isOtherSelected = value.includes('other');
 
