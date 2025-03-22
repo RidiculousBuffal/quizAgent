@@ -1,5 +1,5 @@
 // MultipleChoiceEditComponent.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Input, Switch, Button, Space, InputNumber, Select, Tag, Tooltip } from 'antd';
 import { PlusOutlined, DeleteOutlined, LockOutlined } from '@ant-design/icons';
 import { MultipleChoiceQuestion } from './checkbox.ts';
@@ -28,20 +28,40 @@ interface MultipleChoiceEditProps {
 
 // 单个可排序选项组件
 const SortableOption = ({
-    option,
-    onTextChange,
-    onRemove,
-    onToggleExclusive,
-    isExclusive,
-    canDelete
-}: {
-    option: { id: number; text: string; value: string | number };
+                            option,
+                            onTextChange,
+                            onRemove,
+                            onToggleExclusive,
+                            isExclusive,
+                            canDelete
+                        }: {
+    option: { id: number; text: string; value: string|number };
     onTextChange: (id: number, text: string) => void;
     onRemove: (id: number) => void;
     onToggleExclusive: (id: number) => void;
     isExclusive: boolean;
     canDelete: boolean;
 }) => {
+    // 添加本地状态管理选项文本
+    const [localText, setLocalText] = useState(option.text);
+
+    // 当选项变化时更新本地状态
+    useEffect(() => {
+        setLocalText(option.text);
+    }, [option.id, option.text]);
+
+    // 处理文本变化
+    const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setLocalText(e.target.value);
+    };
+
+    // 失去焦点时更新选项
+    const handleTextBlur = () => {
+        if (localText !== option.text) {
+            onTextChange(option.id, localText);
+        }
+    };
+
     const {
         attributes,
         listeners,
@@ -59,17 +79,33 @@ const SortableOption = ({
         border: '1px solid #f0f0f0',
         borderRadius: '4px',
         backgroundColor: 'white',
-        cursor: 'move',
     };
 
     return (
-        <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+        <div ref={setNodeRef} style={style} {...attributes}>
+            {/* 添加拖动手柄区域 */}
+            <div
+                {...listeners}
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginRight: 8,
+                    cursor: 'grab',
+                    padding: '0 8px',
+                    color: '#999'
+                }}
+            >
+                ⋮⋮
+            </div>
+
             <Input
-                value={option.text}
-                onChange={(e) => onTextChange(option.id, e.target.value)}
+                value={localText}
+                onChange={handleTextChange}
+                onBlur={handleTextBlur}
                 style={{ width: '300px', marginRight: 8 }}
                 onClick={(e) => e.stopPropagation()} // 防止点击输入框触发拖动
             />
+
             <Space>
                 <Tooltip title={isExclusive ? "取消互斥选项" : "设为互斥选项"}>
                     <Button
@@ -96,6 +132,16 @@ const SortableOption = ({
 };
 
 const MultipleChoiceEditComponent: React.FC<MultipleChoiceEditProps> = ({ question, onChange }) => {
+    // 添加本地状态来管理输入
+    const [localTitle, setLocalTitle] = useState(question.title);
+    const [localDescription, setLocalDescription] = useState(question.description || '');
+
+    // 当外部 question 属性变化时，更新本地状态
+    useEffect(() => {
+        setLocalTitle(question.title);
+        setLocalDescription(question.description || '');
+    }, [question.id]); // 只在问题ID变化时更新，避免循环更新
+
     // 设置拖拽传感器
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -104,16 +150,32 @@ const MultipleChoiceEditComponent: React.FC<MultipleChoiceEditProps> = ({ questi
         })
     );
 
-    const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const updatedQuestion = question.clone();
-        updatedQuestion.title = e.target.value;
-        onChange(updatedQuestion);
+    // 标题失去焦点时更新问题
+    const handleTitleBlur = () => {
+        if (localTitle !== question.title) {
+            const updatedQuestion = question.clone();
+            updatedQuestion.title = localTitle;
+            onChange(updatedQuestion);
+        }
     };
 
-    const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const updatedQuestion = question.clone();
-        updatedQuestion.description = e.target.value;
-        onChange(updatedQuestion);
+    // 描述失去焦点时更新问题
+    const handleDescriptionBlur = () => {
+        if (localDescription !== question.description) {
+            const updatedQuestion = question.clone();
+            updatedQuestion.description = localDescription;
+            onChange(updatedQuestion);
+        }
+    };
+
+    // 处理标题按下回车键
+    const handleTitlePressEnter = () => {
+        handleTitleBlur();
+    };
+
+    // 处理描述按下回车键
+    const handleDescriptionPressEnter = () => {
+        handleDescriptionBlur();
     };
 
     const handleRequiredChange = (checked: boolean) => {
@@ -207,11 +269,21 @@ const MultipleChoiceEditComponent: React.FC<MultipleChoiceEditProps> = ({ questi
         <div className="question-edit">
             <Form layout="vertical">
                 <Form.Item label="问题标题">
-                    <Input value={question.title} onChange={handleTitleChange} />
+                    <Input
+                        value={localTitle}
+                        onChange={(e) => setLocalTitle(e.target.value)}
+                        onBlur={handleTitleBlur}
+                        onPressEnter={handleTitlePressEnter}
+                    />
                 </Form.Item>
 
                 <Form.Item label="问题描述">
-                    <Input value={question.description} onChange={handleDescriptionChange} />
+                    <Input
+                        value={localDescription}
+                        onChange={(e) => setLocalDescription(e.target.value)}
+                        onBlur={handleDescriptionBlur}
+                        onPressEnter={handleDescriptionPressEnter}
+                    />
                 </Form.Item>
 
                 <Form.Item label="是否必填">
