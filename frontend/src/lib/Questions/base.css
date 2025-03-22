@@ -1,0 +1,47 @@
+.question-preview,
+.question-edit {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
+    padding: 2rem;
+    margin: 1.5rem auto;
+    transition: box-shadow 0.3s ease;
+    max-width: 800px;
+}
+
+.question-preview:hover {
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* 标题样式体系 */
+.question-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 1.2rem;
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+.question-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    height: 2px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.required-mark {
+    color: #dc3545;
+    margin-left: 0.3rem;
+}
+
+/* 问题描述文本 */
+.question-description {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+}

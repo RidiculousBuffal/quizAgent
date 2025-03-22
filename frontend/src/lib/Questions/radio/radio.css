@@ -1,0 +1,78 @@
+/* 全局基础样式 */
+
+/* 问卷容器主结构 */
+
+/* 单选按钮组高级样式 */
+.ant-radio-group {
+    width: 100%;
+}
+
+.ant-radio-wrapper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    padding: 0.8rem;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.ant-radio-wrapper:hover {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+.ant-radio-inner {
+    border-color: #666 !important;
+}
+
+.ant-radio-checked .ant-radio-inner {
+    border-color: #000 !important;
+    background: #000;
+}
+
+/* 编辑界面专业样式 */
+.question-edit {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.ant-form-item-label label {
+    font-weight: 500;
+    color: #333;
+}
+
+/* 选项管理交互组件 */
+.ant-input {
+    border-radius: 6px;
+    border-color: #ddd;
+}
+
+.ant-btn-dangerous {
+    color: #dc3545 !important;
+    border-color: #dc3545 !important;
+}
+
+/* 添加选项按钮样式 */
+.ant-btn-dashed {
+    border-color: #666;
+    color: #444;
+}
+
+/* 验证错误状态 */
+.ant-typography-danger {
+    display: block;
+    margin-top: 0.8rem;
+    font-size: 0.9rem;
+}
+
+/* 响应式布局优化 */
+@media (max-width: 768px) {
+    .question-preview,
+    .question-edit {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+
+    .question-title {
+        font-size: 1.3rem;
+    }
+}
