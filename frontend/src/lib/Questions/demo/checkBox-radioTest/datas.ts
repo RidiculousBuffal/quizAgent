@@ -1,0 +1,40 @@
+// 模拟后端 JSON 数据
+export const mockQuestionsJSON = [
+    {
+        id: 1,
+        sort: 1,
+        type: { typeId: 2, typeName: "radio", typeDescription: "单选题" },
+        title: "你喜欢的颜色是什么？",
+        description: "请选择一个你最喜欢的颜色",
+        isRequired: true,
+        isVisible: true,
+        options: [
+            { id: 1, text: "红色", value: "1" },
+            { id: 2, text: "蓝色", value: "2" },
+            { id: 3, text: "绿色", value: "3" },
+        ],
+        allowOther: true,
+        otherText: "其他，请注明：",
+    },
+    {
+        id: 2,
+        sort: 2,
+        type: { typeId: 3, typeName: "checkbox", typeDescription: "多选题" },
+        title: "你喜欢的水果有哪些？",
+        description: "可多选",
+        isRequired: false,
+        isVisible: true,
+        options: [
+            { id: 4, text: "苹果", value: "4" },
+            { id: 5, text: "香蕉", value: "5" },
+            { id: 6, text: "西瓜", value: "6" },
+        ],
+        minSelected: 1,
+        maxSelected: 2,
+        randomizeOptions: true,
+        displayInColumns: 2,
+        exclusiveOptions: [6],
+        allowOther: true,
+        otherText: "其他，请注明：",
+    },
+];
