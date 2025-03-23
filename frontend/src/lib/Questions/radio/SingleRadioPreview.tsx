@@ -23,7 +23,7 @@ const SingleRadioPreview: React.FC<SingleChoicePreviewProps> = ({
     const [otherValue, setOtherValue] = useState('');
 
     // 判断当前是否选中"其他"选项
-    const isOtherSelected = value === 'other' || value?.startsWith('other:');
+    const isOtherSelected = value!=null && (value === 'other' || value?.startsWith('other:'));
 
     // 当value变化时，更新otherValue
     useEffect(() => {
