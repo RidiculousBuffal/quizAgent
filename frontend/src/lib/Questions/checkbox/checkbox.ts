@@ -24,7 +24,7 @@ export class MultipleChoiceQuestion extends BaseQuestion {
         super(params);
         this.options = params.options || [];
         this.allowOther = params.allowOther || false;
-        this.otherText = params.otherText || '其他';
+        this.otherText = params.otherText;
         this.minSelected = params.minSelected;
         this.maxSelected = params.maxSelected;
         this.randomizeOptions = params.randomizeOptions || false;
