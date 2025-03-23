@@ -4,7 +4,8 @@ import {PlusOutlined, DeleteOutlined} from '@ant-design/icons';
 import {SingleChoiceQuestion} from './radio.ts';
 import './radio.css'
 import '../base.css'
-interface SingleChoiceEditProps {
+import {BaseQuestionEditParams} from "../BaseQuestion.ts";
+interface SingleChoiceEditProps  extends BaseQuestionEditParams{
     question: SingleChoiceQuestion;
     onChange: (question: SingleChoiceQuestion) => void;
 }

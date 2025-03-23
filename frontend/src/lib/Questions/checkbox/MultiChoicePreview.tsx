@@ -2,10 +2,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Checkbox, Space, Input, Typography, Row, Col, Tag } from 'antd';
 import { MultipleChoiceQuestion } from './checkbox.ts';
+import {BaseQuestionPreviewParams} from "../BaseQuestion.ts";
 
 const { Text } = Typography;
 
-interface MultipleChoicePreviewProps {
+interface MultipleChoicePreviewProps extends BaseQuestionPreviewParams{
     question: MultipleChoiceQuestion;
     value: string[];
     onChange: (value: string[]) => void;

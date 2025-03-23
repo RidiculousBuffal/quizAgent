@@ -4,7 +4,7 @@ import { SingleChoiceQuestion } from './radio.ts';
 
 const { Text } = Typography;
 
-interface SingleChoicePreviewProps {
+interface SingleChoicePreviewProps extends BaseQuestionPreviewParams{
     question: SingleChoiceQuestion;
     value: string;
     onChange: (value: string) => void;
@@ -12,6 +12,7 @@ interface SingleChoicePreviewProps {
 }
 import './radio.css'
 import '../base.css'
+import {BaseQuestionPreviewParams} from "../BaseQuestion.ts";
 const SingleRadioPreview: React.FC<SingleChoicePreviewProps> = ({
                                                                      question,
                                                                      value,

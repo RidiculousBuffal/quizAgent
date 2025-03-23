@@ -14,31 +14,27 @@ export const createAuthSlice: StateCreator<
     UserState,
     MiddlewareTypes,
     [],
-    authSlice> = (set, get) => (
-    {
-        saToken: undefined,
-        login: (token: string) => {
-            set({
-                ...get(),
-                saToken: token,
-                isSignedIn:true
-            })
-        },
-        isSignedIn: false,
-        setSigned: (sign: boolean) => {
-            set({
-                ...get(),
-                isSignedIn: sign
-            })
-        },
-        clearToken:()=>{
-            set(
-                {
-                    ...get(),
-                    saToken:undefined
-                }
-            )
-        }
-    }
-)
+    authSlice> = (set) => ({
+    saToken: undefined,
+    isSignedIn: false,
 
+    login: (token: string) => {
+        set({
+            saToken: token,
+            isSignedIn: true  // 只需设置当前 slice 需要修改的字段
+        })
+    },
+
+    setSigned: (sign: boolean) => {
+        set({
+            isSignedIn: sign
+        })
+    },
+
+    clearToken: () => {
+        set({
+            saToken: undefined,
+            isSignedIn: false  // 根据业务需求决定是否同时修改
+        })
+    }
+})

@@ -20,8 +20,9 @@ import {
     verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import {BaseQuestionEditParams} from "../BaseQuestion.ts";
 
-interface MultipleChoiceEditProps {
+interface MultipleChoiceEditProps extends BaseQuestionEditParams{
     question: MultipleChoiceQuestion;
     onChange: (question: MultipleChoiceQuestion) => void;
 }

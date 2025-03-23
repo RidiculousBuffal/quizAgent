@@ -1,12 +1,25 @@
 import React from "react";
-import { QuestionType } from "./QuestionType";
+import {QuestionType} from "./QuestionType";
 
 export interface BaseValidationRule {
     required: boolean;
     message?: string;
     validator?: (value: any) => boolean | Promise<boolean>;
 }
-export interface BaseQuestionParams{
+
+export interface BaseQuestionPreviewParams {
+    value: any,
+    onChange: (value: any) => void;
+    showValidation?: boolean
+    question: any
+}
+
+export interface BaseQuestionEditParams {
+    question: any,
+    onChange: (question: any) => void;
+}
+
+export interface BaseQuestionParams {
     id: number;
     sort: number;
     type: QuestionType;
@@ -16,6 +29,7 @@ export interface BaseQuestionParams{
     isVisible?: boolean;
     validationRules?: BaseValidationRule[];
 }
+
 export abstract class BaseQuestion {
     //基本属性:
     id: number;
@@ -27,8 +41,8 @@ export abstract class BaseQuestion {
     isVisible: boolean;
     validationRules: BaseValidationRule[];
     //组件
-    component: React.ComponentType<any>;
-    previewComponent: React.ComponentType<any>;
+    component: React.ComponentType<BaseQuestionEditParams>;
+    previewComponent: React.ComponentType<BaseQuestionPreviewParams>;
 
     // 构造函数
     constructor(params: BaseQuestionParams) {
@@ -47,9 +61,9 @@ export abstract class BaseQuestion {
     }
 
     //抽象方法
-    abstract getComponent(): React.ComponentType<any>;
+    abstract getComponent(): React.ComponentType<BaseQuestionEditParams>;
 
-    abstract getPreviewComponent(): React.ComponentType<any>;
+    abstract getPreviewComponent(): React.ComponentType<BaseQuestionPreviewParams>;
 
     abstract getDefaultValue(): any;
 

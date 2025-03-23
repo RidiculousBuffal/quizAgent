@@ -1,5 +1,7 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 import {useLogto} from "@logto/react";
 import {useUserStore} from "../../store/user/UserStore.ts";
 import useApp from "antd/es/app/useApp";

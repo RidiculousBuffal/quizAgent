@@ -29,11 +29,11 @@ export class SingleChoiceQuestion extends BaseQuestion {
         this.otherText = params.otherText
     }
 
-    getComponent(): React.ComponentType<any> {
+    getComponent() {
         return SingleRadioEdit
     }
 
-    getPreviewComponent(): React.ComponentType<any> {
+    getPreviewComponent() {
         return SingleRadioPreview
     }
 
