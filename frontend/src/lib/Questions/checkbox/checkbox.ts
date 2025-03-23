@@ -2,6 +2,7 @@ import {BaseQuestion} from "../BaseQuestion.ts";
 import {QuestionOption, SingleChoiceQuestionParams} from "../radio/radio.ts";
 import MultipleChoiceEditComponent from "./MultiChoiceEdit.tsx";
 import MultipleChoicePreviewComponent from "./MultiChoicePreview.tsx";
+
 export interface MultiChoiceParams extends SingleChoiceQuestionParams {
     minSelected?: number;
     maxSelected?: number;
@@ -30,6 +31,7 @@ export class MultipleChoiceQuestion extends BaseQuestion {
         this.displayInColumns = params.displayInColumns || 1;
         this.exclusiveOptions = params.exclusiveOptions || [];
     }
+
     getComponent(): React.ComponentType<any> {
         return MultipleChoiceEditComponent;
     }
@@ -45,7 +47,7 @@ export class MultipleChoiceQuestion extends BaseQuestion {
     validate(value: string[]): boolean | { isValid: boolean; message: string } {
         // 检查是否必填
         if (this.isRequired && (!value || value.length === 0)) {
-            return { isValid: false, message: '此题为必答题' };
+            return {isValid: false, message: '此题为必答题'};
         }
 
         // 检查最少选择数量
@@ -104,7 +106,7 @@ export class MultipleChoiceQuestion extends BaseQuestion {
 
     clone(): MultipleChoiceQuestion {
         return new MultipleChoiceQuestion({
-            id: Date.now(), // 生成新ID
+            id: this.id, // 生成新ID
             sort: this.sort,
             type: this.type,
             title: this.title,

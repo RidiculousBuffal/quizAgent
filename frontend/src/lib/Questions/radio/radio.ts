@@ -38,7 +38,7 @@ export class SingleChoiceQuestion extends BaseQuestion {
     }
 
     getDefaultValue(): any {
-        return []
+        return ""
     }
 
     validate(value: any): boolean | { isValid: boolean; message: string } {
@@ -74,6 +74,23 @@ export class SingleChoiceQuestion extends BaseQuestion {
             text: text,
             value: newId.toString()
         });
+    }
+    clone(): SingleChoiceQuestion {
+        return new SingleChoiceQuestion(
+            {
+                options:this.options,
+                id:this.id,
+                allowOther:this.allowOther,
+                otherText:this.otherText,
+                isRequired:this.isRequired,
+                isVisible:this.isVisible,
+                validationRules:this.validationRules,
+                title:this.title,
+                type:this.type,
+                description:this.description,
+                sort:this.sort
+            }
+        )
     }
 
     removeOption(optionId: number): void {
