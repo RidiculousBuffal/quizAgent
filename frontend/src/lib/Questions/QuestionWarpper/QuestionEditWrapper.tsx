@@ -19,23 +19,9 @@ function QuestionEditWrapper({id}: { id: number }) {
     if (question == undefined) {
         return <></>
     } else {
-        switch (question.type.typeName) {
-            case "radio": {
-                const radio = new SingleChoiceQuestion({...(question as SingleChoiceQuestion)})
-                const EditComponent = radio.getComponent()
-                return <EditComponent question={radio}
-                                      onChange={(updatedQuestion: any) => handleQuestionChange(id, updatedQuestion)}></EditComponent>
-
-            }
-            case "checkbox": {
-                const checkbox = new MultipleChoiceQuestion({...(question as MultipleChoiceQuestion)})
-                const EditComponent = checkbox.getComponent()
-                return <EditComponent question={checkbox}
-                                      onChange={(updatedQuestion: any) => handleQuestionChange(id, updatedQuestion)}></EditComponent>
-            }
-            default:
-                return <></>
-        }
+        const EditComponent = question.getComponent();
+        return <EditComponent question={question}
+                              onChange={(updatedQuestion: any) => handleQuestionChange(id, updatedQuestion)}></EditComponent>
     }
 
 }
