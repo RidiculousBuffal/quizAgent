@@ -1,4 +1,4 @@
-import React from "react";
+import {v4 as uuid} from 'uuid'
 import {BaseQuestion, BaseQuestionParams} from "../BaseQuestion.ts";
 import SingleRadioEdit from "./SingleRadioEdit.tsx";
 import SingleRadioPreview from "./SingleRadioPreview.tsx";
@@ -72,23 +72,24 @@ export class SingleChoiceQuestion extends BaseQuestion {
         this.options.push({
             id: newId,
             text: text,
-            value: newId.toString()
+            value: uuid()
         });
     }
+
     clone(): SingleChoiceQuestion {
         return new SingleChoiceQuestion(
             {
-                options:this.options,
-                id:this.id,
-                allowOther:this.allowOther,
-                otherText:this.otherText,
-                isRequired:this.isRequired,
-                isVisible:this.isVisible,
-                validationRules:this.validationRules,
-                title:this.title,
-                type:this.type,
-                description:this.description,
-                sort:this.sort
+                options: this.options,
+                id: this.id,
+                allowOther: this.allowOther,
+                otherText: this.otherText,
+                isRequired: this.isRequired,
+                isVisible: this.isVisible,
+                validationRules: this.validationRules,
+                title: this.title,
+                type: this.type,
+                description: this.description,
+                sort: this.sort
             }
         )
     }
