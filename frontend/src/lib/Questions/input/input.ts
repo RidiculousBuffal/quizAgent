@@ -1,4 +1,6 @@
 import { BaseQuestion, BaseQuestionParams } from "../BaseQuestion.ts";
+import InputEdit from "./inputEdit.tsx";
+import InputPreview from "./inputPreview.tsx";
 
 export interface ValidationFunction {
     validate: (value: string) => boolean | { isValid: boolean; message: string };
@@ -7,20 +9,11 @@ export interface ValidationFunction {
 
 export interface FillBlankParams extends BaseQuestionParams {
     blankCount: number;                // 填空数量
-    blankLabels: string[];            // 每个填空的标签
+    blankLabels: string[];            // 每个填空的标签(填空题左侧的文本)
     answerType: 'text' | 'number';     // 答案类型：文本或数字
 
     // 替换具体限制为自定义验证函数
     validators: ValidationFunction[][];  // 每个填空的验证函数数组
-
-    // 保留基础限制作为便捷选项
-    // caseSensitive: boolean;            // 是否区分大小写（文本类型适用）
-    // allowDecimal?: boolean;            // 是否允许小数（数字类型适用）
-    // minLength?: number;                // 最小字符长度（文本类型适用）
-    // maxLength?: number;                // 最大字符长度（文本类型适用）
-    // minValue?: number;                 // 最小值（数字类型适用）
-    // maxValue?: number;                 // 最大值（数字类型适用）
-
     correctAnswers: string[][];       // 正确答案列表，每个填空可以有多个正确答案
     placeholder?: string;              // 填空占位符文本
     inlineMode: boolean;               // 是否为行内填空模式（在文本中嵌入填空）
@@ -31,13 +24,7 @@ export class FillBlankQuestion extends BaseQuestion {
     blankCount: number;
     blankLabels: string[];
     answerType: 'text' | 'number';
-    // caseSensitive: boolean;
     validators: ValidationFunction[][];
-    // allowDecimal?: boolean;
-    // minLength?: number;
-    // maxLength?: number;
-    // minValue?: number;
-    // maxValue?: number;
     correctAnswers: string[][];
     placeholder: string;
     inlineMode: boolean;
@@ -48,13 +35,7 @@ export class FillBlankQuestion extends BaseQuestion {
         this.blankCount = params.blankCount || 1;
         this.blankLabels = params.blankLabels || [];
         this.answerType = params.answerType || 'text';
-        // this.caseSensitive = params.caseSensitive || false;
         this.validators = params.validators || [];
-        // this.allowDecimal = params.allowDecimal;
-        // this.minLength = params.minLength;
-        // this.maxLength = params.maxLength;
-        // this.minValue = params.minValue;
-        // this.maxValue = params.maxValue;
         this.correctAnswers = params.correctAnswers || [];
         this.placeholder = params.placeholder || '请在此输入';
         this.inlineMode = params.inlineMode || false;
@@ -74,9 +55,6 @@ export class FillBlankQuestion extends BaseQuestion {
         while (this.validators.length < this.blankCount) {
             this.validators.push([]);
         }
-
-        // 将基础限制转换为验证函数
-        // this._convertBasicValidatorsToFunctions();
     }
 
     // 添加自定义验证函数
@@ -94,11 +72,11 @@ export class FillBlankQuestion extends BaseQuestion {
     }
 
     getComponent(): React.ComponentType<any> {
-        throw new Error("Method not implemented.");
+        return InputEdit;
     }
 
     getPreviewComponent(): React.ComponentType<any> {
-        throw new Error("Method not implemented.");
+        return InputPreview;
     }
 
     getDefaultValue() {
@@ -153,5 +131,17 @@ export class FillBlankQuestion extends BaseQuestion {
         }
 
         return true;
+    }
+
+    toJSON(): object {
+        return {
+            ...super.toJSON(),
+            blankCount: this.blankCount,
+            blankLabels: this.blankLabels,
+        }
+    }
+
+    static fromJSON(json: any): FillBlankQuestion {
+        return new FillBlankQuestion(json);
     }
 }
