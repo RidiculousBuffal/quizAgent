@@ -17,9 +17,7 @@ import {
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { FillBlankQuestion, FillBlankParams, ValidationFunction } from './input';
 
-const { Title, Text } = Typography;
 const { TextArea } = Input;
-const { Panel } = Collapse;
 const { Option } = Select;
 
 interface InputEditProps {
@@ -45,15 +43,10 @@ const InputEdit: React.FC<InputEditProps> = ({ question, onChange }) => {
         while (correctAnswers.length < newCount) correctAnswers.push([]);
         correctAnswers.length = newCount;
 
-        const validators = JSON.parse(JSON.stringify(question.validators));
-        while (validators.length < newCount) validators.push([]);
-        validators.length = newCount;
-
         updateQuestion({
             blankCount: newCount,
             blankLabels,
             correctAnswers,
-            validators,
         });
     };
 
@@ -83,77 +76,6 @@ const InputEdit: React.FC<InputEditProps> = ({ question, onChange }) => {
         const correctAnswers = JSON.parse(JSON.stringify(question.correctAnswers));
         correctAnswers[blankIndex].splice(answerIndex, 1);
         updateQuestion({ correctAnswers });
-    };
-
-    type ValidatorType = 'required' | 'minLength' | 'maxLength' | 'minValue' | 'maxValue' | 'regex' | 'custom';
-
-    const addValidator = (blankIndex: number, type: ValidatorType) => {
-        const validators: ValidationFunction[][] = JSON.parse(JSON.stringify(question.validators));
-        let validator: ValidationFunction;
-
-        switch (type) {
-            case 'required':
-                validator = {
-                    validate: (value: string) => value.trim() !== '',
-                    errorMessage: '此项为必填项'
-                };
-                break;
-            case 'minLength':
-                validator = {
-                    validate: (value: string) => value.length >= 3,
-                    errorMessage: '输入长度至少为3个字符'
-                };
-                break;
-            case 'maxLength':
-                validator = {
-                    validate: (value: string) => value.length <= 100,
-                    errorMessage: '输入长度不能超过100个字符'
-                };
-                break;
-            case 'minValue':
-                validator = {
-                    validate: (value: string) => {
-                        const num = parseFloat(value);
-                        return !isNaN(num) && num >= 0;
-                    },
-                    errorMessage: '输入值必须大于等于0'
-                };
-                break;
-            case 'maxValue':
-                validator = {
-                    validate: (value: string) => {
-                        const num = parseFloat(value);
-                        return !isNaN(num) && num <= 100;
-                    },
-                    errorMessage: '输入值必须小于等于100'
-                };
-                break;
-            case 'regex':
-                validator = {
-                    validate: (value: string) => /^[a-zA-Z0-9]+$/.test(value),
-                    errorMessage: '只能输入字母和数字'
-                };
-                break;
-            default:
-                validator = {
-                    validate: (value: string) => true,
-                    errorMessage: '自定义验证'
-                };
-        }
-        validators[blankIndex].push(validator);
-        updateQuestion({ validators });
-    };
-
-    const removeValidator = (blankIndex: number, validatorIndex: number) => {
-        const validators: ValidationFunction[][] = JSON.parse(JSON.stringify(question.validators));
-        validators[blankIndex].splice(validatorIndex, 1);
-        updateQuestion({ validators });
-    };
-
-    const updateValidatorErrorMessage = (blankIndex: number, validatorIndex: number, message: string) => {
-        const validators: ValidationFunction[][] = JSON.parse(JSON.stringify(question.validators));
-        validators[blankIndex][validatorIndex].errorMessage = message;
-        updateQuestion({ validators });
     };
 
     return (
@@ -271,44 +193,6 @@ const InputEdit: React.FC<InputEditProps> = ({ question, onChange }) => {
                                 >
                                     添加正确答案
                                 </Button>
-                            </Form.Item>
-
-                            {/* 验证器设置 */}
-                            <Form.Item label="验证规则">
-                                {(question.validators[blankIndex] || []).map((validator: ValidationFunction, validatorIndex: number) => (
-                                    <Card
-                                        key={validatorIndex}
-                                        size="small"
-                                        style={{ marginBottom: 16 }}
-                                        title={`验证规则 ${validatorIndex + 1}`}
-                                        extra={
-                                            <Button
-                                                type="text"
-                                                danger
-                                                icon={<DeleteOutlined />}
-                                                onClick={() => removeValidator(blankIndex, validatorIndex)}
-                                            />
-                                        }
-                                    >
-                                        <Form.Item label="错误提示信息">
-                                            <Input
-                                                value={validator.errorMessage || ''}
-                                                onChange={(e) => updateValidatorErrorMessage(blankIndex, validatorIndex, e.target.value)}
-                                            />
-                                        </Form.Item>
-                                    </Card>
-                                ))}
-                                <Form.Item label="添加验证规则">
-                                    <Row gutter={[8, 8]}>
-                                        <Col><Button onClick={() => addValidator(blankIndex, 'required')}>必填</Button></Col>
-                                        <Col><Button onClick={() => addValidator(blankIndex, 'minLength')}>最小长度</Button></Col>
-                                        <Col><Button onClick={() => addValidator(blankIndex, 'maxLength')}>最大长度</Button></Col>
-                                        <Col><Button onClick={() => addValidator(blankIndex, 'minValue')}>最小值</Button></Col>
-                                        <Col><Button onClick={() => addValidator(blankIndex, 'maxValue')}>最大值</Button></Col>
-                                        <Col><Button onClick={() => addValidator(blankIndex, 'regex')}>正则表达式</Button></Col>
-                                        <Col><Button onClick={() => addValidator(blankIndex, 'custom')}>自定义</Button></Col>
-                                    </Row>
-                                </Form.Item>
                             </Form.Item>
                         </>
                     )

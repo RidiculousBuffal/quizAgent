@@ -6,13 +6,12 @@ import {
     Typography,
     Space,
     Alert,
-    Divider,
     Card
 } from 'antd';
 import { FillBlankQuestion } from './input';
 import { BaseQuestionPreviewParams } from '../BaseQuestion';
 
-const { Text, Title, Paragraph } = Typography;
+const { Title, Paragraph } = Typography;
 
 interface InputPreviewProps extends BaseQuestionPreviewParams {
     question: FillBlankQuestion;
