@@ -12,8 +12,6 @@ export interface FillBlankParams extends BaseQuestionParams {
     blankLabels: string[];            // 每个填空的标签(填空题左侧的文本)
     answerType: 'text' | 'number';     // 答案类型：文本或数字
 
-    // 替换具体限制为自定义验证函数
-    validators: ValidationFunction[][];  // 每个填空的验证函数数组
     correctAnswers: string[][];       // 正确答案列表，每个填空可以有多个正确答案
     placeholder?: string;              // 填空占位符文本
     inlineMode: boolean;               // 是否为行内填空模式（在文本中嵌入填空）
@@ -24,7 +22,6 @@ export class FillBlankQuestion extends BaseQuestion {
     blankCount: number;
     blankLabels: string[];
     answerType: 'text' | 'number';
-    validators: ValidationFunction[][];
     correctAnswers: string[][];
     placeholder: string;
     inlineMode: boolean;
@@ -35,7 +32,6 @@ export class FillBlankQuestion extends BaseQuestion {
         this.blankCount = params.blankCount || 1;
         this.blankLabels = params.blankLabels || [];
         this.answerType = params.answerType || 'text';
-        this.validators = params.validators || [];
         this.correctAnswers = params.correctAnswers || [];
         this.placeholder = params.placeholder || '请在此输入';
         this.inlineMode = params.inlineMode || false;
@@ -49,25 +45,6 @@ export class FillBlankQuestion extends BaseQuestion {
         // 确保正确答案数组与填空数量一致
         while (this.correctAnswers.length < this.blankCount) {
             this.correctAnswers.push([]);
-        }
-
-        // 确保验证函数数组与填空数量一致
-        while (this.validators.length < this.blankCount) {
-            this.validators.push([]);
-        }
-    }
-
-    // 添加自定义验证函数
-    addValidator(blankIndex: number, validator: ValidationFunction): void {
-        if (blankIndex >= 0 && blankIndex < this.blankCount) {
-            this.validators[blankIndex].push(validator);
-        }
-    }
-
-    // 清除指定填空的所有验证函数
-    clearValidators(blankIndex: number): void {
-        if (blankIndex >= 0 && blankIndex < this.blankCount) {
-            this.validators[blankIndex] = [];
         }
     }
 
@@ -108,25 +85,6 @@ export class FillBlankQuestion extends BaseQuestion {
                     isValid: false,
                     message: `${this.blankLabels[i]}必须是有效的数字`
                 };
-            }
-
-            // 应用所有验证函数
-            for (const validator of this.validators[i]) {
-                const result = validator.validate(value);
-
-                if (typeof result === 'boolean') {
-                    if (!result) {
-                        return {
-                            isValid: false,
-                            message: validator.errorMessage || `${this.blankLabels[i]}的输入无效`
-                        };
-                    }
-                } else if (!result.isValid) {
-                    return {
-                        isValid: false,
-                        message: result.message || validator.errorMessage || `${this.blankLabels[i]}的输入无效`
-                    };
-                }
             }
         }
 

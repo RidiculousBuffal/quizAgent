@@ -6,24 +6,23 @@ import {
     Typography,
     Space,
     Alert,
-    Divider,
     Card
 } from 'antd';
 import { FillBlankQuestion } from './input';
 import { BaseQuestionPreviewParams } from '../BaseQuestion';
 
-const { Text, Title, Paragraph } = Typography;
+const { Title, Paragraph } = Typography;
 
 interface InputPreviewProps extends BaseQuestionPreviewParams {
     question: FillBlankQuestion;
 }
 
 const InputPreview: React.FC<InputPreviewProps> = ({
-                                                       question,
-                                                       value,
-                                                       onChange,
-                                                       showValidation = false
-                                                   }) => {
+    question,
+    value,
+    onChange,
+    showValidation = false
+}) => {
     const [answers, setAnswers] = useState<string[]>(value || question.getDefaultValue());
     const [validationResult, setValidationResult] = useState<{ isValid: boolean; message?: string } | boolean>(true);
 
