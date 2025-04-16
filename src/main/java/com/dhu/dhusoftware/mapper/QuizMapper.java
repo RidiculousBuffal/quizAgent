@@ -1,0 +1,27 @@
+package com.dhu.dhusoftware.mapper;
+
+import com.dhu.dhusoftware.pojo.Quiz;
+import org.apache.ibatis.annotations.*;
+
+import java.util.List;
+
+@Mapper
+public interface QuizMapper {
+    @Insert("INSERT INTO quiz(quizId, quizName, quizDescription, quizStartTime, quizEndTime, status, creator) VALUES (#{quizId}, #{quizName}, #{quizDescription}, #{quizStartTime}, #{quizEndTime}, #{status}, #{creator})")
+    int addQuiz(Quiz quiz);
+
+    @Select("SELECT * FROM quiz WHERE quizId = #{quizId}")
+    Quiz getQuizById(Long quizId);
+
+    @Update("UPDATE quiz SET quizName = #{quizName}, quizDescription = #{quizDescription}, quizStartTime = #{quizStartTime}, quizEndTime = #{quizEndTime}, status = #{status} WHERE quizId = #{quizId}")
+    int updateQuiz(Quiz quiz);
+
+    @Delete("DELETE FROM quiz WHERE quizId = #{quizId}")
+    int deleteQuiz(Long quizId);
+
+    @Select("SELECT * FROM quiz WHERE creator = #{creator}")
+    List<Quiz> listQuizzesByCreator(String creator);
+
+    @Select("SELECT * FROM quiz")
+    List<Quiz> listAllQuizzes();
+}
