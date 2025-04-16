@@ -1,6 +1,5 @@
-// MultipleChoicePreviewComponent.tsx
-import React, { useState, useEffect, useMemo } from 'react';
-import { Checkbox, Space, Input, Typography, Row, Col, Tag } from 'antd';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import {Checkbox, Space, Input, Typography, Row, Col, Tag, GetRef} from 'antd';
 import { MultipleChoiceQuestion } from './checkbox.ts';
 import {BaseQuestionPreviewParams} from "../BaseQuestion.ts";
 
@@ -14,16 +13,23 @@ interface MultipleChoicePreviewProps extends BaseQuestionPreviewParams{
 }
 
 const MultipleChoicePreviewComponent: React.FC<MultipleChoicePreviewProps> = ({
-    question,
-    value = [],
-    onChange,
-    showValidation = false
-}) => {
+                                                                                  question,
+                                                                                  value = [],
+                                                                                  onChange,
+                                                                                  showValidation = false
+                                                                              }) => {
     const [otherValue, setOtherValue] = useState('');
-    const isOtherSelected = value.includes('other');
+    const otherInputRef = useRef<GetRef<typeof Input>>(null);
+
+    // 检查是否选中了"其他"选项（包括带有other:前缀的值）
+    const isOtherSelected = value.includes('other') || value.some(v => v.startsWith('other:'));
+
+    // 计算实际的checkbox值，确保"other:"前缀的值被映射为"other"
+    const checkboxValues = useMemo(() => {
+        return value.map(v => v.startsWith('other:') ? 'other' : v);
+    }, [value]);
 
     // 使用 useMemo 生成随机排序的选项，并确保它们在组件生命周期内保持稳定
-    // 只有当 question.options 或 question.randomizeOptions 改变时才会重新计算
     const displayOptions = useMemo(() => {
         let options = [...question.options];
 
@@ -52,7 +58,7 @@ const MultipleChoicePreviewComponent: React.FC<MultipleChoicePreviewProps> = ({
         if (selectedExclusiveOptionId !== undefined) {
             const exclusiveValue = selectedExclusiveOptionId.toString();
             // 检查这个互斥选项是否是新选中的
-            const wasExclusiveSelected = value.includes(exclusiveValue);
+            const wasExclusiveSelected = checkboxValues.includes(exclusiveValue);
             const isExclusiveNewlySelected = checkedValues.includes(exclusiveValue) && !wasExclusiveSelected;
 
             if (isExclusiveNewlySelected) {
@@ -64,7 +70,7 @@ const MultipleChoicePreviewComponent: React.FC<MultipleChoicePreviewProps> = ({
 
         // 如果选中了普通选项，移除所有互斥选项
         const hasNonExclusiveNewSelection = checkedValues.some(
-            val => !question.exclusiveOptions.includes(parseInt(val)) && !value.includes(val)
+            val => !question.exclusiveOptions.includes(parseInt(val)) && !checkboxValues.includes(val)
         );
 
         if (hasNonExclusiveNewSelection) {
@@ -76,15 +82,35 @@ const MultipleChoicePreviewComponent: React.FC<MultipleChoicePreviewProps> = ({
         }
 
         // 处理"其他"选项
-        if (isOtherSelected && !checkedValues.includes('other')) {
+        const wasOtherSelected = isOtherSelected;
+        const isOtherNowSelected = checkedValues.includes('other');
+
+        if (wasOtherSelected && !isOtherNowSelected) {
             // 如果"其他"被取消选中，移除"other"及其值
-            onChange(checkedValues.filter(v => !v.startsWith('other:')));
-        } else if (checkedValues.includes('other') && otherValue) {
-            // 如果"其他"被选中且已有输入值，保留输入值
-            const filteredValues = checkedValues.filter(v => v !== 'other');
-            onChange([...filteredValues, `other:${otherValue}`]);
+            const newValues = value.filter(v => !v.startsWith('other:') && v !== 'other');
+            onChange(newValues);
+            setOtherValue('');
+        } else if (!wasOtherSelected && isOtherNowSelected) {
+            // 如果"其他"被新选中
+            const newValues = [
+                ...checkedValues.filter(v => v !== 'other'),
+                `other:${otherValue}`
+            ];
+            onChange(newValues);
+            // 聚焦到输入框
+            setTimeout(() => {
+                otherInputRef.current?.focus();
+            }, 0);
         } else {
-            onChange(checkedValues);
+            // 保持其他选项不变，只更新非"其他"选项
+            const otherOptionValue = value.find(v => v.startsWith('other:')) || (isOtherSelected ? `other:${otherValue}` : null);
+            const newValues = checkedValues.filter(v => v !== 'other');
+
+            if (otherOptionValue && isOtherNowSelected) {
+                newValues.push(otherOptionValue);
+            }
+
+            onChange(newValues);
         }
     };
 
@@ -95,7 +121,9 @@ const MultipleChoicePreviewComponent: React.FC<MultipleChoicePreviewProps> = ({
 
         // 更新包含"其他"值的选项
         if (isOtherSelected) {
+            // 保留所有非"其他"选项的值
             const filteredValues = value.filter(v => v !== 'other' && !v.startsWith('other:'));
+            // 添加新的"其他"值
             onChange([...filteredValues, `other:${inputValue}`]);
         }
     };
@@ -105,6 +133,9 @@ const MultipleChoicePreviewComponent: React.FC<MultipleChoicePreviewProps> = ({
         const otherOption = value.find(v => v.startsWith('other:'));
         if (otherOption) {
             setOtherValue(otherOption.substring(6)); // 移除 "other:" 前缀
+        } else if (isOtherSelected && !otherValue) {
+            // 如果选中了"其他"但没有值，设置一个空字符串
+            onChange([...value.filter(v => v !== 'other'), 'other:']);
         }
     }, [value]);
 
@@ -128,11 +159,38 @@ const MultipleChoicePreviewComponent: React.FC<MultipleChoicePreviewProps> = ({
 
     const columns = question.displayInColumns || 1;
 
+    // 自定义"其他"选项输入框
+    const renderOtherInput = () => {
+        if (!isOtherSelected) return null;
+
+        return (
+            <Input
+                ref={otherInputRef}
+                value={otherValue}
+                onChange={handleOtherInputChange}
+                onClick={e => e.stopPropagation()}
+                onMouseDown={e => e.stopPropagation()}
+                style={{ width: 200 }}
+                autoFocus
+            />
+        );
+    };
+
+    // 阻止事件冒泡的包装器组件
+    const StopPropagation: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+        <div
+            onClick={e => e.stopPropagation()}
+            onMouseDown={e => e.stopPropagation()}
+        >
+            {children}
+        </div>
+    );
+
     // 根据列数划分选项
     const renderOptionsInColumns = () => {
         if (columns === 1) {
             return (
-                <Checkbox.Group onChange={handleCheckboxChange} value={value}>
+                <Checkbox.Group onChange={handleCheckboxChange} value={checkboxValues}>
                     <Space direction="vertical" style={{ width: '100%' }}>
                         {displayOptions.map(option => (
                             <Checkbox
@@ -152,22 +210,17 @@ const MultipleChoicePreviewComponent: React.FC<MultipleChoicePreviewProps> = ({
                         ))}
 
                         {question.allowOther && (
-                            <Space>
-                                <Checkbox
-                                    value="other"
-                                    disabled={value.some(v => question.exclusiveOptions.includes(parseInt(v)))}
-                                >
-                                    {question.otherText}
-                                </Checkbox>
-                                {isOtherSelected && (
-                                    <Input
-                                        value={otherValue}
-                                        onChange={handleOtherInputChange}
-                                        onClick={e => e.stopPropagation()}
-                                        style={{ width: 200 }}
-                                    />
-                                )}
-                            </Space>
+                            <StopPropagation>
+                                <Space>
+                                    <Checkbox
+                                        value="other"
+                                        disabled={value.some(v => question.exclusiveOptions.includes(parseInt(v)))}
+                                    >
+                                        {question.otherText}
+                                    </Checkbox>
+                                    {renderOtherInput()}
+                                </Space>
+                            </StopPropagation>
                         )}
                     </Space>
                 </Checkbox.Group>
@@ -176,7 +229,7 @@ const MultipleChoicePreviewComponent: React.FC<MultipleChoicePreviewProps> = ({
 
         // 多列显示
         return (
-            <Checkbox.Group onChange={handleCheckboxChange} value={value} style={{ width: '100%' }}>
+            <Checkbox.Group onChange={handleCheckboxChange} value={checkboxValues} style={{ width: '100%' }}>
                 <Row>
                     {displayOptions.map(option => (
                         <Col span={24 / columns} key={option.id} style={{ marginBottom: 8 }}>
@@ -197,22 +250,17 @@ const MultipleChoicePreviewComponent: React.FC<MultipleChoicePreviewProps> = ({
 
                     {question.allowOther && (
                         <Col span={24} style={{ marginTop: 8 }}>
-                            <Space>
-                                <Checkbox
-                                    value="other"
-                                    disabled={value.some(v => question.exclusiveOptions.includes(parseInt(v)))}
-                                >
-                                    {question.otherText}
-                                </Checkbox>
-                                {isOtherSelected && (
-                                    <Input
-                                        value={otherValue}
-                                        onChange={handleOtherInputChange}
-                                        onClick={e => e.stopPropagation()}
-                                        style={{ width: 200 }}
-                                    />
-                                )}
-                            </Space>
+                            <StopPropagation>
+                                <Space>
+                                    <Checkbox
+                                        value="other"
+                                        disabled={value.some(v => question.exclusiveOptions.includes(parseInt(v)))}
+                                    >
+                                        {question.otherText}
+                                    </Checkbox>
+                                    {renderOtherInput()}
+                                </Space>
+                            </StopPropagation>
                         </Col>
                     )}
                 </Row>

@@ -18,29 +18,12 @@ function QuestionPreviewWrapper({id}: { id: number }) {
     if (question == undefined) {
         return <></>
     } else {
-        switch (question.type.typeName) {
-            // zustand 不缓存类中的函数
-            case "radio": {
-                const radio = new SingleChoiceQuestion({...(question as SingleChoiceQuestion)})
-                const PreviewComponent = radio.getPreviewComponent()
-                return <PreviewComponent question={radio}
-                                         value={answer || radio.getDefaultValue()}
-                                         onChange={(value: any) => {
-                                             handleAnswerChange(id, value)
-                                         }} showValidation={true}/>
-            }
-            case "checkbox": {
-                const checkbox = new MultipleChoiceQuestion({...(question as MultipleChoiceQuestion)})
-                const PreviewComponent = checkbox.getPreviewComponent()
-                return <PreviewComponent question={checkbox }
-                                         value={answer || checkbox.getDefaultValue()}
-                                         onChange={(value: any) => {
-                                             handleAnswerChange(id, value)
-                                         }} showValidation={true}/>
-            }
-            default:
-                return <></>
-        }
+        const PreviewComponent = question.getPreviewComponent()
+        return <PreviewComponent question={question}
+                                 value={answer || question.getDefaultValue()}
+                                 onChange={(value: any) => {
+                                     handleAnswerChange(id, value)
+                                 }} showValidation={true}/>
     }
 
 }
