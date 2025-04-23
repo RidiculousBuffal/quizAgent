@@ -24,5 +24,5 @@
 .sortable-dragging {
   opacity: 0.8;
   transform: scale(1.02);
-  z-index: 999;
+  z-index: 9999;
 }
