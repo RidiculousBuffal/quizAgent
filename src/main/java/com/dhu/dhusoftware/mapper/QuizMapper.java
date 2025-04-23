@@ -26,4 +26,6 @@ public interface QuizMapper {
 
     @Select("SELECT * FROM quiz")
     List<Quiz> listAllQuizzes();
+
+
 }

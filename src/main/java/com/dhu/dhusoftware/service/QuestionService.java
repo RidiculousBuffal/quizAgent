@@ -40,7 +40,7 @@ public class QuestionService {
 
         if (question.getQuestionId() == null || question.getQuestionId() <= 0) {
             // 新建问题
-            questionMapper.addQuestion(question);
+            questionMapper.insertQuestion(question);
         } else {
             // 更新问题
             Question existingQuestion = questionMapper.getQuestionById(question.getQuestionId());
