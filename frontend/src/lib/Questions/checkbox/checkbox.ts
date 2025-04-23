@@ -2,6 +2,7 @@ import {BaseQuestion} from "../BaseQuestion.ts";
 import {QuestionOption, SingleChoiceQuestionParams} from "../radio/radio.ts";
 import MultipleChoiceEditComponent from "./MultiChoiceEdit.tsx";
 import MultipleChoicePreviewComponent from "./MultiChoicePreview.tsx";
+import {v4 as uuid} from 'uuid'
 
 export interface MultiChoiceParams extends SingleChoiceQuestionParams {
     minSelected?: number;
@@ -134,7 +135,7 @@ export class MultipleChoiceQuestion extends BaseQuestion {
         this.options.push({
             id: newId,
             text: text,
-            value: newId.toString()
+            value: uuid()
         });
     }
 

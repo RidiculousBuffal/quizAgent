@@ -1,7 +1,8 @@
-import {BaseQuestion} from "./BaseQuestion.ts";
-import {SingleChoiceQuestion} from "./radio/radio.ts";
-import {ParamsMap, QuestionType} from "./QuestionType.ts";
-import {MultipleChoiceQuestion} from "./checkbox/checkbox.ts";
+import { BaseQuestion } from "./BaseQuestion.ts";
+import { SingleChoiceQuestion } from "./radio/radio.ts";
+import { QuestionType } from "./QuestionType.ts";
+import { MultipleChoiceQuestion } from "./checkbox/checkbox.ts";
+import { FillBlankQuestion } from "./input/input.ts";
 
 export class QuestionFactory {
     private static _questionTypes: Map<number, typeof BaseQuestion> = new Map();
@@ -10,7 +11,7 @@ export class QuestionFactory {
         return this._questionTypes;
     }
 
-// 注册问题类型
+    // 注册问题类型
     static registerQuestionType(typeId: number, questionClass: typeof BaseQuestion): void {
         QuestionFactory._questionTypes.set(typeId, questionClass);
     }
@@ -45,4 +46,5 @@ export class QuestionFactory {
 
 QuestionFactory.registerQuestionType(2, SingleChoiceQuestion);
 QuestionFactory.registerQuestionType(3, MultipleChoiceQuestion); // 多选题
+QuestionFactory.registerQuestionType(4, FillBlankQuestion); // 填空题
 // 注册其他问题类型...
