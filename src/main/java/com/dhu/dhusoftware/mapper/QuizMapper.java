@@ -7,7 +7,9 @@ import java.util.List;
 
 @Mapper
 public interface QuizMapper {
-    @Insert("INSERT INTO quiz(quizId, quizName, quizDescription, quizStartTime, quizEndTime, status, creator) VALUES (#{quizId}, #{quizName}, #{quizDescription}, #{quizStartTime}, #{quizEndTime}, #{status}, #{creator})")
+    @Options(useGeneratedKeys = true, keyProperty = "quizId")
+    @Insert("INSERT INTO quiz(quizName, quizDescription, quizStartTime, quizEndTime, status, creator) " +
+            "VALUES (#{quizName}, #{quizDescription}, #{quizStartTime}, #{quizEndTime}, #{status}, #{creator})")
     int addQuiz(Quiz quiz);
 
     @Select("SELECT * FROM quiz WHERE quizId = #{quizId}")
