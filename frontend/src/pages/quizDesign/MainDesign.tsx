@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Button, Card, Divider, Empty, Layout, message, Space, Typography} from 'antd';
+import React, { useState } from 'react';
+import { Button, Card, Divider, Empty, Layout, message, Space, Typography } from 'antd';
 import {
   ArrowDownOutlined,
   ArrowUpOutlined,
@@ -25,7 +25,7 @@ import {
   useSortable,
   verticalListSortingStrategy
 } from '@dnd-kit/sortable';
-import {CSS} from '@dnd-kit/utilities';
+import { CSS } from '@dnd-kit/utilities';
 import './MainDesign.css'; // 导入CSS文件
 // 导入题型组件
 import InputEdit from '../../lib/Questions/input/inputEdit';
@@ -33,10 +33,10 @@ import MultiChoiceEdit from '../../lib/Questions/checkbox/MultiChoiceEdit';
 import SingleRadioEdit from '../../lib/Questions/radio/SingleRadioEdit';
 
 // 导入题型类
-import {FillBlankQuestion} from '../../lib/Questions/input/input';
-import {MultipleChoiceQuestion} from '../../lib/Questions/checkbox/checkbox';
-import {SingleChoiceQuestion} from '../../lib/Questions/radio/radio';
-import {BaseQuestion} from '../../lib/Questions/BaseQuestion';
+import { FillBlankQuestion } from '../../lib/Questions/input/input';
+import { MultipleChoiceQuestion } from '../../lib/Questions/checkbox/checkbox';
+import { SingleChoiceQuestion } from '../../lib/Questions/radio/radio';
+import { BaseQuestion } from '../../lib/Questions/BaseQuestion';
 
 const { Header, Sider, Content } = Layout;
 const { Title, Text } = Typography;
@@ -61,7 +61,7 @@ const createNewQuestion = (type: QuestionType): BaseQuestion => {
         id,
         type: {
           typeId: 4,
-          typeName: 'radio',
+          typeName: 'fillblank',
           typeDescription: '填空题',
         },
         title: '新建填空题',
