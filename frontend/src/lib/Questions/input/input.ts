@@ -2,11 +2,6 @@ import { BaseQuestion, BaseQuestionParams } from "../BaseQuestion.ts";
 import InputEdit from "./inputEdit.tsx";
 import InputPreview from "./inputPreview.tsx";
 
-export interface ValidationFunction {
-    validate: (value: string) => boolean | { isValid: boolean; message: string };
-    errorMessage?: string;
-}
-
 export interface FillBlankParams extends BaseQuestionParams {
     blankCount: number;                // 填空数量
     blankLabels: string[];            // 每个填空的标签(填空题左侧的文本)

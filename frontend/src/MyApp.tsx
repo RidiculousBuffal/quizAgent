@@ -5,6 +5,7 @@ import Dashboard from "./pages/home/DashBoard.tsx";
 import HomePage from "./pages/home/HomePage.tsx";
 import ProtectedRoute from "./components/auth/protectedRoute.tsx";
 import { DebugFloater } from "./components/debug/debugButton.tsx";
+import MainDesign from "./pages/quizDesign/MainDesign.tsx";
 import '../index.css'
 
 // Protected route component
@@ -20,6 +21,7 @@ function MyApp() {
                 element={<ProtectedRoute element={<Dashboard />} />}
             />
             <Route path="*" element={<Navigate to="/" />} />
+            <Route path="/quizdesign" element={<MainDesign />}/>
         </Routes>
         <DebugFloater></DebugFloater>
     </>
