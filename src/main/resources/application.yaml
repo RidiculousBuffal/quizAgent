@@ -10,6 +10,10 @@ spring:
     multipart:
       max-file-size: 10000
       max-request-size: 10000
+  ai:
+    openai:
+      base-url: https://aihubmix.com
+      api-key: sk-TWcWBpaG6WEN4kJmF4E2BbDeD29d410eB3F4CdAf5c0b85E4
 
 mybatis:
   configuration:
@@ -22,7 +26,7 @@ logto:
   jwks-uri: https://zlclobelogto.zeabur.app/oidc/jwks # JWKS 公钥 URI
   issuer: https://zlclobelogto.zeabur.app/oidc       # 发行者 (issuer)
   app-id: "http://localhost:13145"                    # APP ID (Audience)
-  
+
 
 sa-token:
   # token 名称（同时也是 cookie 名称）
