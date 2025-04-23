@@ -21,6 +21,8 @@ public class AIService {
         this.openAiApi = openAiApi;
     }
 
+
+
     public Flux<ChatResponse> getResponse(String Model, String question) {
         var openaiChatOptions = OpenAiChatOptions.builder().model(Model).build();
         var chatModel = OpenAiChatModel.builder().openAiApi(this.openAiApi).defaultOptions(openaiChatOptions).build();
