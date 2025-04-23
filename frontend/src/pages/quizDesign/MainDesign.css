@@ -1,0 +1,28 @@
+/* 拖拽相关样式 */
+.dragging {
+  cursor: grabbing !important;
+  user-select: none;
+}
+
+/* 防止拖拽时文本选择 */
+.dragging * {
+  user-select: none !important;
+}
+
+/* 优化动画性能 */
+.ant-card {
+  will-change: transform;
+}
+
+/* 平滑过渡效果 */
+.ant-card-body,
+.ant-card-head {
+  transition: all 0.2s ease !important;
+}
+
+/* 拖拽时的视觉反馈 */
+.sortable-dragging {
+  opacity: 0.8;
+  transform: scale(1.02);
+  z-index: 999;
+}
