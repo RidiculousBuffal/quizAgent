@@ -16,12 +16,10 @@ const ProtectedRoute: React.FC<{ element: React.ReactNode }> = ({ element }) => 
         const checkAuth = async () => {
             const token = await getAccessToken();
             if (!token || !isSignedBackend) {
-                console.log(isAuthenticated, isSignedBackend);
                 message.info('请先登录');
                 setIsAuthorized(false);
                 nav('/')
             } else {
-                console.log(isAuthenticated, isSignedBackend);
                 setIsAuthorized(true);
             }
         };
