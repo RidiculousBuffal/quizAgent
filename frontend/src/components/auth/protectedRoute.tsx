@@ -5,6 +5,7 @@ import { useUserStore } from "../../store/user/UserStore.ts";
 import useApp from "antd/es/app/useApp";
 import HomePage from "../../pages/home/HomePage.tsx";
 import { useNavigate } from "react-router";
+import FullScreenLoading from "../loading/FullScreenLoading.tsx";
 
 const ProtectedRoute: React.FC<{ element: React.ReactNode }> = ({ element }) => {
     const { isAuthenticated, getAccessToken } = useLogto();
@@ -29,7 +30,7 @@ const ProtectedRoute: React.FC<{ element: React.ReactNode }> = ({ element }) => 
 
     if (isAuthorized === null) {
         // Optionally, you could return a loader or spinner here while you're checking
-        return <div>Loading...</div>;
+        return <FullScreenLoading text="登录验证中" />;
     }
 
     return isAuthorized ? <>{element}</> : <HomePage />;

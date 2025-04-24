@@ -1,0 +1,129 @@
+.fullscreen-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.loading-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+}
+
+.loading-text {
+  margin-top: 16px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* 加载器样式 - 旋转器 */
+.loading-spinner {
+  border-radius: 50%;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #3498db;
+  animation: spin 1s infinite linear;
+}
+
+.loading-spinner.small {
+  width: 24px;
+  height: 24px;
+}
+
+.loading-spinner.medium {
+  width: 48px;
+  height: 48px;
+}
+
+.loading-spinner.large {
+  width: 64px;
+  height: 64px;
+  border-width: 4px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 加载器样式 - 点 */
+.loading-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.loading-dots div {
+  width: 12px;
+  height: 12px;
+  background-color: currentColor;
+  border-radius: 50%;
+  animation: dots-bounce 1.4s infinite ease-in-out both;
+}
+
+.loading-dots div:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.loading-dots div:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+.loading-dots.small div {
+  width: 8px;
+  height: 8px;
+}
+
+.loading-dots.medium div {
+  width: 12px;
+  height: 12px;
+}
+
+.loading-dots.large div {
+  width: 16px;
+  height: 16px;
+}
+
+@keyframes dots-bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+/* 加载器样式 - 脉冲 */
+.loading-pulse {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #3498db;
+  animation: pulse 1.2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.loading-pulse.small {
+  width: 24px;
+  height: 24px;
+}
+
+.loading-pulse.medium {
+  width: 40px;
+  height: 40px;
+}
+
+.loading-pulse.large {
+  width: 56px;
+  height: 56px;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: scale(1); opacity: 0; }
+}
