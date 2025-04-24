@@ -1,6 +1,6 @@
-package com.dhu.dhusoftware.service;
+package com.dhu.dhusoftware.service.question;
 
-import com.dhu.dhusoftware.aiJson.RadioQuestion;
+import com.dhu.dhusoftware.ai.jsonSchema.CheckboxQuestion;
 import com.dhu.dhusoftware.mapper.QuestionMapper;
 import com.dhu.dhusoftware.pojo.Question;
 import com.dhu.dhusoftware.pojo.Questiontype;
@@ -12,26 +12,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RadioQuestionService {
+public class CheckboxQuestionService {
     @Autowired
     private QuestionMapper questionMapper;
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    public String processAndSaveRadioQuestion(RadioQuestion radioQuestion, Long quizId) throws Exception {
-        // Step 1: Convert to JSON (no validators needed for Radio)
-        String jsonDetails = mapper.writeValueAsString(radioQuestion);
+    public String processAndSaveCheckboxQuestion(CheckboxQuestion checkboxQuestion, Long quizId) throws Exception {
+        // Step 1: Convert to JSON (no validators needed for Checkbox)
+        String jsonDetails = mapper.writeValueAsString(checkboxQuestion);
 
         // Step 2: Save to question table
         Question question = new Question();
-        question.setQuestionName(radioQuestion.title());
-        question.setQuestionDescription(radioQuestion.description());
+        question.setQuestionName(checkboxQuestion.title());
+        question.setQuestionDescription(checkboxQuestion.description());
         question.setQuestionDetails(jsonDetails);
-        question.setQuestionTypeId(1L); // Default to 1 for Radio
+        question.setQuestionTypeId(2L); // Default to 2 for Checkbox
         questionMapper.insertQuestion(question);
 
         // Step 3: Fetch questionType details
-        Questiontype questionType = questionMapper.selectQuestionTypeById(1L);
+        Questiontype questionType = questionMapper.selectQuestionTypeById(2L);
         ObjectNode typeNode = mapper.createObjectNode();
         typeNode.put("typeId", questionType.getTypeId());
         typeNode.put("typeName", questionType.getTypeName());

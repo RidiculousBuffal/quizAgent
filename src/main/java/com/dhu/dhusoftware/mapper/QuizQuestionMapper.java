@@ -22,4 +22,5 @@ public interface QuizQuestionMapper {
 
     @Select("SELECT * FROM quizquestion WHERE quizId = #{quizId} ORDER BY sort")
     List<Quizquestion> listByQuizId(Long quizId);
+
 }

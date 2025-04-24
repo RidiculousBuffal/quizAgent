@@ -2,8 +2,8 @@ spring:
   application:
     name: dhuSoftware
   datasource:
-    url: jdbc:mysql://localhost:3306/futurequiz?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
-    password: 200421
+    url: jdbc:mysql://localhost:3306/dhusoftware?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    password: 123456
     username: root
     driver-class-name: com.mysql.cj.jdbc.Driver
   servlet:
@@ -14,13 +14,15 @@ spring:
     openai:
       base-url: https://aihubmix.com
       api-key: sk-TWcWBpaG6WEN4kJmF4E2BbDeD29d410eB3F4CdAf5c0b85E4
+  http:
+    client:
+      connect-timeout: 200s
+      read-timeout: 200s
 
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
 
-server:
-  port: 13145
 
 logto:
   jwks-uri: https://zlclobelogto.zeabur.app/oidc/jwks # JWKS 公钥 URI

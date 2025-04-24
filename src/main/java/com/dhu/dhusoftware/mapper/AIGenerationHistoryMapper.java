@@ -22,4 +22,8 @@ public interface AIGenerationHistoryMapper {
 
     @Select("SELECT * FROM aigenerationhistory WHERE quizId = #{quizId}")
     List<AIGenerationHistory> listByQuizId(Long quizId);
+
+    // 新增方法：根据 userId 和 quizId 联合查询历史记录
+    @Select("SELECT * FROM aigenerationhistory WHERE userId = #{userId} AND quizId = #{quizId} ORDER BY generationTime DESC")
+    List<AIGenerationHistory> listByUserIdAndQuizId(@Param("userId") String userId, @Param("quizId") Long quizId);
 }

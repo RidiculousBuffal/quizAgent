@@ -4,9 +4,7 @@ package com.dhu.dhusoftware.json;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.boot.test.context.SpringBootTest;
-import com.dhu.dhusoftware.aiJson.FillBlank;
-
-import java.util.Arrays;
+import com.dhu.dhusoftware.ai.jsonSchema.FillBlank;
 
 @SpringBootTest
 public class OpenAIJsonTest {

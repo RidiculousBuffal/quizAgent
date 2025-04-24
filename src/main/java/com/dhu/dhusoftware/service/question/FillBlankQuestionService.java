@@ -1,6 +1,6 @@
-package com.dhu.dhusoftware.service;
+package com.dhu.dhusoftware.service.question;
 
-import com.dhu.dhusoftware.aiJson.CheckboxQuestion;
+import com.dhu.dhusoftware.ai.jsonSchema.FillBlank;
 import com.dhu.dhusoftware.mapper.QuestionMapper;
 import com.dhu.dhusoftware.pojo.Question;
 import com.dhu.dhusoftware.pojo.Questiontype;
@@ -12,26 +12,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CheckboxQuestionService {
+public class FillBlankQuestionService {
     @Autowired
     private QuestionMapper questionMapper;
-
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    public String processAndSaveCheckboxQuestion(CheckboxQuestion checkboxQuestion, Long quizId) throws Exception {
-        // Step 1: Convert to JSON (no validators needed for Checkbox)
-        String jsonDetails = mapper.writeValueAsString(checkboxQuestion);
+    public String processAndSaveFillBlank(FillBlank fillBlank, Long quizId) throws Exception {
+        // Step 1: Add validators field to JSON representation
+        String jsonDetails = JsonRecordProcessor.addValidatorsAndConvertToJson(fillBlank, fillBlank.blankCount());
 
         // Step 2: Save to question table
         Question question = new Question();
-        question.setQuestionName(checkboxQuestion.title());
-        question.setQuestionDescription(checkboxQuestion.description());
+        question.setQuestionName(fillBlank.title());
+        question.setQuestionDescription(fillBlank.description());
         question.setQuestionDetails(jsonDetails);
-        question.setQuestionTypeId(2L); // Default to 2 for Checkbox
+        question.setQuestionTypeId(3L); // Default to 3 for FillBlank
         questionMapper.insertQuestion(question);
 
         // Step 3: Fetch questionType details
-        Questiontype questionType = questionMapper.selectQuestionTypeById(2L);
+        Questiontype questionType = questionMapper.selectQuestionTypeById(3L);
         ObjectNode typeNode = mapper.createObjectNode();
         typeNode.put("typeId", questionType.getTypeId());
         typeNode.put("typeName", questionType.getTypeName());

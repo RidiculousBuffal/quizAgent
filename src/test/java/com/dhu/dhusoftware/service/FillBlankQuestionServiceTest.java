@@ -1,11 +1,12 @@
 package com.dhu.dhusoftware.service;
 
-import com.dhu.dhusoftware.aiJson.AnswerType;
-import com.dhu.dhusoftware.aiJson.FillBlank;
+import com.dhu.dhusoftware.ai.jsonSchema.AnswerType;
+import com.dhu.dhusoftware.ai.jsonSchema.FillBlank;
 import com.dhu.dhusoftware.mapper.QuestionMapper;
 import com.dhu.dhusoftware.pojo.Question;
 import com.dhu.dhusoftware.pojo.Questiontype;
 import com.dhu.dhusoftware.pojo.Quizquestion;
+import com.dhu.dhusoftware.service.question.FillBlankQuestionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

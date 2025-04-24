@@ -1,6 +1,6 @@
-package com.dhu.dhusoftware.service;
+package com.dhu.dhusoftware.service.question;
 
-import com.dhu.dhusoftware.aiJson.FillBlank;
+import com.dhu.dhusoftware.ai.jsonSchema.RadioQuestion;
 import com.dhu.dhusoftware.mapper.QuestionMapper;
 import com.dhu.dhusoftware.pojo.Question;
 import com.dhu.dhusoftware.pojo.Questiontype;
@@ -12,25 +12,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FillBlankQuestionService {
+public class RadioQuestionService {
     @Autowired
     private QuestionMapper questionMapper;
+
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    public String processAndSaveFillBlank(FillBlank fillBlank, Long quizId) throws Exception {
-        // Step 1: Add validators field to JSON representation
-        String jsonDetails = JsonRecordProcessor.addValidatorsAndConvertToJson(fillBlank, fillBlank.blankCount());
+    public String processAndSaveRadioQuestion(RadioQuestion radioQuestion, Long quizId) throws Exception {
+        // Step 1: Convert to JSON (no validators needed for Radio)
+        String jsonDetails = mapper.writeValueAsString(radioQuestion);
 
         // Step 2: Save to question table
         Question question = new Question();
-        question.setQuestionName(fillBlank.title());
-        question.setQuestionDescription(fillBlank.description());
+        question.setQuestionName(radioQuestion.title());
+        question.setQuestionDescription(radioQuestion.description());
         question.setQuestionDetails(jsonDetails);
-        question.setQuestionTypeId(3L); // Default to 3 for FillBlank
+        question.setQuestionTypeId(1L); // Default to 1 for Radio
         questionMapper.insertQuestion(question);
 
         // Step 3: Fetch questionType details
-        Questiontype questionType = questionMapper.selectQuestionTypeById(3L);
+        Questiontype questionType = questionMapper.selectQuestionTypeById(1L);
         ObjectNode typeNode = mapper.createObjectNode();
         typeNode.put("typeId", questionType.getTypeId());
         typeNode.put("typeName", questionType.getTypeName());

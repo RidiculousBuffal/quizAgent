@@ -1,4 +1,4 @@
-package com.dhu.dhusoftware.aiJson;
+package com.dhu.dhusoftware.ai.jsonSchema;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
@@ -19,8 +19,8 @@ public record FillBlank(
         @JsonProperty(required = false, defaultValue = "填空") String placeholder,
         @JsonPropertyDescription("判断是否采用内联填空模式")
         @JsonProperty(required = false, defaultValue = "false") Boolean inlineMode,
-        @JsonPropertyDescription("用{{blank}}代表空格,如:{{blank}}先生于{{blank}}年在{{blank}}宣布成立{{blank}}")
-        @JsonProperty(required = false) String inlineText
+        @JsonPropertyDescription("用{{blank}}代表空格,如:{{blank}}先生于{{blank}}年在{{blank}}宣布成立{{blank}},不论inlineMode是否开启都必须填写")
+        @JsonProperty(required = true) String inlineText
 ) {
 }
 
