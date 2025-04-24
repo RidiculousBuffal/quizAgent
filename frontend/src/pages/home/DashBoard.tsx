@@ -26,8 +26,8 @@ const Dashboard: React.FC = () => {
     const handleNewQuizDesign = async () => {
         await createQuiz(formData.getFieldsValue().title,
             formData.getFieldsValue().description,
-            formData.getFieldsValue().timeRange[0].format('YYYY-MM-DD HH:mm:ss'),
-            formData.getFieldsValue().timeRange[1].format('YYYY-MM-DD HH:mm:ss')).then(res => {
+            formData.getFieldsValue().timeRange[0]?.format('YYYY-MM-DD HH:mm:ss'),
+            formData.getFieldsValue().timeRange[1]?.format('YYYY-MM-DD HH:mm:ss')).then(res => {
                 setNewQuizModalVisible(false);
                 setCurEditQuizId((res as { quizId: number }).quizId)
                 navigator("/quizDesign")
