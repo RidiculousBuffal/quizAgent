@@ -29,6 +29,8 @@ logto:
   issuer: https://zlclobelogto.zeabur.app/oidc       # 发行者 (issuer)
   app-id: "http://localhost:13145"                    # APP ID (Audience)
 
+server:
+  port: 13145
 
 sa-token:
   # token 名称（同时也是 cookie 名称）
