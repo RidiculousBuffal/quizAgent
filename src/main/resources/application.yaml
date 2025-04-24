@@ -43,3 +43,9 @@ sa-token:
   token-style: uuid
   # 是否输出操作日志
   is-log: true
+
+  is-read-header: true
+
+logging:
+  level:
+    cn.dev33.satoken: debug
