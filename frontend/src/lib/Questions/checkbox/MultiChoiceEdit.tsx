@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // MultipleChoiceEditComponent.tsx
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Switch, Button, Space, InputNumber, Select, Tag, Tooltip } from 'antd';
@@ -20,23 +21,23 @@ import {
     verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import {BaseQuestionEditParams} from "../BaseQuestion.ts";
+import { BaseQuestionEditParams } from "../BaseQuestion.ts";
 
-interface MultipleChoiceEditProps extends BaseQuestionEditParams{
+interface MultipleChoiceEditProps extends BaseQuestionEditParams {
     question: MultipleChoiceQuestion;
     onChange: (question: MultipleChoiceQuestion) => void;
 }
 
 // 单个可排序选项组件
 const SortableOption = ({
-                            option,
-                            onTextChange,
-                            onRemove,
-                            onToggleExclusive,
-                            isExclusive,
-                            canDelete
-                        }: {
-    option: { id: number; text: string; value: string|number };
+    option,
+    onTextChange,
+    onRemove,
+    onToggleExclusive,
+    isExclusive,
+    canDelete
+}: {
+    option: { id: number; text: string; value: string | number };
     onTextChange: (id: number, text: string) => void;
     onRemove: (id: number) => void;
     onToggleExclusive: (id: number) => void;
