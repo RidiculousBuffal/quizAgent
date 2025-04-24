@@ -80,7 +80,7 @@ const HomePage: React.FC = () => {
                                         percent={78}
                                         strokeColor="#333"
                                         trailColor="#eee"
-                                        width={160}
+                                        size={160}
                                         strokeWidth={8}
                                         format={() => ''}
                                     />
