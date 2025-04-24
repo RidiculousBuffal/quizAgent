@@ -36,3 +36,4 @@ node_modules
 ./frontend/.env
 
 ./src/main/resources/application.yaml
+/yarn.lock
