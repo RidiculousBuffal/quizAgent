@@ -4,6 +4,8 @@ import com.dhu.dhusoftware.mapper.AIGenerationHistoryMapper;
 import com.dhu.dhusoftware.pojo.AIGenerationHistory;
 import com.dhu.dhusoftware.ai.prompt.AIQuestionPrompts;
 import com.dhu.dhusoftware.ai.tools.AIQuestionTools;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.ToolResponseMessage;
@@ -56,7 +58,7 @@ public class BaseAIQuestionService {
      * @param modelName 用户指定的模型名称
      * @return Map 包含AI响应和工具调用的JSON元信息
      */
-    public Map<String, Object> generateQuestion(String userId, Long quizId, String question, String modelName) {
+    public Map<String, Object> generateQuestion(String userId, Long quizId, String question, String modelName) throws JsonProcessingException {
         // 步骤1：获取与当前用户和quizId相关的历史聊天记录作为上下文
         List<AIGenerationHistory> historyList = aiGenerationHistoryMapper.listByUserIdAndQuizId(userId, quizId);
         String context = buildContext(historyList);
@@ -90,8 +92,9 @@ public class BaseAIQuestionService {
         Map<String, Object> finalResult = performMultiTurnToolCalling(messages, chatOptions, history);
 
         // 步骤6：更新历史记录，保存最终结果
-        history.setGeneratedResult(finalResult.get("toolCallJson") != null ?
-                finalResult.get("toolCallJson").toString() : finalResult.get("aiResponse").toString());
+        ObjectMapper objectMapper = new ObjectMapper();
+        String finalJsonString = objectMapper.writeValueAsString(finalResult);
+        history.setGeneratedResult(finalJsonString);
         aiGenerationHistoryMapper.updateAIGenerationHistory(history);
 
         return finalResult;
@@ -119,14 +122,13 @@ public class BaseAIQuestionService {
                 // 调用AI模型
                 ChatResponse chatResponse = chatModel.call(currentPrompt);
                 String aiOutput = chatResponse.getResult().getOutput().getText();
-                aiResponses.append("Round ").append(round).append(": ").append(aiOutput).append("\n");
-
+                aiResponses.append(aiOutput).append("\n");
                 // 检查是否有工具调用请求
                 if (!chatResponse.hasToolCalls()) {
                     // 没有工具调用，直接返回最终结果
                     result.put("aiResponse", aiResponses.toString());
                     if (!toolCallResults.toString().isEmpty()) {
-                        result.put("toolCallJson", toolCallResults.toString());
+                        result.put("toolCallJson", toolCallResults);
                     }
                     return result;
                 }
