@@ -17,6 +17,6 @@ public class QuizDto {
     private Timestamp quizStartTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Timestamp quizEndTime;
-    private int status;
+    private long status;
     private String creator;
 }

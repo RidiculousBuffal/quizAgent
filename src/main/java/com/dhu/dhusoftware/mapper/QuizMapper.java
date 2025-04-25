@@ -27,5 +27,7 @@ public interface QuizMapper {
     @Select("SELECT * FROM quiz")
     List<Quiz> listAllQuizzes();
 
+    @Update("UPDATE quiz SET status = IF(NOW() BETWEEN quiz.quizStartTime AND quiz.quizEndTime, 1, 0)")
+    void updateQuizStatusByTime();
 
 }
