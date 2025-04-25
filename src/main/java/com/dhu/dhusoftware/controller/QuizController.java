@@ -6,6 +6,7 @@ import com.dhu.dhusoftware.constant.COMMON;
 import com.dhu.dhusoftware.constant.QuizConstants;
 import com.dhu.dhusoftware.dto.QuizDto;
 import com.dhu.dhusoftware.dto.QuizQuestionDto;
+import com.dhu.dhusoftware.pojo.Quiz;
 import com.dhu.dhusoftware.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
