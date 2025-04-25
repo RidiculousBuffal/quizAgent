@@ -51,6 +51,7 @@ public class FillBlankQuestionService {
         quizQuestion.setSort(sort);
         questionMapper.insertQuizQuestion(quizQuestion);
 
+        ObjectMapper objectMapper = new ObjectMapper();
         // Step 7: Return the final JSON to frontend
         return jsonDetails;
     }

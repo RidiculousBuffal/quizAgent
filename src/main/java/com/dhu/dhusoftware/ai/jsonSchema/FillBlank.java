@@ -3,6 +3,7 @@ package com.dhu.dhusoftware.ai.jsonSchema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 
+import java.time.Year;
 import java.util.List;
 
 public record FillBlank(
