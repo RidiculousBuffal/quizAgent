@@ -9,8 +9,10 @@ import com.dhu.dhusoftware.pojo.Quiz;
 import com.dhu.dhusoftware.pojo.Quizquestion;
 import com.dhu.dhusoftware.constant.QuizConstants;
 import cn.dev33.satoken.stp.StpUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 /**
  * 问卷服务层，处理问卷创建、更新等逻辑
  */
+@Slf4j
 @Service
 public class QuizService {
 
@@ -102,12 +105,16 @@ public class QuizService {
      */
     public List<QuizDto> listQuizzesByCurrentUser() {
         String currentUserId = StpUtil.getLoginIdAsString();
+        System.out.println(currentUserId);
         List<Quiz> quizzes = quizMapper.listQuizzesByCreator(currentUserId);
-        return quizzes.stream().map(quiz -> {
+        System.out.println(quizzes);
+        List<QuizDto> ans = quizzes.stream().map(quiz -> {
             QuizDto dto = new QuizDto();
             BeanUtils.copyProperties(quiz, dto);
             return dto;
-        }).collect(Collectors.toList());
+        }).toList();
+        System.out.println(ans);
+        return ans;
     }
 
     /**
@@ -162,5 +169,18 @@ public class QuizService {
         }
 
         return updatedDtos;
+    }
+
+    /**
+     * 定时任务方法，用于根据当前时间更新问卷状态。
+     * 该方法每隔30秒执行一次，调用 quizMapper.updateQuizStatusByTime() 方法，
+     * 根据问卷的开始时间和结束时间自动更新问卷的状态。
+     * 如果当前时间在问卷的开始时间和结束时间之间，问卷状态将被设置为有效（1），
+     * 否则设置为无效（0）。
+     */
+    @Scheduled(fixedRate = 30000)
+    public void updateQuizStatus() {
+        log.info("quiz状态正在进行更新");
+        quizMapper.updateQuizStatusByTime();
     }
 }
