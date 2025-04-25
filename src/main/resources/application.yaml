@@ -1,9 +1,9 @@
 spring:
   application:
-    name: dhuSoftware
+    name: futurequiz
   datasource:
-    url: jdbc:mysql://localhost:3306/dhusoftware?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
-    password: 123456
+    url: jdbc:mysql://localhost:3306/futurequiz?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    password: 200421
     username: root
     driver-class-name: com.mysql.cj.jdbc.Driver
   servlet:
@@ -18,7 +18,18 @@ spring:
     client:
       connect-timeout: 200s
       read-timeout: 200s
-
+  data:
+    redis:
+      database: 1
+      host: 127.0.0.1
+      port: 6379
+      timeout: 10s
+      lettuce:
+        pool:
+          max-active: 200
+          max-wait: -1ms
+          max-idle: 10
+          min-idle: 0
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
@@ -53,3 +64,4 @@ sa-token:
 logging:
   level:
     cn.dev33.satoken: debug
+
