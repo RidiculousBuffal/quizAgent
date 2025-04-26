@@ -19,13 +19,15 @@ public interface QuestionMapper {
     @Delete("DELETE FROM question WHERE questionId = #{questionId}")
     int deleteQuestion(Long questionId);
 
-    @Select("SELECT * FROM question")
-    List<Question> listAllQuestions();
 
     @Insert("INSERT INTO question (questionName, questionDescription, questionDetails, questionTypeId) " +
             "VALUES (#{questionName}, #{questionDescription}, #{questionDetails}, #{questionTypeId})")
     @Options(useGeneratedKeys = true, keyProperty = "questionId")
     void insertQuestion(Question question);
+
+    @Insert("INSERT INTO question (questionId,questionName, questionDescription, questionDetails, questionTypeId) " +
+            "VALUES (#{questionId},#{questionName}, #{questionDescription}, #{questionDetails}, #{questionTypeId})")
+    void insertQuestionWithId(Question question);
 
     @Select("SELECT * FROM questiontype WHERE typeId = #{typeId}")
     Questiontype selectQuestionTypeById(Long typeId);

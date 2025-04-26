@@ -18,6 +18,7 @@ import SortableQuestionCard from "./SortableQuestionCard";
 import QuestionEditWrapper from "../../lib/Questions/QuestionWarpper/QuestionEditWrapper";
 import {QuestionFactory} from "../../lib/Questions/QuestionFactory";
 import {QuestionType} from "../../lib/Questions/QuestionType";
+import {saveAllQuestions} from "../../api/questionapi.ts";
 
 const {Header, Sider, Content} = Layout;
 const {Title} = Typography;
@@ -147,7 +148,9 @@ const MainDesign = () => {
                 <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", height: "100%"}}>
                     <Title level={4} style={{margin: 0}}>问卷设计</Title>
                     <Button icon={<SaveOutlined/>} type="primary"
-                            onClick={() => message.success("问卷已保存")}>保存问卷</Button>
+                            onClick={() => {
+                                saveAllQuestions().then()
+                            }}>保存问卷</Button>
                 </div>
             </Header>
             <Layout>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dhu.dhusoftware.mapper.QuizQuestionMapper">
+
+    <!-- ======================== 结果映射 ======================== -->
+    <resultMap id="QuizQuestionDetailMap"
+               type="com.dhu.dhusoftware.dto.QuizQuestionDetailDTO">
+
+        <!-- quizquestion 字段 -->
+        <id property="quizQuestionId" column="quizQuestionId"/>
+        <result property="quizId" column="quizId"/>
+        <result property="sort" column="sort"/>
+
+        <!-- question 对象 -->
+        <association property="question"
+                     javaType="com.dhu.dhusoftware.pojo.Question">
+            <id property="questionId" column="questionId"/>
+            <result property="questionName" column="questionName"/>
+            <result property="questionDescription" column="questionDescription"/>
+            <result property="questionDetails" column="questionDetails"/>
+            <result property="questionTypeId" column="questionTypeId"/>
+        </association>
+
+        <!-- questiontype 对象 -->
+        <association property="questionType"
+                     javaType="com.dhu.dhusoftware.pojo.Questiontype">
+            <id property="typeId" column="typeId"/>
+            <result property="typeName" column="typeName"/>
+            <result property="description" column="description"/>
+            <result property="typeSchema" column="typeSchema"/>
+        </association>
+    </resultMap>
+
+    <!-- ======================== 查询语句 ======================== -->
+    <select id="listQuizQuestionDetails"
+            parameterType="long"
+            resultMap="QuizQuestionDetailMap">
+        SELECT qq.quizQuestionId,
+               qq.quizId,
+               qq.sort,
+
+               q.questionId,
+               q.questionName,
+               q.questionDescription,
+               q.questionDetails,
+               q.questionTypeId,
+
+               qt.typeId,
+               qt.typeName,
+               qt.description,
+               qt.typeSchema
+
+        FROM quizquestion qq
+                 LEFT JOIN question q ON q.questionId = qq.questionId
+                 LEFT JOIN questiontype qt ON q.questionTypeId = qt.typeId
+        WHERE qq.quizId = #{quizId}
+        ORDER BY qq.sort ASC
+    </select>
+
+</mapper>

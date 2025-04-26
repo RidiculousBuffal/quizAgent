@@ -1,5 +1,6 @@
 package com.dhu.dhusoftware.mapper;
 
+import com.dhu.dhusoftware.dto.QuizQuestionDetailDTO;
 import com.dhu.dhusoftware.pojo.Quizquestion;
 import org.apache.ibatis.annotations.*;
 
@@ -23,4 +24,8 @@ public interface QuizQuestionMapper {
     @Select("SELECT * FROM quizquestion WHERE quizId = #{quizId} ORDER BY sort")
     List<Quizquestion> listByQuizId(Long quizId);
 
+    List<QuizQuestionDetailDTO> listQuizQuestionDetails(@Param("quizId") Long quizId);
+
+    @Select("select * from quizquestion where quizId=#{quizId} and questionId=#{questionId} limit 1")
+    Quizquestion getByQuizIdAndQuestionId(Long quizId, Long questionId);
 }
