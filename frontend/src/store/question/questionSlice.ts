@@ -68,11 +68,20 @@ export const createQuestionSlice: StateCreator<
     },
 
     sortQuestions: (activeId, overId) => {
-        const questionAnswer = [...get().questionAnswer];
-        const oldIndex = questionAnswer.findIndex((qa) => qa.question.id === activeId);
-        const newIndex = questionAnswer.findIndex((qa) => qa.question.id === overId);
+        const list = [...get().questionAnswer];
+        const oldIndex = list.findIndex(qa => qa.question.id === activeId);
+        const newIndex = list.findIndex(qa => qa.question.id === overId);
+
         if (oldIndex !== -1 && newIndex !== -1) {
-            set({ questionAnswer: arrayMove(questionAnswer, oldIndex, newIndex) });
+            // 1. 交换数组位置
+            const moved = arrayMove(list, oldIndex, newIndex);
+
+            // 2. 只交换 sort 值
+            const tmpSort = moved[oldIndex].question.sort;
+            moved[oldIndex].question.sort = moved[newIndex].question.sort;
+            moved[newIndex].question.sort = tmpSort;
+
+            set({ questionAnswer: moved });
         }
     },
 

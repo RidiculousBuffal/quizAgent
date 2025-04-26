@@ -10,10 +10,22 @@ import {SingleChoiceQuestion} from "../../lib/Questions/radio/radio.ts";
 
 const {Text} = Typography;
 const getQuestionTypeTitle = (question: BaseQuestion): string => {
-    if (question instanceof FillBlankQuestion) return '填空题';
-    if (question instanceof MultipleChoiceQuestion) return '多选题';
-    if (question instanceof SingleChoiceQuestion) return '单选题';
-    return '未知题型';
+    switch (question.type.typeId) {
+        case 1: {
+            return "单选题"
+        }
+        case 2: {
+            return "多选题"
+        }
+
+        case 3: {
+            return "填空题"
+        }
+        default:{
+            return"未知提醒"
+        }
+
+    }
 };
 const SortableQuestionCard = ({
                                   question,

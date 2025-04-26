@@ -107,7 +107,6 @@ const MainDesign = () => {
             const activeId = Number(active.id);
             const overId = Number(over.id);
             sortQuestions(activeId, overId);
-            setActiveId(overId);
         }
     };
 
