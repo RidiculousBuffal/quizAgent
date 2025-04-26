@@ -11,7 +11,7 @@ export class QuestionFactory {
         return this._questionTypes;
     }
 
-// 注册问题类型
+    // 注册问题类型
     static registerQuestionType(typeId: number, questionClass: typeof BaseQuestion): void {
         QuestionFactory._questionTypes.set(typeId, questionClass);
     }
@@ -44,7 +44,7 @@ export class QuestionFactory {
 
 // 注册问题类型
 
-QuestionFactory.registerQuestionType(2, SingleChoiceQuestion);
-QuestionFactory.registerQuestionType(3, MultipleChoiceQuestion); // 多选题
-QuestionFactory.registerQuestionType(4, FillBlankQuestion); // 填空题
+QuestionFactory.registerQuestionType(1, SingleChoiceQuestion);
+QuestionFactory.registerQuestionType(2, MultipleChoiceQuestion); // 多选题
+QuestionFactory.registerQuestionType(3, FillBlankQuestion); // 填空题
 // 注册其他问题类型...
