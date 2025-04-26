@@ -11,7 +11,7 @@ export class QuestionFactory {
         return this._questionTypes;
     }
 
-// 注册问题类型
+    // 注册问题类型
     static registerQuestionType(typeId: number, questionClass: typeof BaseQuestion): void {
         QuestionFactory._questionTypes.set(typeId, questionClass);
     }
