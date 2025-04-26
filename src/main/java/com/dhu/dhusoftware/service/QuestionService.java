@@ -6,6 +6,8 @@ import com.dhu.dhusoftware.mapper.QuizQuestionMapper;
 import com.dhu.dhusoftware.pojo.Question;
 import com.dhu.dhusoftware.constant.QuizConstants;
 import com.dhu.dhusoftware.pojo.Quizquestion;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,7 +128,26 @@ public class QuestionService {
      * @param quizId 问卷ID
      * @return List<QuizQuestionDetailDTO> 问题详情列表
      */
-    public List<QuizQuestionDetailDTO> getQuizQuestionDetailsByQuizId(Long quizId) {
-        return quizQuestionMapper.listQuizQuestionDetails(quizId);
+    public List<Map<String, Object>> getQuizQuestionDetailsByQuizId(Long quizId) throws JsonProcessingException {
+        List<QuizQuestionDetailDTO> quizQuestionDetailDTOS = quizQuestionMapper.listQuizQuestionDetails(quizId);
+        List<Map<String, Object>> maps = new ArrayList<>();
+        for (QuizQuestionDetailDTO q : quizQuestionDetailDTOS) {
+            Long id = q.getQuestion().getQuestionId();
+            Long sort = q.getSort();
+            Long typeId = q.getQuestionType().getTypeId();
+            String typeName = q.getQuestionType().getTypeName();
+            String typeDescription = q.getQuestionType().getDescription();
+            Map<String, Object> type = new HashMap<>();
+            type.put("typeId", typeId);
+            type.put("typeName", typeName);
+            type.put("typeDescription", typeDescription);
+            Map<String, Object> mapper = objectMapper.readValue(q.getQuestion().getQuestionDetails(), new TypeReference<Map<String, Object>>() {
+            });
+            mapper.put("type", type);
+            mapper.put("id", id);
+            mapper.put("sort", sort);
+            maps.add(mapper);
+        }
+        return maps;
     }
 }

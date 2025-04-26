@@ -9,6 +9,7 @@ import com.dhu.dhusoftware.dto.QuizQuestionDetailDTO;
 import com.dhu.dhusoftware.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -30,10 +31,17 @@ public class QuestionController {
      */
     @PostMapping("/save/{quizId}")
     public SaResult saveQuestion(@PathVariable("quizId") Long quizId, @RequestBody ArrayList<Map<String, Object>> payload) {
-        System.out.println(payload);
         return SaResult.ok().setCode(COMMON.SUCCESS_CODE).setData(questionService.saveOrUpdateQuestion(payload, quizId));
     }
 
+    @GetMapping("/listQuestions/{quizId}")
+    public SaResult listQuestions(@PathVariable("quizId") Long quizId) {
+        try {
+            return SaResult.ok().setCode(COMMON.SUCCESS_CODE).setData(questionService.getQuizQuestionDetailsByQuizId(quizId));
+        } catch (Exception e) {
+            return SaResult.error().setCode(COMMON.FAILURE_CODE).setMsg(e.getMessage());
+        }
+    }
     /**
      * 删除问题
      *

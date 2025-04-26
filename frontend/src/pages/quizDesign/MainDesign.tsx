@@ -1,6 +1,6 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {v4 as uuid} from 'uuid'
-import {Layout, Button, Divider, Empty, Typography, message} from "antd";
+import {Layout, Button, Divider, Empty, Typography} from "antd";
 import {
     DndContext,
     closestCenter,
@@ -18,7 +18,8 @@ import SortableQuestionCard from "./SortableQuestionCard";
 import QuestionEditWrapper from "../../lib/Questions/QuestionWarpper/QuestionEditWrapper";
 import {QuestionFactory} from "../../lib/Questions/QuestionFactory";
 import {QuestionType} from "../../lib/Questions/QuestionType";
-import {saveAllQuestions} from "../../api/questionapi.ts";
+import {deleteQuestionBackend, getAllQuestionsInQuiz, saveAllQuestions} from "../../api/questionapi.ts";
+import {useQuizStore} from "../../store/quiz/QuizStore.ts";
 
 const {Header, Sider, Content} = Layout;
 const {Title} = Typography;
@@ -51,11 +52,12 @@ const MainDesign = () => {
 
     // 从全局store获取和操作问题数据
     const questionAnswer = useQuestionStore((s) => s.questionAnswer);
+    const setQuestion = useQuestionStore(q => q.setRawQuestions);
     const addQuestion = useQuestionStore((s) => s.addQuestion);
     const deleteQuestion = useQuestionStore((s) => s.deleteQuestion);
     const sortQuestions = useQuestionStore((s) => s.sortQuestions);
     // 题目数组
-    const questions = questionAnswer.map((qa) => qa.question);
+    const questions = questionAnswer.map((qa) => qa.question)
 
     // 拖拽传感器
     const sensors = useSensors(
@@ -63,6 +65,17 @@ const MainDesign = () => {
         useSensor(KeyboardSensor, {coordinateGetter: sortableKeyboardCoordinates})
     );
 
+    const currentQuizId = useQuizStore((q) => q.curEditQuizId)
+
+    useEffect(() => {
+        getAllQuestionsInQuiz(currentQuizId!).then(
+            r => {
+                if (r) {
+                    setQuestion(r);
+                }
+            }
+        )
+    }, [currentQuizId, setQuestion])
 
     const handleAddQuestion = (type: QuestionType) => {
         // 自动补充各题型不同参数，id 建议用 Date.now()
@@ -72,7 +85,6 @@ const MainDesign = () => {
             title: `新建${type.typeDescription}`,
             sort: id,
         };
-
         // 针对不同题型补充必要项
         if (type.typeName === 'fillblank') {
             params.blankCount = 1;
@@ -95,7 +107,6 @@ const MainDesign = () => {
             params.allowOther = false;
             params.otherText = '';
         }
-
         const newQuestion = QuestionFactory.createQuestion(type, params);
         addQuestion(newQuestion);
         setActiveId(newQuestion.id);
@@ -112,9 +123,9 @@ const MainDesign = () => {
 
     const handleDelete = (id: number) => {
         deleteQuestion(id);
+        deleteQuestionBackend(id).then(r => r)
         setActiveId((prev) => (prev === id ? null : prev));
     };
-
     const handleDuplicate = (id: number) => {
         const q = questions.find((q) => q.id === id);
         if (!q) return;
@@ -130,17 +141,14 @@ const MainDesign = () => {
         addQuestion(copy);
         setActiveId(newId);
     };
-
     const handleMoveUp = (id: number) => {
         const idx = questions.findIndex((q) => q.id === id);
         if (idx > 0) sortQuestions(id, questions[idx - 1].id);
     };
-
     const handleMoveDown = (id: number) => {
         const idx = questions.findIndex((q) => q.id === id);
         if (idx < questions.length - 1) sortQuestions(id, questions[idx + 1].id);
     };
-
     return (
         <Layout style={{maxHeight: "100vh", minHeight: "100vh"}}>
             <Header style={{background: "#fff", padding: "0 16px", borderBottom: "1px solid #f0f0f0"}}>

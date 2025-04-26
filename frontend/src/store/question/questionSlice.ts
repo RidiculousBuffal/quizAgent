@@ -68,21 +68,21 @@ export const createQuestionSlice: StateCreator<
     },
 
     sortQuestions: (activeId, overId) => {
-        const list = [...get().questionAnswer];
-        const oldIndex = list.findIndex(qa => qa.question.id === activeId);
-        const newIndex = list.findIndex(qa => qa.question.id === overId);
+        set(state => {
+            const list = [...state.questionAnswer];
+            const oldIndex = list.findIndex(qa => qa.question.id === activeId);
+            const newIndex = list.findIndex(qa => qa.question.id === overId);
+            if (oldIndex === -1 || newIndex === -1) return {};   // 安全兜底
 
-        if (oldIndex !== -1 && newIndex !== -1) {
-            // 1. 交换数组位置
             const moved = arrayMove(list, oldIndex, newIndex);
 
-            // 2. 只交换 sort 值
-            const tmpSort = moved[oldIndex].question.sort;
-            moved[oldIndex].question.sort = moved[newIndex].question.sort;
-            moved[newIndex].question.sort = tmpSort;
+            // 关键：统一刷新 sort 字段
+            moved.forEach((qa, idx) => {
+                qa.question.sort = idx;          // 或 idx + 1，随你习惯
+            });
 
-            set({ questionAnswer: moved });
-        }
+            return { questionAnswer: moved };
+        });
     },
 
     deleteQuestion: (id) => {
