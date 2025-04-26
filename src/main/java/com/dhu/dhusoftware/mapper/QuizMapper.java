@@ -1,6 +1,7 @@
 package com.dhu.dhusoftware.mapper;
 
 import com.dhu.dhusoftware.pojo.Quiz;
+import com.dhu.dhusoftware.pojo.Quizpermission;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -29,5 +30,8 @@ public interface QuizMapper {
 
     @Update("UPDATE quiz SET status = IF(NOW() BETWEEN quiz.quizStartTime AND quiz.quizEndTime, 1, 0)")
     void updateQuizStatusByTime();
+
+    @Select("select quiz.creator from quiz, quizpermission where quiz.quizId = quizpermission.quizId and quizpermission.quizId = #{quizId}")
+    String getCreatorFromQuizPermissionByQuizId(Quizpermission quizpermission);
 
 }

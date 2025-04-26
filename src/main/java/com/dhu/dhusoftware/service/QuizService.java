@@ -1,9 +1,12 @@
 package com.dhu.dhusoftware.service;
 
 import com.dhu.dhusoftware.constant.PermissionConstants;
+import com.dhu.dhusoftware.constant.QuizPermissionTypeConstants;
 import com.dhu.dhusoftware.dto.QuizDto;
+import com.dhu.dhusoftware.dto.QuizPermissionDto;
 import com.dhu.dhusoftware.dto.QuizQuestionDto;
 import com.dhu.dhusoftware.mapper.QuizMapper;
+import com.dhu.dhusoftware.mapper.QuizPermissionTypeMapper;
 import com.dhu.dhusoftware.mapper.QuizQuestionMapper;
 import com.dhu.dhusoftware.pojo.Quiz;
 import com.dhu.dhusoftware.pojo.Quizquestion;
@@ -34,12 +37,18 @@ public class QuizService {
     @Autowired
     private QuizQuestionMapper quizQuestionMapper;
 
+    @Autowired
+    private QuizPermissionService quizPermissionService;
+
+    @Autowired
+    private QuizPermissionTypeMapper quizPermissionTypeMapper;
+
     /**
      * 创建或更新问卷
      * @param quizDto 问卷数据传输对象
      * @return QuizDto 更新后的问卷数据
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public QuizDto saveOrUpdateQuiz(QuizDto quizDto) {
         String currentUserId = StpUtil.getLoginIdAsString();
         Quiz quiz = new Quiz();
@@ -50,6 +59,10 @@ public class QuizService {
             quiz.setCreator(currentUserId);
             quiz.setStatus(QuizConstants.STATUS_DRAFT); // 默认草稿状态
             quizMapper.addQuiz(quiz);
+            QuizPermissionDto quizPermissionDto = new QuizPermissionDto();
+            quizPermissionDto.setQuizId(quiz.getQuizId());
+            quizPermissionDto.setQuizPermissionTypeId(quizPermissionTypeMapper.getQuizPermissionIdByType(QuizPermissionTypeConstants.PUBLIC));
+            quizPermissionService.updateOrInsertQuizPermission(quizPermissionDto);
         } else {
             // 更新问卷，校验权限
             Quiz existingQuiz = quizMapper.getQuizById(quiz.getQuizId());
@@ -72,6 +85,7 @@ public class QuizService {
      * @param quizId 问卷ID
      * @return 是否成功
      */
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteQuiz(Long quizId) {
         String currentUserId = StpUtil.getLoginIdAsString();
         Quiz quiz = quizMapper.getQuizById(quizId);
@@ -81,7 +95,12 @@ public class QuizService {
         if (!quiz.getCreator().equals(currentUserId) && !StpUtil.hasPermission(PermissionConstants.SCOPE_QUIZ_DELETE)) {
             throw new SecurityException(QuizConstants.PERMISSION_DENIED_MSG);
         }
-        return quizMapper.deleteQuiz(quizId) > 0;
+        //删除相应对的quizPermission相应记录
+        if (quizPermissionService.deleteQuizPermission(quizId)) {
+            return quizMapper.deleteQuiz(quizId) > 0;
+        } else {
+            throw new IllegalArgumentException(QuizConstants.NOT_FOUND);
+        }
     }
 
     /**

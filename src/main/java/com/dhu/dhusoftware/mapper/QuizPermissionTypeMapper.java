@@ -22,4 +22,7 @@ public interface QuizPermissionTypeMapper {
 
     @Select("SELECT * FROM quizpermissiontype")
     List<Quizpermissiontype> listAllQuizPermissionTypes();
+
+    @Select("select quizPermissionTypeId from quizpermissiontype where quizPermissionTypeName = #{quizPermissionTypeName}")
+    long getQuizPermissionIdByType(String permissionType);
 }
