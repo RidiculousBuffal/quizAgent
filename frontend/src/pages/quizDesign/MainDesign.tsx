@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useCallback} from "react";
 import {v4 as uuid} from 'uuid'
-import {Layout, Button, Divider, Empty, Typography} from "antd";
+import {Layout, Button, Divider, Empty, Typography, message, Spin} from "antd";
 import {
     DndContext,
     closestCenter,
@@ -11,7 +11,7 @@ import {
     DragEndEvent
 } from "@dnd-kit/core";
 import {SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy} from "@dnd-kit/sortable";
-import {SaveOutlined, EditOutlined, CheckCircleOutlined, CheckSquareOutlined} from "@ant-design/icons";
+import {SaveOutlined, EditOutlined, CheckCircleOutlined, CheckSquareOutlined, SyncOutlined, CheckOutlined, LoadingOutlined} from "@ant-design/icons";
 import {useQuestionStore} from "../../store/question/QuestionStore";
 import QuestionTypeList from "./QuestionTypeList";
 import SortableQuestionCard from "./SortableQuestionCard";
@@ -22,7 +22,7 @@ import {deleteQuestionBackend, getAllQuestionsInQuiz, saveAllQuestions} from "..
 import {useQuizStore} from "../../store/quiz/QuizStore.ts";
 
 const {Header, Sider, Content} = Layout;
-const {Title} = Typography;
+const {Title, Text} = Typography;
 
 // 配置你的类型（typeId 一定与 factory 注册一致！）
 const questionTypes: { key: string; icon: React.ReactNode; title: string; type: QuestionType }[] = [
@@ -49,6 +49,12 @@ const questionTypes: { key: string; icon: React.ReactNode; title: string; type: 
 const MainDesign = () => {
     // 当前选中的题目ID
     const [activeId, setActiveId] = useState<number | null>(null);
+    // 保存状态: 'idle', 'saving', 'saved', 'error'
+    const [savingStatus, setSavingStatus] = useState('idle');
+    // 是否有未保存的更改
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+    // 保存按钮loading状态
+    const [isSaving, setIsSaving] = useState(false);
 
     // 从全局store获取和操作问题数据
     const questionAnswer = useQuestionStore((s) => s.questionAnswer);
@@ -76,6 +82,48 @@ const MainDesign = () => {
             }
         )
     }, [currentQuizId, setQuestion])
+
+    // 跟踪题目变更
+    useEffect(() => {
+        if (questions.length > 0) {
+            setHasUnsavedChanges(true);
+        }
+    }, [questionAnswer]);
+
+    // 保存问卷函数
+    const saveQuestions = useCallback(async () => {
+        if (!hasUnsavedChanges) return;
+
+        try {
+            setSavingStatus('saving');
+            setIsSaving(true);
+            await saveAllQuestions();
+            setSavingStatus('saved');
+            setHasUnsavedChanges(false);
+
+            // 3秒后重置状态为idle
+            setTimeout(() => {
+                setSavingStatus('idle');
+            }, 3000);
+        } catch (error) {
+            setSavingStatus('error');
+            message.error('保存问卷失败，请稍后重试');
+            console.error('Error saving questions:', error);
+        } finally {
+            setIsSaving(false);
+        }
+    }, [hasUnsavedChanges]);
+
+    // 自动保存
+    useEffect(() => {
+        const autoSaveInterval = setInterval(() => {
+            if (hasUnsavedChanges && savingStatus !== 'saving') {
+                saveQuestions();
+            }
+        }, 5000);
+
+        return () => clearInterval(autoSaveInterval);
+    }, [hasUnsavedChanges, savingStatus, saveQuestions]);
 
     const handleAddQuestion = (type: QuestionType) => {
         // 自动补充各题型不同参数，id 建议用 Date.now()
@@ -126,6 +174,7 @@ const MainDesign = () => {
         deleteQuestionBackend(id).then(r => r)
         setActiveId((prev) => (prev === id ? null : prev));
     };
+
     const handleDuplicate = (id: number) => {
         const q = questions.find((q) => q.id === id);
         if (!q) return;
@@ -141,23 +190,61 @@ const MainDesign = () => {
         addQuestion(copy);
         setActiveId(newId);
     };
+
     const handleMoveUp = (id: number) => {
         const idx = questions.findIndex((q) => q.id === id);
         if (idx > 0) sortQuestions(id, questions[idx - 1].id);
     };
+
     const handleMoveDown = (id: number) => {
         const idx = questions.findIndex((q) => q.id === id);
         if (idx < questions.length - 1) sortQuestions(id, questions[idx + 1].id);
     };
+
+    // 渲染保存状态
+    const renderSaveStatus = () => {
+        switch (savingStatus) {
+            case 'saving':
+                return (
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <Spin
+                            indicator={<LoadingOutlined style={{ fontSize: 18, marginRight: 8 }} spin />}
+                        />
+                        <Text type="secondary" style={{ marginLeft: 8 }}>问卷保存中...</Text>
+                    </div>
+                );
+            case 'saved':
+                return (
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <CheckOutlined style={{ color: '#52c41a', fontSize: 16, marginRight: 8 }} />
+                        <Text type="success">问卷已保存</Text>
+                    </div>
+                );
+            case 'error':
+                return <Text type="danger" style={{ fontWeight: 'bold' }}>保存失败，请手动保存</Text>;
+            default:
+                return hasUnsavedChanges ?
+                    <Text type="warning" style={{ fontWeight: 'bold' }}>有未保存的更改</Text> : null;
+        }
+    };
+
     return (
         <Layout style={{maxHeight: "100vh", minHeight: "100vh"}}>
             <Header style={{background: "#fff", padding: "0 16px", borderBottom: "1px solid #f0f0f0"}}>
                 <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", height: "100%"}}>
-                    <Title level={4} style={{margin: 0}}>问卷设计</Title>
-                    <Button icon={<SaveOutlined/>} type="primary"
-                            onClick={() => {
-                                saveAllQuestions().then()
-                            }}>保存问卷</Button>
+                    <div style={{display: "flex", alignItems: "center"}}>
+                        <Title level={4} style={{margin: 0, marginRight: 16}}>问卷设计</Title>
+                        {renderSaveStatus()}
+                    </div>
+                    <Button
+                        icon={<SaveOutlined/>}
+                        type="primary"
+                        onClick={saveQuestions}
+                        loading={isSaving}
+                        disabled={savingStatus === 'saving' || !hasUnsavedChanges}
+                    >
+                        {isSaving ? '保存中...' : '保存问卷'}
+                    </Button>
                 </div>
             </Header>
             <Layout>
