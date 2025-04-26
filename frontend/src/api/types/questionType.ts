@@ -7,3 +7,12 @@ export type questionTypeAPI = {
     typeDescription: string,
     typeSchema?: string
 }
+export interface QuizDto {
+    quizId: number;
+    quizName: string;
+    quizDescription: string;
+    quizStartTime: string; // 后端返回是字符串
+    quizEndTime: string;
+    status: number;
+    creator: string | null;
+}
