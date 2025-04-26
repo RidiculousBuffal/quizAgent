@@ -1,49 +1,38 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Modal, Input, DatePicker, Form, FormInstance } from 'antd';
-import dayjs from 'dayjs';
+import { Dayjs } from 'dayjs';
 
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
+
+export interface QuizInfoType {
+    title: string;
+    description: string;
+    timeRange: Dayjs[]
+}
 
 interface QuizModalProps {
     open: boolean;
     onOk: () => void;
     onCancel: () => void;
-    formData: FormInstance<any>
+    formData: FormInstance<any>;
+    initialValue?: QuizInfoType
 }
 
-const NewQuizCreate: React.FC<QuizModalProps> = ({ open, onOk, onCancel, formData }) => {
-    // 处理提交
-    // const handleOk = async () => {
-    //     try {
-    //         const values = await form.validateFields();
-    //         // values: { title, description, timeRange }
-    //         // 这里可以将数据提交到后端
-    //         message.success('创建成功, 数据: ' + JSON.stringify({
-    //             ...values,
-    //             quizStartTime: values.timeRange ? values.timeRange[0].format('YYYY-MM-DD HH:mm:ss') : '',
-    //             quizEndTime: values.timeRange ? values.timeRange[1].format('YYYY-MM-DD HH:mm:ss') : '',
-    //         }));
-    //         setOpen(false);
-    //         form.resetFields();
-    //     } catch (err) {
-    //         console.error(err);
-    //         message.error('创建失败');
-    //         form.resetFields();
-    //     }
-    // };
-
-    // const handleCancel = () => {
-    //     setOpen(false);
-    //     form.resetFields();
-    // };
+const NewQuizCreate: React.FC<QuizModalProps> = ({ open, onOk, onCancel, formData, initialValue }) => {
+    useEffect(() => {
+        if (open && initialValue) {
+            // 这里主动同步最新的初始化值到表单
+            formData.setFieldsValue(initialValue);
+        }
+    }, [open, initialValue, formData]);
 
 
     return (
         <div>
             <Modal
                 open={open}
-                title="新建问卷"
+                title="问卷信息"
                 onOk={onOk}
                 onCancel={onCancel}
                 okText="确定"
@@ -53,11 +42,7 @@ const NewQuizCreate: React.FC<QuizModalProps> = ({ open, onOk, onCancel, formDat
                 <Form
                     layout="vertical"
                     form={formData}
-                    initialValues={{
-                        title: '',
-                        description: '',
-                        timeRange: ''
-                    }}
+                    initialValues={initialValue}
                 >
                     <Form.Item
                         label="问卷标题"
@@ -70,7 +55,6 @@ const NewQuizCreate: React.FC<QuizModalProps> = ({ open, onOk, onCancel, formDat
                     <Form.Item
                         label="问卷描述"
                         name="description"
-                        rules={[{ message: '请输入问卷描述' }]}
                     >
                         <TextArea placeholder="请输入问卷描述" rows={4} />
                     </Form.Item>
