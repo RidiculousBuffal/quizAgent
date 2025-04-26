@@ -19,7 +19,8 @@ public record RadioQuestion(
 ) {
     // 内部类表示选项
     public record Option(
-            @JsonProperty(required = true) Integer id,
+            @JsonPropertyDescription("必须是uuid_v4格式")
+            @JsonProperty(required = true) String id,
             @JsonProperty(required = true) String text,
             @JsonProperty(required = true) String value
     ) {

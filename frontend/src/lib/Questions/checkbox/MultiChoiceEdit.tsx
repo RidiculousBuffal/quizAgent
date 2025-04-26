@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // MultipleChoiceEditComponent.tsx
-import React, { useState, useEffect } from 'react';
-import { Form, Input, Switch, Button, Space, InputNumber, Select, Tag, Tooltip } from 'antd';
-import { PlusOutlined, DeleteOutlined, LockOutlined } from '@ant-design/icons';
-import { MultipleChoiceQuestion } from './checkbox.ts';
+import React, {useState, useEffect} from 'react';
+import {Form, Input, Switch, Button, Space, InputNumber, Select, Tag, Tooltip} from 'antd';
+import {PlusOutlined, DeleteOutlined, LockOutlined} from '@ant-design/icons';
+import {MultipleChoiceQuestion} from './checkbox.ts';
 import {
     DndContext,
     closestCenter,
@@ -20,8 +20,8 @@ import {
     useSortable,
     verticalListSortingStrategy
 } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { BaseQuestionEditParams } from "../BaseQuestion.ts";
+import {CSS} from '@dnd-kit/utilities';
+import {BaseQuestionEditParams} from "../BaseQuestion.ts";
 
 interface MultipleChoiceEditProps extends BaseQuestionEditParams {
     question: MultipleChoiceQuestion;
@@ -30,17 +30,17 @@ interface MultipleChoiceEditProps extends BaseQuestionEditParams {
 
 // 单个可排序选项组件
 const SortableOption = ({
-    option,
-    onTextChange,
-    onRemove,
-    onToggleExclusive,
-    isExclusive,
-    canDelete
-}: {
-    option: { id: number; text: string; value: string | number };
-    onTextChange: (id: number, text: string) => void;
-    onRemove: (id: number) => void;
-    onToggleExclusive: (id: number) => void;
+                            option,
+                            onTextChange,
+                            onRemove,
+                            onToggleExclusive,
+                            isExclusive,
+                            canDelete
+                        }: {
+    option: { id: string; text: string; value: string | number };
+    onTextChange: (id: string, text: string) => void;
+    onRemove: (id: string) => void;
+    onToggleExclusive: (id: string) => void;
     isExclusive: boolean;
     canDelete: boolean;
 }) => {
@@ -70,7 +70,7 @@ const SortableOption = ({
         setNodeRef,
         transform,
         transition
-    } = useSortable({ id: option.id });
+    } = useSortable({id: option.id});
 
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -104,7 +104,7 @@ const SortableOption = ({
                 value={localText}
                 onChange={handleTextChange}
                 onBlur={handleTextBlur}
-                style={{ width: '300px', marginRight: 8 }}
+                style={{width: '300px', marginRight: 8}}
                 onClick={(e) => e.stopPropagation()} // 防止点击输入框触发拖动
             />
 
@@ -112,7 +112,7 @@ const SortableOption = ({
                 <Tooltip title={isExclusive ? "取消互斥选项" : "设为互斥选项"}>
                     <Button
                         type={isExclusive ? "primary" : "default"}
-                        icon={<LockOutlined />}
+                        icon={<LockOutlined/>}
                         onClick={(e) => {
                             e.stopPropagation();
                             onToggleExclusive(option.id);
@@ -121,7 +121,7 @@ const SortableOption = ({
                 </Tooltip>
                 <Button
                     type="text"
-                    icon={<DeleteOutlined />}
+                    icon={<DeleteOutlined/>}
                     onClick={(e) => {
                         e.stopPropagation();
                         onRemove(option.id);
@@ -133,7 +133,7 @@ const SortableOption = ({
     );
 };
 
-const MultipleChoiceEditComponent: React.FC<MultipleChoiceEditProps> = ({ question, onChange }) => {
+const MultipleChoiceEditComponent: React.FC<MultipleChoiceEditProps> = ({question, onChange}) => {
     // 添加本地状态来管理输入
     const [localTitle, setLocalTitle] = useState(question.title);
     const [localDescription, setLocalDescription] = useState(question.description || '');
@@ -186,7 +186,7 @@ const MultipleChoiceEditComponent: React.FC<MultipleChoiceEditProps> = ({ questi
         onChange(updatedQuestion);
     };
 
-    const handleOptionTextChange = (id: number, text: string) => {
+    const handleOptionTextChange = (id: string, text: string) => {
         const updatedQuestion = question.clone();
         const option = updatedQuestion.options.find(opt => opt.id === id);
         if (option) {
@@ -201,7 +201,7 @@ const MultipleChoiceEditComponent: React.FC<MultipleChoiceEditProps> = ({ questi
         onChange(updatedQuestion);
     };
 
-    const removeOption = (id: number) => {
+    const removeOption = (id: string) => {
         const updatedQuestion = question.clone();
         updatedQuestion.removeOption(id);
         onChange(updatedQuestion);
@@ -243,14 +243,14 @@ const MultipleChoiceEditComponent: React.FC<MultipleChoiceEditProps> = ({ questi
         onChange(updatedQuestion);
     };
 
-    const toggleExclusiveOption = (optionId: number) => {
+    const toggleExclusiveOption = (optionId: string) => {
         const updatedQuestion = question.clone();
         updatedQuestion.toggleExclusiveOption(optionId);
         onChange(updatedQuestion);
     };
 
     const handleDragEnd = (event: DragEndEvent) => {
-        const { active, over } = event;
+        const {active, over} = event;
 
         if (over && active.id !== over.id) {
             const updatedQuestion = question.clone();
@@ -289,7 +289,7 @@ const MultipleChoiceEditComponent: React.FC<MultipleChoiceEditProps> = ({ questi
                 </Form.Item>
 
                 <Form.Item label="是否必填">
-                    <Switch checked={question.isRequired} onChange={handleRequiredChange} />
+                    <Switch checked={question.isRequired} onChange={handleRequiredChange}/>
                 </Form.Item>
 
                 <Form.Item label="选择限制">
@@ -312,14 +312,14 @@ const MultipleChoiceEditComponent: React.FC<MultipleChoiceEditProps> = ({ questi
                 </Form.Item>
 
                 <Form.Item label="随机排序选项">
-                    <Switch checked={question.randomizeOptions} onChange={handleRandomizeOptionsChange} />
+                    <Switch checked={question.randomizeOptions} onChange={handleRandomizeOptionsChange}/>
                 </Form.Item>
 
                 <Form.Item label="选项列数">
                     <Select
                         value={question.displayInColumns}
                         onChange={handleDisplayInColumnsChange}
-                        style={{ width: 120 }}
+                        style={{width: 120}}
                     >
                         <Select.Option value={1}>1列</Select.Option>
                         <Select.Option value={2}>2列</Select.Option>
@@ -338,7 +338,7 @@ const MultipleChoiceEditComponent: React.FC<MultipleChoiceEditProps> = ({ questi
                             items={question.options.map(opt => opt.id)}
                             strategy={verticalListSortingStrategy}
                         >
-                            <div style={{ marginBottom: 16 }}>
+                            <div style={{marginBottom: 16}}>
                                 {question.options.map((option) => (
                                     <SortableOption
                                         key={option.id}
@@ -357,14 +357,14 @@ const MultipleChoiceEditComponent: React.FC<MultipleChoiceEditProps> = ({ questi
                     <Button
                         type="dashed"
                         onClick={addOption}
-                        icon={<PlusOutlined />}
-                        style={{ width: '300px', marginTop: 8 }}
+                        icon={<PlusOutlined/>}
+                        style={{width: '300px', marginTop: 8}}
                     >
                         添加选项
                     </Button>
 
                     {question.exclusiveOptions.length > 0 && (
-                        <div style={{ marginTop: 8 }}>
+                        <div style={{marginTop: 8}}>
                             <span>互斥选项: </span>
                             {question.exclusiveOptions.map(id => {
                                 const option = question.options.find(opt => opt.id === id);
@@ -377,7 +377,7 @@ const MultipleChoiceEditComponent: React.FC<MultipleChoiceEditProps> = ({ questi
                 </Form.Item>
 
                 <Form.Item label="允许其他选项">
-                    <Switch checked={question.allowOther} onChange={handleAllowOtherChange} />
+                    <Switch checked={question.allowOther} onChange={handleAllowOtherChange}/>
                 </Form.Item>
 
                 {question.allowOther && (
