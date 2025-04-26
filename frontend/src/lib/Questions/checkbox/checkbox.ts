@@ -9,7 +9,7 @@ export interface MultiChoiceParams extends SingleChoiceQuestionParams {
     maxSelected?: number;
     randomizeOptions: boolean; // 是否随机排序选项
     displayInColumns: number; // 选项分列显示
-    exclusiveOptions: number[]; // 互斥选项IDs
+    exclusiveOptions: string[]; // 互斥选项IDs
 }
 
 export class MultipleChoiceQuestion extends BaseQuestion {
@@ -20,7 +20,7 @@ export class MultipleChoiceQuestion extends BaseQuestion {
     maxSelected?: number; // 最多选择数量
     randomizeOptions: boolean; // 是否随机排序选项
     displayInColumns: number; // 选项分列显示
-    exclusiveOptions: number[]; // 互斥选项IDs
+    exclusiveOptions: string[]; // 互斥选项IDs
     constructor(params: MultiChoiceParams) {
         super(params);
         this.options = params.options || [];
@@ -128,24 +128,21 @@ export class MultipleChoiceQuestion extends BaseQuestion {
 
     // 特定于多选题的方法
     addOption(text: string): void {
-        const newId = this.options.length > 0
-            ? Math.max(...this.options.map(o => o.id)) + 1
-            : 1;
 
         this.options.push({
-            id: newId,
+            id: uuid(),
             text: text,
             value: uuid()
         });
     }
 
-    removeOption(optionId: number): void {
+    removeOption(optionId: string): void {
         this.options = this.options.filter(opt => opt.id !== optionId);
         // 同时从互斥选项中移除
         this.exclusiveOptions = this.exclusiveOptions.filter(id => id !== optionId);
     }
 
-    toggleExclusiveOption(optionId: number): void {
+    toggleExclusiveOption(optionId: string): void {
         if (this.exclusiveOptions.includes(optionId)) {
             this.exclusiveOptions = this.exclusiveOptions.filter(id => id !== optionId);
         } else {
@@ -153,7 +150,7 @@ export class MultipleChoiceQuestion extends BaseQuestion {
         }
     }
 
-    isExclusiveOption(optionId: number): boolean {
+    isExclusiveOption(optionId: string): boolean {
         return this.exclusiveOptions.includes(optionId);
     }
 }

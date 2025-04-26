@@ -4,7 +4,7 @@ import SingleRadioEdit from "./SingleRadioEdit.tsx";
 import SingleRadioPreview from "./SingleRadioPreview.tsx";
 
 export interface QuestionOption {
-    id: number;
+    id: string;
     text: string;
     value: string | number;
 
@@ -65,12 +65,9 @@ export class SingleChoiceQuestion extends BaseQuestion {
 
     // 特定于单选题的方法
     addOption(text: string): void {
-        const newId = this.options.length > 0
-            ? Math.max(...this.options.map(o => o.id)) + 1
-            : 1;
 
         this.options.push({
-            id: newId,
+            id: uuid(),
             text: text,
             value: uuid()
         });
@@ -94,7 +91,7 @@ export class SingleChoiceQuestion extends BaseQuestion {
         )
     }
 
-    removeOption(optionId: number): void {
+    removeOption(optionId: string): void {
         this.options = this.options.filter(opt => opt.id !== optionId);
     }
 }

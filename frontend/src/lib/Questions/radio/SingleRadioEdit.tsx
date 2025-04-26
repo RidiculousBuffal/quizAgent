@@ -26,7 +26,7 @@ const SingleRadioEdit: React.FC<SingleChoiceEditProps> = ({question, onChange}) 
         onChange(question);
     };
 
-    const handleOptionTextChange = (id: number, text: string) => {
+    const handleOptionTextChange = (id: string, text: string) => {
         const option = question.options.find(opt => opt.id === id);
         if (option) {
             option.text = text;
@@ -39,7 +39,7 @@ const SingleRadioEdit: React.FC<SingleChoiceEditProps> = ({question, onChange}) 
         onChange(question);
     };
 
-    const removeOption = (id: number) => {
+    const removeOption = (id: string) => {
         question.removeOption(id);
         onChange(question);
     };

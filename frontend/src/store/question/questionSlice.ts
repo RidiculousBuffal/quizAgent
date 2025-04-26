@@ -3,6 +3,7 @@ import { StateCreator } from "zustand/vanilla";
 import { QuestionFactory } from "../../lib/Questions/QuestionFactory";
 import { MiddlewareTypes } from "../baseType.ts";
 import { arrayMove } from '@dnd-kit/sortable';
+import {QuestionState} from "./QuestionStore.ts";
 
 export type QuestionAnswer = {
     question: BaseQuestion,
@@ -28,7 +29,7 @@ export function toQuestionInstance(q: BaseQuestion | object): BaseQuestion {
 }
 
 export const createQuestionSlice: StateCreator<
-    QuestionSlice,
+    QuestionState,
     MiddlewareTypes,
     [],
     QuestionSlice
