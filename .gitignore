@@ -39,3 +39,4 @@ node_modules
 /yarn.lock
 
 src/main/resources/application.yaml
+/bash.exe.stackdump
