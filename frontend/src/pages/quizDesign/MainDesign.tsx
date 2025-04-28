@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useCallback} from "react";
 import {v4 as uuid} from 'uuid'
-import {Layout, Button, Divider, Empty, Typography, message, Spin} from "antd";
+import {Layout, Button, Divider, Empty, Typography, message, Spin, Segmented} from "antd";
 import {
     DndContext,
     closestCenter,
@@ -11,15 +11,27 @@ import {
     DragEndEvent
 } from "@dnd-kit/core";
 import {SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy} from "@dnd-kit/sortable";
-import {SaveOutlined, EditOutlined, CheckCircleOutlined, CheckSquareOutlined, SyncOutlined, CheckOutlined, LoadingOutlined} from "@ant-design/icons";
+import {
+    SaveOutlined,
+    EditOutlined,
+    CheckCircleOutlined,
+    CheckSquareOutlined,
+    SyncOutlined,
+    CheckOutlined,
+    LoadingOutlined,
+    EyeOutlined
+} from "@ant-design/icons";
 import {useQuestionStore} from "../../store/question/QuestionStore";
 import QuestionTypeList from "./QuestionTypeList";
 import SortableQuestionCard from "./SortableQuestionCard";
 import QuestionEditWrapper from "../../lib/Questions/QuestionWarpper/QuestionEditWrapper";
+import QuestionViewWrapper from "../../lib/Questions/QuestionWarpper/QuestionPreviewWrapper.tsx";
 import {QuestionFactory} from "../../lib/Questions/QuestionFactory";
 import {QuestionType} from "../../lib/Questions/QuestionType";
 import {deleteQuestionBackend, getAllQuestionsInQuiz, saveAllQuestions} from "../../api/questionapi.ts";
 import {useQuizStore} from "../../store/quiz/QuizStore.ts";
+import {ArrowLeft} from "lucide-react";
+import {useNavigate} from "react-router";
 
 const {Header, Sider, Content} = Layout;
 const {Title, Text} = Typography;
@@ -55,6 +67,8 @@ const MainDesign = () => {
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
     // 保存按钮loading状态
     const [isSaving, setIsSaving] = useState(false);
+    // 当前模式：编辑或预览
+    const [mode, setMode] = useState<'edit' | 'preview'>('edit');
 
     // 从全局store获取和操作问题数据
     const questionAnswer = useQuestionStore((s) => s.questionAnswer);
@@ -64,7 +78,7 @@ const MainDesign = () => {
     const sortQuestions = useQuestionStore((s) => s.sortQuestions);
     // 题目数组
     const questions = questionAnswer.map((qa) => qa.question)
-
+    const nav = useNavigate();
     // 拖拽传感器
     const sensors = useSensors(
         useSensor(PointerSensor, {activationConstraint: {distance: 8}}),
@@ -206,25 +220,25 @@ const MainDesign = () => {
         switch (savingStatus) {
             case 'saving':
                 return (
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <div style={{display: 'flex', alignItems: 'center'}}>
                         <Spin
-                            indicator={<LoadingOutlined style={{ fontSize: 18, marginRight: 8 }} spin />}
+                            indicator={<LoadingOutlined style={{fontSize: 18, marginRight: 8}} spin/>}
                         />
-                        <Text type="secondary" style={{ marginLeft: 8 }}>问卷保存中...</Text>
+                        <Text type="secondary" style={{marginLeft: 8}}>问卷保存中...</Text>
                     </div>
                 );
             case 'saved':
                 return (
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <CheckOutlined style={{ color: '#52c41a', fontSize: 16, marginRight: 8 }} />
+                    <div style={{display: 'flex', alignItems: 'center'}}>
+                        <CheckOutlined style={{color: '#52c41a', fontSize: 16, marginRight: 8}}/>
                         <Text type="success">问卷已保存</Text>
                     </div>
                 );
             case 'error':
-                return <Text type="danger" style={{ fontWeight: 'bold' }}>保存失败，请手动保存</Text>;
+                return <Text type="danger" style={{fontWeight: 'bold'}}>保存失败，请手动保存</Text>;
             default:
                 return hasUnsavedChanges ?
-                    <Text type="warning" style={{ fontWeight: 'bold' }}>有未保存的更改</Text> : null;
+                    <Text type="warning" style={{fontWeight: 'bold'}}>有未保存的更改</Text> : null;
         }
     };
 
@@ -234,17 +248,31 @@ const MainDesign = () => {
                 <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", height: "100%"}}>
                     <div style={{display: "flex", alignItems: "center"}}>
                         <Title level={4} style={{margin: 0, marginRight: 16}}>问卷设计</Title>
+                        <Segmented
+                            options={[
+                                {value: 'edit', label: <><EditOutlined/> 编辑模式</>},
+                                {value: 'preview', label: <><EyeOutlined/> 预览模式</>},
+                            ]}
+                            value={mode}
+                            onChange={(value) => setMode(value as 'edit' | 'preview')}
+                            style={{marginRight: 16}}
+                        />
                         {renderSaveStatus()}
                     </div>
-                    <Button
-                        icon={<SaveOutlined/>}
-                        type="primary"
-                        onClick={saveQuestions}
-                        loading={isSaving}
-                        disabled={savingStatus === 'saving' || !hasUnsavedChanges}
-                    >
-                        {isSaving ? '保存中...' : '保存问卷'}
-                    </Button>
+                    <div style={{display: "flex",gap:"10px"}}>
+                        <Button icon={<ArrowLeft/>} onClick={() => {
+                            nav('/dashboard')
+                        }}>返回</Button>
+                        <Button
+                            icon={<SaveOutlined/>}
+                            type="primary"
+                            onClick={saveQuestions}
+                            loading={isSaving}
+                            disabled={savingStatus === 'saving' || !hasUnsavedChanges}
+                        >
+                            {isSaving ? '保存中...' : '保存问卷'}
+                        </Button>
+                    </div>
                 </div>
             </Header>
             <Layout>
@@ -284,7 +312,11 @@ const MainDesign = () => {
                 </Sider>
                 <Content style={{padding: "20px", background: "#f5f5f5", overflowY: "auto"}}>
                     {activeId && questions.find(q => q.id === activeId) ? (
-                        <QuestionEditWrapper id={activeId}/>
+                        mode === 'edit' ? (
+                            <QuestionEditWrapper id={activeId}/>
+                        ) : (
+                            <QuestionViewWrapper id={activeId}/>
+                        )
                     ) : (
                         <Empty description="请从左侧添加或选择题目进行编辑" style={{marginTop: "100px"}}/>
                     )}

@@ -1,18 +1,18 @@
-import { Layout, Typography, Card, Avatar, Button, Row, Col, Statistic, message } from 'antd';
-import { useLogto } from '@logto/react';
-import { useUserStore } from '../../store/user/UserStore.ts';
-import { UserOutlined, FormOutlined, LineChartOutlined, TeamOutlined } from '@ant-design/icons';
-import { useNavigate } from "react-router";
-import { useEffect, useState } from 'react';
-import QuizInfoEdit, { QuizInfoType } from '../../components/modal/QuizInfoEdit.tsx';
-import { useForm } from 'antd/es/form/Form';
-import { useQuizStore } from '../../store/quiz/QuizStore.ts';
-import { createOrEditQuiz, deleteQuizById, getQuizList } from '../../api/quizApi.ts';
+import {Layout, Typography, Card, Avatar, Button, Row, Col, Statistic, message} from 'antd';
+import {useLogto} from '@logto/react';
+import {useUserStore} from '../../store/user/UserStore.ts';
+import {UserOutlined, FormOutlined, LineChartOutlined, TeamOutlined} from '@ant-design/icons';
+import {useNavigate} from "react-router";
+import {useEffect, useState} from 'react';
+import QuizInfoEdit, {QuizInfoType} from '../../components/modal/QuizInfoEdit.tsx';
+import {useForm} from 'antd/es/form/Form';
+import {useQuizStore} from '../../store/quiz/QuizStore.ts';
+import {createOrEditQuiz, deleteQuizById, getQuizList} from '../../api/quizApi.ts';
 import QuizTable from '../../components/table/QuizTable.tsx';
 import dayjs from 'dayjs';
 
-const { Header, Content, Footer, Sider } = Layout;
-const { Title, Text } = Typography;
+const {Header, Content, Footer, Sider} = Layout;
+const {Title, Text} = Typography;
 
 export interface quizShowType {
     quizId: number,
@@ -24,7 +24,7 @@ export interface quizShowType {
 }
 
 const Dashboard: React.FC = () => {
-    const { signOut } = useLogto();
+    const {signOut} = useLogto();
     const user = useUserStore(state => state.user)!;
     const [quizModalVisible, setQuizModalVisible] = useState(false);
     const [quizModelEditVisible, setQuizModalEditVisible] = useState(false)
@@ -45,18 +45,18 @@ const Dashboard: React.FC = () => {
                 formData.getFieldsValue().description,
                 formData.getFieldsValue().timeRange[0]?.format('YYYY-MM-DD HH:mm:ss'),
                 formData.getFieldsValue().timeRange[1]?.format('YYYY-MM-DD HH:mm:ss')).then(res => {
-                    setQuizModalVisible(false);
-                    setCurEditQuizId((res as { quizId: number }).quizId)
-                    navigator("/quizDesign")
-                })
+                setQuizModalVisible(false);
+                setCurEditQuizId((res as { quizId: number }).quizId)
+                navigator("/quizDesign")
+            })
         } else {
             await createOrEditQuiz(formData.getFieldsValue().title,
                 formData.getFieldsValue().description,
                 '', '').then(res => {
-                    setQuizModalVisible(false);
-                    setCurEditQuizId((res as { quizId: number }).quizId)
-                    navigator("/quizDesign")
-                })
+                setQuizModalVisible(false);
+                setCurEditQuizId((res as { quizId: number }).quizId)
+                navigator("/quizDesign")
+            })
         }
     }
 
@@ -113,12 +113,12 @@ const Dashboard: React.FC = () => {
             await createOrEditQuiz(formEditData.getFieldsValue().title,
                 formEditData.getFieldsValue().description,
                 null, null, curEditSurveyId).then(async res => {
-                    setQuizModalEditVisible(false);
-                    if (res!.quizId === curEditSurveyId)
-                        message.success('修改成功')
-                    const data = await getQuizList()
-                    setSurveyData(data as quizShowType[])
-                })
+                setQuizModalEditVisible(false);
+                if (res!.quizId === curEditSurveyId)
+                    message.success('修改成功')
+                const data = await getQuizList()
+                setSurveyData(data as quizShowType[])
+            })
         }
     }
 
@@ -140,7 +140,7 @@ const Dashboard: React.FC = () => {
             />
 
             {/* 主布局 - 100vh高度固定，内部各元素高度相对调整 */}
-            <Layout style={{ height: '100vh', overflow: 'hidden' }}>
+            <Layout style={{height: '100vh', overflow: 'hidden'}}>
                 {/* 侧边栏 */}
                 <Sider
                     width={260}
@@ -159,29 +159,29 @@ const Dashboard: React.FC = () => {
                         <Avatar
                             size={80}
                             src={user.userAvatar}
-                            icon={!user.userAvatar ? <UserOutlined /> : undefined}
-                            style={{ marginBottom: '16px' }}
+                            icon={!user.userAvatar ? <UserOutlined/> : undefined}
+                            style={{marginBottom: '16px'}}
                         />
-                        <Title level={4} style={{ marginBottom: '4px' }}>{user.userName}</Title>
+                        <Title level={4} style={{marginBottom: '4px'}}>{user.userName}</Title>
                         <Text type="secondary">{user.userEmail || 'No email provided'}</Text>
                     </div>
 
-                    <div style={{ padding: '20px' }}>
+                    <div style={{padding: '20px'}}>
                         <Title level={5}>导航</Title>
-                        <Button type="link" block style={{ textAlign: 'left', height: 'auto', padding: '10px 0' }}>
-                            <FormOutlined /> 我的问卷
+                        <Button type="link" block style={{textAlign: 'left', height: 'auto', padding: '10px 0'}}>
+                            <FormOutlined/> 我的问卷
                         </Button>
-                        <Button type="link" block style={{ textAlign: 'left', height: 'auto', padding: '10px 0' }}>
-                            <LineChartOutlined /> 问卷分析
+                        <Button type="link" block style={{textAlign: 'left', height: 'auto', padding: '10px 0'}}>
+                            <LineChartOutlined/> 问卷分析
                         </Button>
-                        <Button type="link" block style={{ textAlign: 'left', height: 'auto', padding: '10px 0' }}>
-                            <TeamOutlined /> 收到的问卷
+                        <Button type="link" block style={{textAlign: 'left', height: 'auto', padding: '10px 0'}}>
+                            <TeamOutlined/> 收到的问卷
                         </Button>
-                        <Button type="link" block style={{ textAlign: 'left', height: 'auto', padding: '10px 0' }}>
-                            <UserOutlined /> 我的账户
+                        <Button type="link" block style={{textAlign: 'left', height: 'auto', padding: '10px 0'}}>
+                            <UserOutlined/> 我的账户
                         </Button>
 
-                        <div style={{ marginTop: '30px' }}>
+                        <div style={{marginTop: '30px'}}>
                             <Button
                                 danger
                                 onClick={() => signOut(import.meta.env.VITE_APP_URL)}
@@ -194,7 +194,7 @@ const Dashboard: React.FC = () => {
                 </Sider>
 
                 {/* 右侧内容区 */}
-                <Layout style={{ display: 'flex', flexDirection: 'column' }}>
+                <Layout style={{display: 'flex', flexDirection: 'column'}}>
                     {/* 顶部导航 */}
                     <Header
                         style={{
@@ -207,7 +207,7 @@ const Dashboard: React.FC = () => {
                             alignItems: 'center', // 垂直居中
                         }}
                     >
-                        <Title level={3} style={{ margin: 0 }}>仪表盘</Title>
+                        <Title level={3} style={{margin: 0}}>仪表盘</Title>
                     </Header>
 
                     <Content style={{
@@ -219,18 +219,18 @@ const Dashboard: React.FC = () => {
                         flexDirection: 'column'
                     }}>
                         {/* 欢迎区 */}
-                        <div style={{ marginBottom: '24px', flexShrink: 0 }}>
-                            <Title level={4} style={{ margin: 0 }}>欢迎回来, {user.userName}!</Title>
+                        <div style={{marginBottom: '24px', flexShrink: 0}}>
+                            <Title level={4} style={{margin: 0}}>欢迎回来, {user.userName}!</Title>
                         </div>
 
                         {/* 统计卡片区 - 固定高度不滚动 */}
-                        <Row gutter={[24, 24]} style={{ marginBottom: '24px', flexShrink: 0 }}>
+                        <Row gutter={[24, 24]} style={{marginBottom: '24px', flexShrink: 0}}>
                             <Col xs={24} md={8}>
                                 <Card>
                                     <Statistic
                                         title="已创建问卷数量"
                                         value={surveyData.length}
-                                        prefix={<FormOutlined />}
+                                        prefix={<FormOutlined/>}
                                     />
                                 </Card>
                             </Col>
@@ -239,7 +239,7 @@ const Dashboard: React.FC = () => {
                                     <Statistic
                                         title="得到的总回复"
                                         value={0}
-                                        prefix={<TeamOutlined />}
+                                        prefix={<TeamOutlined/>}
                                     />
                                 </Card>
                             </Col>
@@ -249,7 +249,7 @@ const Dashboard: React.FC = () => {
                                         title="问卷完成率"
                                         value={0}
                                         suffix="%"
-                                        prefix={<LineChartOutlined />}
+                                        prefix={<LineChartOutlined/>}
                                     />
                                 </Card>
                             </Col>

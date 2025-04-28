@@ -88,7 +88,7 @@ const SingleRadioPreview: React.FC<SingleChoicePreviewProps> = ({
             >
                 <Space direction="vertical">
                     {question.options.map(option => (
-                        <Radio key={option.id} value={option.value.toString()}>
+                        <Radio key={option.id} value={option.value?.toString()}>
                             {option.text}
                         </Radio>
                     ))}
