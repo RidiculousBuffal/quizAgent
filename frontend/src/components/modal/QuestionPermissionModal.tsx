@@ -14,7 +14,7 @@ import {
     App,
     Flex
 } from "antd";
-import { updateQuizStatus } from "../../api/quizApi";
+import { getQuizDetail, updateQuizStatus } from "../../api/quizApi";
 import { getQuizPermissionDetails, saveQuizPermission } from "../../api/quizpermissionapi.ts";
 import { autocompleteUsers, getUserInfo, UserType } from "../../api/userapi.ts";
 import {
@@ -25,6 +25,7 @@ import {
     UserOutlined,
     StopOutlined
 } from "@ant-design/icons";
+import { QuizDto } from "../../api/types/questionType.ts";
 
 const { Option } = Select;
 const { Text, Title } = Typography;
@@ -54,6 +55,8 @@ const QuizPublishPermissionModal: React.FC<PublishPermissionModalProps> = ({
     const [detailsId, setDetailsId] = useState<number>();
     const [selectedAllow, setSelectedAllow] = useState<string[]>([]);
     const [selectedDeny, setSelectedDeny] = useState<string[]>([]);
+    const [curQuizMsg, setCurQuizMsg] = useState<QuizDto | null>(null);
+    const [isQuizEnded, setIsQuizEnded] = useState<boolean>(false);
 
     // 答题链接
     const answerUrl = `${import.meta.env.VITE_APP_URL}/doQuiz/${quizId}`;
@@ -100,6 +103,21 @@ const QuizPublishPermissionModal: React.FC<PublishPermissionModalProps> = ({
 
         fetchPermissionDetails();
     }, [quizId, open]);
+
+    useEffect(() => {
+        const fetchQuizDetail = async () => {
+            // 获取问卷基本信息
+            await getQuizDetail(quizId).then(res => {
+                if (res) {
+                    setCurQuizMsg(res);
+                }
+            })
+            setIsQuizEnded(curQuizMsg?.quizEndTime
+                ? new Date(curQuizMsg.quizEndTime.replace(' ', 'T')).getTime() < Date.now()
+                : false)
+        }
+        fetchQuizDetail();
+    }, [curQuizMsg?.quizEndTime, open, quizId])
 
     // 自动补全handler
     const handleUserSearch = async (value: string) => {
@@ -244,14 +262,22 @@ const QuizPublishPermissionModal: React.FC<PublishPermissionModalProps> = ({
                             </Button>
                         </Flex>
                     ) : (
-                        <Button
-                            type="primary"
-                            style={{ marginTop: 12 }}
-                            loading={loading}
-                            onClick={handleStatusChange}
-                        >
-                            立即发布
-                        </Button>
+                        <>
+                            <Button
+                                type="primary"
+                                style={{ marginTop: 12 }}
+                                loading={loading}
+                                onClick={handleStatusChange}
+                                disabled={isQuizEnded ?? false}
+                            >
+                                立即发布
+                            </Button>
+                            {isQuizEnded && (
+                                <Text type="danger">
+                                    问卷已结束，无法进行发布
+                                </Text>
+                            )}
+                        </>
                     )}
                 </div>
 
