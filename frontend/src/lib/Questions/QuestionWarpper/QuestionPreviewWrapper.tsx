@@ -18,7 +18,7 @@ function QuestionPreviewWrapper({ id }: { id: number }) {
             }
         } catch (error) {
             console.error("Error updating answer:", error);
-            message.error("发生错误，无法保存答案")
+            message.error("发生错误，无法保存答案").then()
         }
     }, [id, setAnswer, answer, message]);
 
