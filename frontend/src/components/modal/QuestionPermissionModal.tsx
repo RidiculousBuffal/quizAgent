@@ -16,7 +16,7 @@ import {
 } from "antd";
 import { updateQuizStatus } from "../../api/quizApi";
 import { getQuizPermissionDetails, saveQuizPermission } from "../../api/quizpermissionapi.ts";
-import { autocompleteUsers, UserType } from "../../api/userapi.ts";
+import { autocompleteUsers, getUserInfo, UserType } from "../../api/userapi.ts";
 import {
     CopyOutlined,
     SettingOutlined,
@@ -41,12 +41,12 @@ const PERMISSION_PUBLIC = 'public';
 const PERMISSION_PRIVATE = 'private';
 
 const QuizPublishPermissionModal: React.FC<PublishPermissionModalProps> = ({
-                                                                               open,
-                                                                               onCancel,
-                                                                               quizId,
-                                                                               status,
-                                                                               onStatusChange
-                                                                           }) => {
+    open,
+    onCancel,
+    quizId,
+    status,
+    onStatusChange
+}) => {
     const { message: contextMessage, modal } = App.useApp();
     const [loading, setLoading] = useState(false);
     const [permissionType, setPermissionType] = useState(PERMISSION_PUBLIC);
@@ -73,6 +73,14 @@ const QuizPublishPermissionModal: React.FC<PublishPermissionModalProps> = ({
 
                 if (details.needLogin) {
                     setPermissionType(PERMISSION_PRIVATE);
+                    details.allowUsers?.forEach(async userId => {
+                        const user = await getUserInfo(userId);
+                        if (user) setAutoUsers(prev => [...prev, user]);
+                    });
+                    details.denyUsers?.forEach(async userId => {
+                        const user = await getUserInfo(userId);
+                        if (user) setAutoUsers(prev => [...prev, user]);
+                    });
                     setSelectedAllow(details.allowUsers ?? []);
                     setSelectedDeny(details.denyUsers ?? []);
                 } else {
@@ -302,7 +310,7 @@ const QuizPublishPermissionModal: React.FC<PublishPermissionModalProps> = ({
                                         style={{ width: '100%' }}
                                         placeholder="搜索并添加允许访问的用户"
                                         value={selectedAllow}
-                                        onChange={list => setSelectedAllow(list)}
+                                        onChange={list => { setSelectedAllow(list); console.log(selectedAllow) }}
                                         onSearch={handleUserSearch}
                                         disabled={selectedDeny.length > 0}
                                         filterOption={false}

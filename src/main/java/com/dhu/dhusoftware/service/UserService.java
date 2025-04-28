@@ -1,5 +1,6 @@
 package com.dhu.dhusoftware.service;
 
+import com.dhu.dhusoftware.dto.UserDto;
 import com.dhu.dhusoftware.mapper.UserMapper;
 import com.dhu.dhusoftware.pojo.User;
 import org.springframework.stereotype.Service;
@@ -33,5 +34,10 @@ public class UserService {
             return List.of();
         }
         return userMapper.searchUsersForAutocomplete(keyword);
+    }
+
+    // 通过id获取姓名邮箱
+    public User getUserById (String userId) {
+        return userMapper.getUserById(userId);
     }
 }
