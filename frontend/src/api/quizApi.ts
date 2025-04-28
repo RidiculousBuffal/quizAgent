@@ -29,3 +29,26 @@ export async function deleteQuizById(quizId: number) {
         method: 'DELETE',
     });
 }
+
+export async function updateQuizStatus(quizId: number, status: number) {
+    // 先查出原有问卷内容
+    const orig = await getQuizDetail(quizId) as QuizDto;
+    if (Date.parse(orig.quizStartTime) > Date.now()) {
+        const timestamp = Date.now();
+        const date = new Date(timestamp);
+        const formattedDate = date.toISOString().slice(0, 19).replace('T', ' ');
+        orig.quizStartTime = formattedDate
+    }
+    // 合并status后再提交
+    return await fetchAPI<QuizDto>(`/api/quiz/save`, {
+        method: 'POST',
+        body: JSON.stringify({
+            ...orig,
+            status,
+        }),
+    });
+}
+
+export async function getQuizDetail(quizId: number): Promise<QuizDto | null> {
+    return await fetchAPI<QuizDto>(`/api/quiz/${quizId}`, {});
+}

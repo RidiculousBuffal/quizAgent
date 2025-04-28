@@ -34,14 +34,13 @@ public class QuizPermissionService {
      * @param quizId 问卷ID
      * @return QuizPermissionDto
      */
-    public QuizPermissionDto getPermissionByQuizId(Long quizId) {
-        QuizPermissionDto quizPermissionDto = new QuizPermissionDto();
+    public Quizpermission getPermissionByQuizId(Long quizId) {
         Quizpermission quizpermission = quizPermissionMapper.getQuizPermissionByQuizId(quizId);
         if (quizpermission == null) {
             throw new IllegalArgumentException(QuizConstants.NOT_FOUND);
         }
-        BeanUtils.copyProperties(quizPermissionDto, quizpermission);
-        return quizPermissionDto;
+
+        return quizpermission;
     }
 
     /**

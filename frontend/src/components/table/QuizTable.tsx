@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Button, Popconfirm, Space, Table, Tag} from 'antd';
+import {SettingOutlined} from "@ant-design/icons";
 
 export interface quizShowType {
     quizId: number;
@@ -15,6 +16,7 @@ interface QuizTableProps {
     onChangeInfo?: (record: quizShowType) => void;
     onEdit?: (quizId: number) => void;
     onDelete?: (quizId: number) => void;
+    onPublishPermission?: (record: quizShowType) => void
 }
 
 // 状态映射
@@ -23,7 +25,7 @@ const statusMap: Record<number, { text: string; color: string }> = {
     1: {text: '已发布', color: 'blue'},
 };
 
-const QuizTable: React.FC<QuizTableProps> = ({surveyData, onChangeInfo, onEdit, onDelete}) => {
+const QuizTable: React.FC<QuizTableProps> = ({surveyData, onChangeInfo, onEdit, onDelete, onPublishPermission}) => {
     // 用于动态计算表格高度
     const [tableHeight, setTableHeight] = useState<number>(300);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -109,6 +111,11 @@ const QuizTable: React.FC<QuizTableProps> = ({surveyData, onChangeInfo, onEdit, 
                         type="primary"
                         onClick={() => onEdit && onEdit(record.quizId)}
                     >编辑</Button>
+                    <Button
+                        size="small"
+                        onClick={() => onPublishPermission && onPublishPermission(record)}
+                        icon={<SettingOutlined/>}
+                    >发布/权限</Button>
                     <Popconfirm
                         title="确认要删除吗?"
                         onConfirm={() => onDelete && onDelete(record.quizId)}

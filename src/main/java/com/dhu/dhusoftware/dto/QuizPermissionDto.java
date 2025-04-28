@@ -9,3 +9,4 @@ public class QuizPermissionDto {
     private Long quizPermissionTypeId;
     private String details;
 }
+

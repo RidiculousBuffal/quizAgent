@@ -10,6 +10,7 @@ import {useQuizStore} from '../../store/quiz/QuizStore.ts';
 import {createOrEditQuiz, deleteQuizById, getQuizList} from '../../api/quizApi.ts';
 import QuizTable from '../../components/table/QuizTable.tsx';
 import dayjs from 'dayjs';
+import QuizPublishPermissionModal from "../../components/modal/QuestionPermissionModal.tsx";
 
 const {Header, Content, Footer, Sider} = Layout;
 const {Title, Text} = Typography;
@@ -32,6 +33,13 @@ const Dashboard: React.FC = () => {
     const [formData] = useForm()
     const [formEditData] = useForm()
     const [surveyData, setSurveyData] = useState<quizShowType[]>([])
+    const [publishModalOpen, setPublishModalOpen] = useState(false);
+    const [publishModalQuiz, setPublishModalQuiz] = useState<quizShowType | null>(null);
+
+    const handleOpenPublishPermission = (record: quizShowType) => {
+        setPublishModalQuiz(record);
+        setPublishModalOpen(true);
+    }
     const [curEditInfoSurvey, setCurEditInfoSurvey] = useState<QuizInfoType>()
     const [curEditSurveyId, setCurEditSurveyId] = useState<number>(-1)
     const createNewQuizDesign = () => {
@@ -298,12 +306,29 @@ const Dashboard: React.FC = () => {
                                     {surveyData.length === 0 ? (
                                         <p>你还没有创建任何问卷.</p>
                                     ) : (
-                                        <QuizTable
-                                            surveyData={surveyData}
-                                            onChangeInfo={changeSurveyInfo}
-                                            onEdit={editSurveyById}
-                                            onDelete={deleteSurveyById}
-                                        />
+                                        <>
+                                            <QuizTable
+                                                surveyData={surveyData}
+                                                onChangeInfo={changeSurveyInfo}
+                                                onEdit={editSurveyById}
+                                                onDelete={deleteSurveyById}
+                                                onPublishPermission={handleOpenPublishPermission}
+                                            />
+                                            <QuizPublishPermissionModal
+                                                open={publishModalOpen}
+                                                onCancel={() => setPublishModalOpen(false)}
+                                                quizId={publishModalQuiz?.quizId ?? -1}
+                                                status={publishModalQuiz?.status ?? 0}
+                                                onStatusChange={async (newStatus: number) => {
+                                                    if (!publishModalQuiz) return;
+                                                    setPublishModalQuiz({...publishModalQuiz, status: newStatus});
+                                                    // 更新主表
+                                                    const data = await getQuizList();
+                                                    setSurveyData(data as quizShowType[]);
+                                                }}
+                                            />
+                                        </>
+
                                     )}
                                 </div>
                             </Card>

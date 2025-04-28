@@ -5,6 +5,8 @@ import com.dhu.dhusoftware.pojo.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class UserService {
     private final UserMapper userMapper;
@@ -23,5 +25,13 @@ public class UserService {
             // 如果用户不存在，执行插入
             userMapper.addUser(user);
         }
+    }
+
+    // 自动补全服务
+    public List<User> autocompleteUsers(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return List.of();
+        }
+        return userMapper.searchUsersForAutocomplete(keyword);
     }
 }

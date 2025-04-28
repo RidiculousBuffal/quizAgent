@@ -27,7 +27,7 @@ public class QuizPermissionController {
     @GetMapping("/details/{quizId}")
     public SaResult getQuizPermissionDetails(@PathVariable Long quizId) {
         try {
-            QuizPermissionDto quizPermissionDto = quizPermissionService.getPermissionByQuizId(quizId);
+            Quizpermission quizPermissionDto = quizPermissionService.getPermissionByQuizId(quizId);
             return SaResult.ok()
                     .setCode(COMMON.SUCCESS_CODE)
                     .setMsg(QuizConstants.SUCCESS_MSG)
