@@ -16,7 +16,6 @@ import {
     EditOutlined,
     CheckCircleOutlined,
     CheckSquareOutlined,
-    SyncOutlined,
     CheckOutlined,
     LoadingOutlined,
     EyeOutlined
@@ -102,7 +101,7 @@ const MainDesign = () => {
         if (questions.length > 0) {
             setHasUnsavedChanges(true);
         }
-    }, [questionAnswer]);
+    }, [questionAnswer, questions.length]);
 
     // 保存问卷函数
     const saveQuestions = useCallback(async () => {
@@ -132,7 +131,7 @@ const MainDesign = () => {
     useEffect(() => {
         const autoSaveInterval = setInterval(() => {
             if (hasUnsavedChanges && savingStatus !== 'saving') {
-                saveQuestions();
+                saveQuestions().then();
             }
         }, 5000);
 
