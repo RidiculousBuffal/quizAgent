@@ -1,6 +1,6 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {Button, Popconfirm, Space, Table, Tag} from 'antd';
-import {SettingOutlined} from "@ant-design/icons";
+import React, { useEffect, useRef, useState } from 'react';
+import { Button, Popconfirm, Space, Table, Tag } from 'antd';
+import { SettingOutlined } from "@ant-design/icons";
 
 export interface quizShowType {
     quizId: number;
@@ -21,11 +21,11 @@ interface QuizTableProps {
 
 // 状态映射
 const statusMap: Record<number, { text: string; color: string }> = {
-    0: {text: '待发布', color: 'default'},
-    1: {text: '已发布', color: 'blue'},
+    0: { text: '待发布', color: 'default' },
+    1: { text: '已发布', color: 'blue' },
 };
 
-const QuizTable: React.FC<QuizTableProps> = ({surveyData, onChangeInfo, onEdit, onDelete, onPublishPermission}) => {
+const QuizTable: React.FC<QuizTableProps> = ({ surveyData, onChangeInfo, onEdit, onDelete, onPublishPermission }) => {
     // 用于动态计算表格高度
     const [tableHeight, setTableHeight] = useState<number>(300);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -54,7 +54,6 @@ const QuizTable: React.FC<QuizTableProps> = ({surveyData, onChangeInfo, onEdit, 
     }, []);
 
     const columns = [
-        // ... 其他列定义保持不变
         {
             title: 'ID',
             dataIndex: 'quizId',
@@ -91,14 +90,14 @@ const QuizTable: React.FC<QuizTableProps> = ({surveyData, onChangeInfo, onEdit, 
             key: 'status',
             width: 80,
             render: (status: number) => {
-                const s = statusMap[status] || {text: '未知', color: 'gray'};
+                const s = statusMap[status] || { text: '未知', color: 'gray' };
                 return <Tag color={s.color}>{s.text}</Tag>;
             }
         },
         {
             title: '操作',
             key: 'action',
-            width: 320,
+            width: 400,
             render: (_: any, record: quizShowType) => (
                 <Space>
                     <Button
@@ -114,7 +113,7 @@ const QuizTable: React.FC<QuizTableProps> = ({surveyData, onChangeInfo, onEdit, 
                     <Button
                         size="small"
                         onClick={() => onPublishPermission && onPublishPermission(record)}
-                        icon={<SettingOutlined/>}
+                        icon={<SettingOutlined />}
                     >发布/权限</Button>
                     <Popconfirm
                         title="确认要删除吗?"
@@ -130,7 +129,7 @@ const QuizTable: React.FC<QuizTableProps> = ({surveyData, onChangeInfo, onEdit, 
     ];
 
     return (
-        <div ref={containerRef} style={{height: '100%', width: '100%'}}>
+        <div ref={containerRef} style={{ height: '100%', width: '100%' }}>
             <Table
                 rowKey="quizId"
                 columns={columns}
@@ -141,8 +140,8 @@ const QuizTable: React.FC<QuizTableProps> = ({surveyData, onChangeInfo, onEdit, 
                     showSizeChanger: true,
                     pageSizeOptions: ['10', '20', '50'],
                 }}
-                scroll={{y: tableHeight}}
-                style={{height: '100%'}}
+                scroll={{ y: tableHeight }}
+                style={{ height: '100%', width: '100%' }}
             />
         </div>
     );
