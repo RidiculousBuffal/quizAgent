@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot, Root } from 'react-dom/client';
 import Message, { MessageProps } from './Message';
 
 interface MessageInstance extends MessageProps {
@@ -38,7 +38,6 @@ const MessageContainer: React.FC<MessageContainerProps> = ({
 
     const hiddenCount = messages.length - visibleMessages.length;
 
-    // 折叠提示样式
     const collapsedNoticeStyle: React.CSSProperties = {
         padding: '8px 16px',
         borderRadius: '4px',
@@ -62,8 +61,6 @@ const MessageContainer: React.FC<MessageContainerProps> = ({
                     onClose={() => removeMessage(key)}
                 />
             ))}
-
-            {/* 显示折叠提示 */}
             {hiddenCount > 0 && (
                 <div
                     style={collapsedNoticeStyle}
@@ -72,8 +69,6 @@ const MessageContainer: React.FC<MessageContainerProps> = ({
                     点击查看全部 {hiddenCount} 条消息
                 </div>
             )}
-
-            {/* 显示收起按钮 */}
             {expanded && messages.length > MAX_VISIBLE_MESSAGES && (
                 <div
                     style={collapsedNoticeStyle}
@@ -92,14 +87,20 @@ class MessageManager {
     private messages: MessageInstance[] = [];
     private seed = 0;
     private maxMessages = 10; // 最大保留的消息数量
+    private root: Root | null = null; // 用于保存 createRoot 创建的根节点
 
     constructor() {
+        // 确保只在浏览器环境中初始化
         if (typeof document !== 'undefined') {
-            this.container = document.createElement('div');
-            this.container.id = 'global-message-container';
-            document.body.appendChild(this.container);
-            this.render();
+            this.initializeContainer();
         }
+    }
+
+    private initializeContainer() {
+        this.container = document.createElement('div');
+        this.container.id = `global-message-container-${Date.now()}`; // 使用时间戳避免 ID 冲突
+        document.body.appendChild(this.container);
+        this.render();
     }
 
     add = (props: MessageProps): string => {
@@ -116,27 +117,35 @@ class MessageManager {
     };
 
     remove = (key: string) => {
-        this.messages = this.messages.filter(message => message.key !== key);
+        this.messages = this.messages.filter((message) => message.key !== key);
         this.render();
     };
 
     destroy = () => {
+        if (this.root) {
+            this.root.unmount(); // 使用 React 18 的卸载方法
+            this.root = null;
+        }
         if (this.container && this.container.parentNode) {
-            ReactDOM.unmountComponentAtNode(this.container);
             this.container.parentNode.removeChild(this.container);
             this.container = null;
-            this.messages = [];
         }
+        this.messages = [];
     };
 
     private render() {
         if (this.container) {
-            ReactDOM.render(
+            // 如果 root 不存在，则创建新的 root
+            if (!this.root) {
+                this.root = createRoot(this.container);
+            }
+
+            // 使用 root.render 进行渲染
+            this.root.render(
                 <MessageContainer
                     messages={this.messages}
                     removeMessage={this.remove}
-                />,
-                this.container
+                />
             );
         }
     }
