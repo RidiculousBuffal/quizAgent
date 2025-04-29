@@ -6,6 +6,7 @@ import com.dhu.dhusoftware.constant.COMMON;
 import com.dhu.dhusoftware.constant.QuizConstants;
 import com.dhu.dhusoftware.dto.QuestionDto;
 import com.dhu.dhusoftware.dto.QuizQuestionDetailDTO;
+import com.dhu.dhusoftware.pojo.Result;
 import com.dhu.dhusoftware.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -35,13 +36,14 @@ public class QuestionController {
     }
 
     @GetMapping("/listQuestions/{quizId}")
-    public SaResult listQuestions(@PathVariable("quizId") Long quizId) {
+    public Result listQuestions(@PathVariable("quizId") Long quizId) {
         try {
-            return SaResult.ok().setCode(COMMON.SUCCESS_CODE).setData(questionService.getQuizQuestionDetailsByQuizId(quizId));
+            return Result.success(null, questionService.getQuizQuestionDetailsByQuizId(quizId));
         } catch (Exception e) {
-            return SaResult.error().setCode(COMMON.FAILURE_CODE).setMsg(e.getMessage());
+            return Result.error(e.getMessage(), null);
         }
     }
+
     /**
      * 删除问题
      *

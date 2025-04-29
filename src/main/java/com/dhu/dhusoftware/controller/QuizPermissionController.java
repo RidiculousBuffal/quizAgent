@@ -5,6 +5,7 @@ import com.dhu.dhusoftware.constant.COMMON;
 import com.dhu.dhusoftware.constant.QuizConstants;
 import com.dhu.dhusoftware.dto.QuizPermissionDto;
 import com.dhu.dhusoftware.pojo.Quizpermission;
+import com.dhu.dhusoftware.pojo.Result;
 import com.dhu.dhusoftware.service.QuizPermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -54,25 +55,16 @@ public class QuizPermissionController {
      * @return SaResult
      */
     @GetMapping("/public/check/{quizId}")
-    public SaResult checkPermission(@PathVariable Long quizId) {
+    public Result checkPermission(@PathVariable Long quizId) {
         try {
             Boolean permission = quizPermissionService.hasPermission(quizId);
-            return SaResult.ok()
-                    .setCode(COMMON.SUCCESS_CODE)
-                    .setMsg(QuizConstants.SUCCESS_MSG)
-                    .setData(permission);
+            return Result.success(QuizConstants.SUCCESS_MSG, permission);
         } catch (SecurityException e) {
-            return SaResult.ok()
-                    .setCode(COMMON.FAILURE_CODE)
-                    .setMsg(QuizConstants.PERMISSION_DENIED_MSG);
+            return Result.error(QuizConstants.FAILURE_MSG, null);
         } catch (IllegalArgumentException e) {
-            return SaResult.ok()
-                    .setCode(COMMON.FAILURE_CODE)
-                    .setMsg(e.getMessage());
+            return Result.error(QuizConstants.FAILURE_MSG, null);
         } catch (Exception e) {
-            return SaResult.ok()
-                    .setCode(COMMON.FAILURE_CODE)
-                    .setMsg(QuizConstants.FAILURE_MSG);
+            return Result.error(QuizConstants.FAILURE_MSG, null);
         }
     }
 
@@ -84,7 +76,7 @@ public class QuizPermissionController {
                     .setCode(COMMON.SUCCESS_CODE)
                     .setMsg(quizPermissionDto.getId() == null ? QuizConstants.CREATE_SUCCESS : QuizConstants.UPDATE_SUCCESS)
                     .setData(resultDto);
-        }catch (SecurityException e) {
+        } catch (SecurityException e) {
             return SaResult.ok()
                     .setCode(COMMON.FAILURE_CODE)
                     .setMsg(QuizConstants.PERMISSION_DENIED_MSG);

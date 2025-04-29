@@ -1,23 +1,24 @@
-// src/pages/doQuiz/DoQuizPage.tsx
-import React, { useEffect, useState, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Layout, Typography, Button, Result, App, Flex } from "antd";
-import { LockOutlined, ArrowLeftOutlined } from "@ant-design/icons";
-import { checkQuizPermission } from "../../api/quizpermissionapi";
-import { getAllQuestionsInQuiz } from "../../api/questionapi";
-import { useQuestionStore } from "../../store/question/QuestionStore";
+import React, {useEffect, useState, useMemo} from "react";
+import {useParams, useNavigate} from "react-router-dom";
+import {Layout, Typography, Button, Result, App, Flex} from "antd";
+import {LockOutlined, ArrowLeftOutlined} from "@ant-design/icons";
+import {checkQuizPermission} from "../../api/quizpermissionapi";
+import {getAllQuestionsInQuiz} from "../../api/questionapi";
+import {useQuestionStore} from "../../store/question/QuestionStore";
 import QuestionAnswerArea from "./components/QuestionAnswerArea";
 import QuestionNavigation from "./components/QuestionNavigation";
 import SubmitQuizButton from "./components/SubmitQuizButton";
 import LoadingScreen from "./components/LoadingScreen";
+import {QuizDto} from "../../api/types/questionType.ts";
+import {getQuizDetail} from "../../api/quizApi.ts";
 
-const { Header, Sider, Content } = Layout;
-const { Title } = Typography;
+const {Header, Sider, Content} = Layout;
+const {Title} = Typography;
 
 const DoQuizPage: React.FC = () => {
-    const { quizId } = useParams<{ quizId: string }>();
+    const {quizId} = useParams<{ quizId: string }>();
     const navigate = useNavigate();
-    const { notification } = App.useApp();
+    const {notification} = App.useApp();
     const [loading, setLoading] = useState(true);
     const [permissionError, setPermissionError] = useState<string | null>(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -62,11 +63,8 @@ const DoQuizPage: React.FC = () => {
                     setPermissionError("此问卷不存在或尚未添加任何题目");
                     return;
                 }
-
-                // TODO: Fetch quiz title if needed
-                // setQuizTitle(quizData.title);
-
-                // Load questions into store
+                const orig = await getQuizDetail(Number(quizId)) as QuizDto;
+                setQuizTitle(orig.quizName)
                 questionStore.setRawQuestions(questionsData);
             } catch (error) {
                 console.error("Failed to load quiz:", error);
@@ -90,7 +88,7 @@ const DoQuizPage: React.FC = () => {
     };
 
     if (loading) {
-        return <LoadingScreen />;
+        return <LoadingScreen/>;
     }
 
     if (permissionError) {
@@ -98,7 +96,7 @@ const DoQuizPage: React.FC = () => {
             <Result
                 status="403"
                 title="访问受限"
-                icon={<LockOutlined />}
+                icon={<LockOutlined/>}
                 subTitle={permissionError}
                 extra={
                     <Button type="primary" onClick={() => navigate('/')}>
@@ -114,25 +112,26 @@ const DoQuizPage: React.FC = () => {
     const currentQuestionAnswer = currentQuestion ? questionStore.findAnswer(currentQuestion.id) : null;
 
     return (
-        <Layout style={{ minHeight: '100vh' }}>
+        <Layout style={{minHeight: '100vh'}}>
             <Header style={{
                 background: '#fff',
                 padding: '0 24px',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.09)'
             }}>
-                <Flex justify="space-between" align="center" style={{ height: '100%' }}>
+                <Flex justify="space-between" align="center" style={{height: '100%'}}>
                     <Flex align="center">
                         <Button
-                            icon={<ArrowLeftOutlined />}
+                            icon={<ArrowLeftOutlined/>}
                             type="text"
                             onClick={() => navigate('/')}
-                            style={{ marginRight: 16 }}
+                            style={{marginRight: 16}}
                         />
-                        <Title level={4} style={{ margin: 0 }}>{quizTitle}</Title>
+                        <Title level={4} style={{margin: 0}}>{quizTitle}</Title>
                     </Flex>
                     <SubmitQuizButton
                         quizId={Number(quizId)}
                         answeredQuestions={answeredQuestions}
+                        quizName={quizTitle}
                     />
                 </Flex>
             </Header>

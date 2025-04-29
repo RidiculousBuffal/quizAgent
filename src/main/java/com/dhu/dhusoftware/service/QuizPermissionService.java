@@ -1,4 +1,6 @@
 package com.dhu.dhusoftware.service;
+
+import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.stp.StpUtil;
 import com.dhu.dhusoftware.constant.QuizConstants;
 import com.dhu.dhusoftware.constant.QuizPermissionTypeConstants;
@@ -53,7 +55,8 @@ public class QuizPermissionService {
         if (quizpermission == null) {
             throw new IllegalArgumentException(QuizConstants.NOT_FOUND);
         }
-        String currentUserId = StpUtil.getLoginIdAsString();
+        String currentUserId = null;
+
         String detailStr = quizpermission.getDetails();
         if (quizpermission.getQuizPermissionTypeId() ==
                 quizPermissionTypeMapper.getQuizPermissionIdByType(QuizPermissionTypeConstants.PUBLIC)) {
@@ -62,7 +65,7 @@ public class QuizPermissionService {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode detailJson = objectMapper.readTree(detailStr);
-
+            currentUserId = StpUtil.getLoginIdAsString();
             boolean needLogin = detailJson.get("needLogin").asBoolean();
             if (!needLogin) {
                 return true;

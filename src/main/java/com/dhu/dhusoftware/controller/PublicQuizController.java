@@ -2,7 +2,9 @@ package com.dhu.dhusoftware.controller;
 
 import cn.dev33.satoken.util.SaResult;
 import com.dhu.dhusoftware.constant.COMMON;
+import com.dhu.dhusoftware.constant.QuizConstants;
 import com.dhu.dhusoftware.dto.QuizSubmissionDTO;
+import com.dhu.dhusoftware.pojo.Result;
 import com.dhu.dhusoftware.service.QuizSubmissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,15 +26,14 @@ public class PublicQuizController {
     private QuizSubmissionService quizSubmissionService;
 
     @PostMapping("/submit")
-    public SaResult submitQuizAnswers(@RequestBody QuizSubmissionDTO submission) {
+    public Result submitQuizAnswers(@RequestBody QuizSubmissionDTO submission) {
         logger.info("Received quiz submission for quiz ID: {}", submission.getQuizId());
 
         // Validate submission data
         if (submission == null || submission.getQuizId() == null ||
                 submission.getAnswers() == null || submission.getAnswers().isEmpty()) {
             logger.warn("Invalid quiz submission data");
-            return SaResult.error("提交的数据不完整")
-                    .setCode(COMMON.FAILURE_CODE);
+            return Result.error("提交数据不完整", null);
         }
 
         try {
@@ -41,19 +42,14 @@ public class PublicQuizController {
 
             if ((Boolean) result.get("success")) {
                 logger.info("Quiz submission successful: {}", result);
-                return SaResult.ok("问卷提交成功")
-                        .setCode(COMMON.SUCCESS_CODE)
-                        .setData(result);
+                return Result.success(QuizConstants.SUCCESS_MSG, result);
             } else {
                 logger.warn("Quiz submission failed: {}", result);
-                return SaResult.error("提交问卷时发生错误")
-                        .setCode(COMMON.FAILURE_CODE)
-                        .setData(result);
+                return Result.error("提交问卷时发生错误", null);
             }
         } catch (Exception e) {
             logger.error("Error processing quiz submission: {}", e.getMessage(), e);
-            return SaResult.error("系统错误：" + e.getMessage())
-                    .setCode(COMMON.FAILURE_CODE);
+            return Result.error(e.getMessage(), null);
         }
     }
 }

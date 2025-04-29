@@ -8,6 +8,7 @@ import com.dhu.dhusoftware.dto.QuizDto;
 import com.dhu.dhusoftware.dto.QuizQuestionDto;
 import com.dhu.dhusoftware.mapper.QuizPermissionMapper;
 import com.dhu.dhusoftware.pojo.Quiz;
+import com.dhu.dhusoftware.pojo.Result;
 import com.dhu.dhusoftware.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -89,22 +90,15 @@ public class QuizController {
      * @return SaResult 响应结果
      */
     @GetMapping("/{quizId}")
-    public SaResult getQuizById(@PathVariable Long quizId) {
+    public Result getQuizById(@PathVariable Long quizId) {
         try {
 
             QuizDto quizDto = quizService.getQuizById(quizId);
-            return SaResult.ok()
-                    .setCode(COMMON.SUCCESS_CODE)
-                    .setMsg(QuizConstants.SUCCESS_MSG)
-                    .setData(quizDto);
+            return Result.success(QuizConstants.SUCCESS_MSG, quizDto);
         } catch (IllegalArgumentException e) {
-            return SaResult.ok()
-                    .setCode(COMMON.FAILURE_CODE)
-                    .setMsg(e.getMessage());
+            return  Result.error(QuizConstants.FAILURE_MSG, null);
         } catch (Exception e) {
-            return SaResult.ok()
-                    .setCode(COMMON.FAILURE_CODE)
-                    .setMsg(QuizConstants.FAILURE_MSG);
+            return  Result.error(QuizConstants.FAILURE_MSG, null);
         }
     }
 

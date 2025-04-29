@@ -1,24 +1,27 @@
-// src/pages/doQuiz/components/SubmitQuizButton.tsx
-import React, { useState } from "react";
-import { Button, App, Typography, List, Space } from "antd";
-import { ExclamationCircleOutlined, SendOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
-import { useQuestionStore } from "../../../store/question/QuestionStore";
+import React, {useState} from "react";
+import {Button, App, Typography, List, Space} from "antd";
+import {ExclamationCircleOutlined, SendOutlined} from "@ant-design/icons";
+import {useNavigate} from "react-router-dom";
+import {useQuestionStore} from "../../../store/question/QuestionStore";
+import {submitQuizAnswers} from "../../../api/answerapi";
 
-const { Text } = Typography;
+const {Text} = Typography;
 
 interface SubmitQuizButtonProps {
     quizId: number;
     answeredQuestions: { id: number; isAnswered: boolean; isRequired: boolean }[];
+    quizName?: string;
 }
 
 const SubmitQuizButton: React.FC<SubmitQuizButtonProps> = ({
                                                                quizId,
-                                                               answeredQuestions
+                                                               answeredQuestions,
+                                                               quizName = "问卷"
                                                            }) => {
-    const { modal, message, notification } = App.useApp();
+    const {modal, message} = App.useApp();
     const navigate = useNavigate();
     const [submitting, setSubmitting] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
 
     const questionStore = useQuestionStore();
 
@@ -45,12 +48,12 @@ const SubmitQuizButton: React.FC<SubmitQuizButtonProps> = ({
                         <Text>以下必答题尚未填写:</Text>
                         <List
                             size="small"
-                            style={{ maxHeight: '200px', overflow: 'auto', marginTop: 16 }}
+                            style={{maxHeight: '200px', overflow: 'auto', marginTop: 16}}
                             dataSource={missingRequiredQuestions}
                             renderItem={(item, index) => (
                                 <List.Item>
                                     <Space>
-                                        <ExclamationCircleOutlined style={{ color: '#faad14' }} />
+                                        <ExclamationCircleOutlined style={{color: '#faad14'}}/>
                                         <Text>{index + 1}. {item.title}</Text>
                                     </Space>
                                 </List.Item>
@@ -66,11 +69,11 @@ const SubmitQuizButton: React.FC<SubmitQuizButtonProps> = ({
         // Confirm submission
         modal.confirm({
             title: '确认提交问卷',
-            icon: <SendOutlined />,
+            icon: <SendOutlined/>,
             content: (
                 <div>
                     <Text>您已回答 {answeredQuestions.filter(q => q.isAnswered).length} 道题目（共 {answeredQuestions.length} 题）</Text>
-                    <br />
+                    <br/>
                     <Text>提交后将无法修改您的回答，确定提交吗？</Text>
                 </div>
             ),
@@ -85,33 +88,44 @@ const SubmitQuizButton: React.FC<SubmitQuizButtonProps> = ({
 
         try {
             // Get all answers from the store
-            const answers = answeredQuestions.map(q => ({
-                questionId: q.id,
-                answer: q.isAnswered ? questionStore.findAnswer(q.id) : null
-            }));
+            const answers = answeredQuestions
+                .filter(q => q.isAnswered) // Only submit answered questions
+                .map(q => ({
+                    questionId: q.id,
+                    answer: questionStore.findAnswer(q.id)
+                }));
 
-            // TODO: Implement the actual API call
-            // await submitQuizAnswers({
-            //   quizId,
-            //   answers
-            // });
-
-            console.log("Would submit:", { quizId, answers });
-
-            notification.success({
-                message: '提交成功',
-                description: '感谢您完成此问卷',
-                placement: 'topRight'
+            // Call the API to submit answers
+            const response = await submitQuizAnswers({
+                quizId,
+                answers
             });
 
-            // Redirect after delay
-            setTimeout(() => {
-                navigate('/');
-            }, 2000);
+            if (response) {
+                setSubmitted(true);
 
+                // Show brief success message
+                message.success('问卷提交成功！');
+
+                // Navigate to completion page with submission details
+                const answeredCount = answeredQuestions.filter(q => q.isAnswered).length;
+                const totalCount = answeredQuestions.length;
+
+                // Use navigate with state to pass data to the completion page
+                navigate('/quizComplete', {
+                    state: {
+                        quizName,
+                        answeredQuestions: answeredCount,
+                        totalQuestions: totalCount,
+                        quizId
+                    }
+                });
+            } else {
+                throw new Error(response?.msg || '提交失败');
+            }
         } catch (error) {
             console.error("Failed to submit answers:", error);
-            message.error('提交失败，请稍后重试');
+            message.error('提交失败：' + (error instanceof Error ? error.message : '请稍后重试'));
         } finally {
             setSubmitting(false);
         }
@@ -123,9 +137,10 @@ const SubmitQuizButton: React.FC<SubmitQuizButtonProps> = ({
             size="middle"
             onClick={handleSubmitClick}
             loading={submitting}
-            icon={<SendOutlined />}
+            disabled={submitted}
+            icon={<SendOutlined/>}
         >
-            提交问卷
+            {submitted ? '已提交' : '提交问卷'}
         </Button>
     );
 };

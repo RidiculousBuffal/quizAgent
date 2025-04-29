@@ -8,6 +8,7 @@ import {DebugFloater} from "./components/debug/debugButton.tsx";
 import MainDesign from "./pages/quizDesign/MainDesign.tsx";
 import '../index.css'
 import DoQuizPage from "./pages/doQuiz/DoQuizPage.tsx";
+import QuizCompletionPage from "./pages/doQuiz/QuizCompletionPage.tsx";
 
 // Protected route component
 
@@ -24,6 +25,7 @@ function MyApp() {
             <Route path="*" element={<Navigate to="/"/>}/>
             <Route path="/quizdesign" element={<MainDesign/>}/>
             <Route path="/doQuiz/:quizId" element={<DoQuizPage/>}/>
+            <Route path="/quizComplete" element={<QuizCompletionPage />}/>
         </Routes>
         <DebugFloater></DebugFloater>
     </>

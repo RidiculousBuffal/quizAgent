@@ -18,6 +18,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new SaInterceptor(handle -> {
+                    System.out.println(handle);
                     // 拿到当前请求的 SaRequest
                     SaRequest request = SaHolder.getRequest();
                     // 跳过预检
@@ -27,10 +28,17 @@ public class WebMvcConfig implements WebMvcConfigurer {
                     // 其余请求做登录校验
                     SaRouter.match("/**")
                             .notMatch("/login")
+                            .notMatch("/quizpermission/public/check/**")
                             .notMatch("/public/**")
+                            .notMatch("/api/question/listQuestions")
                             .check(r -> StpUtil.checkLogin());
                 }))
                 .addPathPatterns("/**")
+                .excludePathPatterns("/login")
+                .excludePathPatterns("/public/**")
+                .excludePathPatterns("/quizpermission/public/check/**")
+                .excludePathPatterns("/api/question/listQuestions/**")
+                .excludePathPatterns("/api/quiz/**")
                 .order(1);
     }
 }
