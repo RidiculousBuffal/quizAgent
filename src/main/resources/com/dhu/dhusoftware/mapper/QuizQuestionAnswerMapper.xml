@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dhu.dhusoftware.mapper.QuizQuestionAnswerMapper">
+
+    <!-- Insert a single quiz question answer record -->
+    <insert id="insertQuizQuestionAnswer" parameterType="com.dhu.dhusoftware.pojo.Quizquestionanswer" useGeneratedKeys="true" keyProperty="answerId">
+        INSERT INTO quizquestionanswer (
+            quizId,
+            questionId,
+            details,
+            answerUser
+        ) VALUES (
+                     #{quizId},
+                     #{questionId},
+                     #{details},
+                     #{answerUser}
+                 )
+    </insert>
+
+    <!-- Batch insert multiple quiz question answers -->
+    <insert id="batchInsertQuizQuestionAnswers" parameterType="java.util.List">
+        INSERT INTO quizquestionanswer (
+        quizId,
+        questionId,
+        details,
+        answerUser
+        ) VALUES
+        <foreach collection="answers" item="answer" separator=",">
+            (
+            #{answer.quizId},
+            #{answer.questionId},
+            #{answer.details},
+            #{answer.answerUser}
+            )
+        </foreach>
+    </insert>
+
+</mapper>

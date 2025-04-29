@@ -27,6 +27,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                     // 其余请求做登录校验
                     SaRouter.match("/**")
                             .notMatch("/login")
+                            .notMatch("/public/**")
                             .check(r -> StpUtil.checkLogin());
                 }))
                 .addPathPatterns("/**")

@@ -1,10 +1,8 @@
 package com.dhu.dhusoftware.service;
-
 import cn.dev33.satoken.stp.StpUtil;
 import com.dhu.dhusoftware.constant.QuizConstants;
 import com.dhu.dhusoftware.constant.QuizPermissionTypeConstants;
 import com.dhu.dhusoftware.dto.QuizPermissionDto;
-import com.dhu.dhusoftware.dto.QuizPermissionTypeDto;
 import com.dhu.dhusoftware.mapper.QuizMapper;
 import com.dhu.dhusoftware.mapper.QuizPermissionMapper;
 import com.dhu.dhusoftware.mapper.QuizPermissionTypeMapper;
@@ -31,6 +29,7 @@ public class QuizPermissionService {
 
     /**
      * 通过问卷ID获取permission的所有所有内容
+     *
      * @param quizId 问卷ID
      * @return QuizPermissionDto
      */
@@ -45,6 +44,7 @@ public class QuizPermissionService {
 
     /**
      * 通过问卷ID获取当前用户是否有权访问
+     *
      * @param quizId 问卷ID
      * @return boolean
      */
@@ -104,6 +104,7 @@ public class QuizPermissionService {
 
     /**
      * 更新/创建quizPermission记录
+     *
      * @param quizPermissionDto 问卷权限
      * @return QuizPermissionDto
      */
