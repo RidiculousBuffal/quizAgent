@@ -25,14 +25,16 @@
         quizId,
         questionId,
         details,
-        answerUser
+        answerUser,
+        uniqueSubmitId
         ) VALUES
         <foreach collection="answers" item="answer" separator=",">
             (
             #{answer.quizId},
             #{answer.questionId},
             #{answer.details},
-            #{answer.answerUser}
+            #{answer.answerUser},
+            #{answer.uniqueSubmitId}
             )
         </foreach>
     </insert>

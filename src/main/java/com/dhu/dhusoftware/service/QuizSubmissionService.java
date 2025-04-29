@@ -11,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class QuizSubmissionService {
@@ -48,7 +45,7 @@ public class QuizSubmissionService {
         }
 
         List<Quizquestionanswer> answers = new ArrayList<>();
-
+        String uniqueSubmitId = UUID.randomUUID().toString();
         // Process each answer
         for (QuizSubmissionDTO.QuestionAnswerDTO answerDTO : submission.getAnswers()) {
             if (answerDTO.getQuestionId() == null) {
@@ -60,7 +57,7 @@ public class QuizSubmissionService {
             answer.setQuizId(submission.getQuizId());
             answer.setQuestionId(answerDTO.getQuestionId());
             answer.setAnswerUser(currentUserId); // Will be null for anonymous users
-
+            answer.setUniqueSubmitId(uniqueSubmitId);
             // Convert answer to JSON string
             try {
                 String details = objectMapper.writeValueAsString(answerDTO.getAnswer());
