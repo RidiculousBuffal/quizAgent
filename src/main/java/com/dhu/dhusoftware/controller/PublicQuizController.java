@@ -2,7 +2,6 @@ package com.dhu.dhusoftware.controller;
 
 import cn.dev33.satoken.util.SaResult;
 import com.dhu.dhusoftware.constant.COMMON;
-import com.dhu.dhusoftware.constant.QuizConstants;
 import com.dhu.dhusoftware.dto.QuizSubmissionDTO;
 import com.dhu.dhusoftware.service.QuizSubmissionService;
 import org.slf4j.Logger;
@@ -24,12 +23,6 @@ public class PublicQuizController {
     @Autowired
     private QuizSubmissionService quizSubmissionService;
 
-    /**
-     * Submit quiz answers (accessible to both authenticated and anonymous users)
-     *
-     * @param submission the quiz submission data containing quizId and answers
-     * @return SaResult with status and submission details
-     */
     @PostMapping("/submit")
     public SaResult submitQuizAnswers(@RequestBody QuizSubmissionDTO submission) {
         logger.info("Received quiz submission for quiz ID: {}", submission.getQuizId());

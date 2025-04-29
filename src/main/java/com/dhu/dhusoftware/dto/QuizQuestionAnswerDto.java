@@ -7,9 +7,6 @@ import lombok.Data;
  */
 @Data
 public class QuizQuestionAnswerDto {
-    private Long answerId;
-    private Long quizId;
     private Long questionId;
-    private String details;
-    private String answerUser;
+    private Object answer;
 }
