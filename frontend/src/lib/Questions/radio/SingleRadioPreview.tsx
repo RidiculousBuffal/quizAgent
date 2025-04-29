@@ -1,29 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { Radio, Space, Input, Typography } from 'antd';
-import { SingleChoiceQuestion } from './radio.ts';
+import React, {useState, useEffect} from 'react';
+import {Radio, Space, Input, Typography} from 'antd';
+import {QuestionOption, SingleChoiceQuestion} from './radio.ts';
+import {BaseQuestionPreviewParams} from "../BaseQuestion.ts";
+import './radio.css';
+import '../base.css';
 
-const { Text } = Typography;
+const {Text} = Typography;
 
-interface SingleChoicePreviewProps extends BaseQuestionPreviewParams{
+interface SingleChoicePreviewProps extends BaseQuestionPreviewParams {
     question: SingleChoiceQuestion;
     value: string;
     onChange: (value: string) => void;
     showValidation?: boolean;
 }
-import './radio.css'
-import '../base.css'
-import {BaseQuestionPreviewParams} from "../BaseQuestion.ts";
+
 const SingleRadioPreview: React.FC<SingleChoicePreviewProps> = ({
-                                                                     question,
-                                                                     value,
-                                                                     onChange,
-                                                                     showValidation = false
-                                                                 }) => {
+                                                                    question,
+                                                                    value,
+                                                                    onChange,
+                                                                    showValidation = false
+                                                                }) => {
     // 分离"other:"前缀，提取纯文本值
     const [otherValue, setOtherValue] = useState('');
 
     // 判断当前是否选中"其他"选项
-    const isOtherSelected = value!=null && (value === 'other' || value?.startsWith('other:'));
+    const isOtherSelected = value != null && (value === 'other' || value?.startsWith('other:'));
 
     // 当value变化时，更新otherValue
     useEffect(() => {
@@ -71,6 +72,11 @@ const SingleRadioPreview: React.FC<SingleChoicePreviewProps> = ({
     // 确定Radio组的值
     const radioValue = isOtherSelected ? 'other' : value;
 
+    // Ensure option.id or option.key exists, fallback to index
+    const getOptionKey = (option: QuestionOption, index: string | number) => {
+        return option.id || option.key || option.value || `option-${index}`;
+    };
+
     return (
         <div className="question-preview">
             <div className="question-title">
@@ -87,17 +93,27 @@ const SingleRadioPreview: React.FC<SingleChoicePreviewProps> = ({
                 value={radioValue}
             >
                 <Space direction="vertical">
-                    {question.options.map(option => (
-                        <Radio key={option.id} value={option.value?.toString()}>
+                    {(question.options || []).map((option, index) => (
+                        <Radio
+                            key={getOptionKey(option, index)}
+                            value={option.value?.toString() || option.id || option.key}
+                        >
                             {option.text}
                         </Radio>
                     ))}
 
                     {question.allowOther && (
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <Radio value="other">{question.otherText}</Radio>
+                        <div
+                            key="other-option-container"
+                            style={{display: 'flex', alignItems: 'center'}}
+                        >
+                            <Radio key="other-option" value="other">{question.otherText || "其他"}</Radio>
                             {/* 使用div包装输入框，防止事件冒泡 */}
-                            <div onClick={(e) => e.stopPropagation()} style={{ marginLeft: 8 }}>
+                            <div
+                                key="other-input-container"
+                                onClick={(e) => e.stopPropagation()}
+                                style={{marginLeft: 8}}
+                            >
                                 <Input
                                     value={otherValue}
                                     onChange={handleOtherInputChange}
