@@ -155,7 +155,7 @@ const MainDesign = () => {
             params.inlineMode = false;
             params.isRequired = false;
         } else if (type.typeName === 'checkbox') {
-            params.options = [{key: uuid(), text: '选项 1'}, {key: uuid(), text: '选项 2'}];
+            params.options = [{key: uuid(), text: '选项 1',value:uuid()}, {key: uuid(), text: '选项 2',value:uuid()}];
             params.isRequired = false;
             params.randomizeOptions = false;
             params.displayInColumns = 1;
@@ -163,7 +163,7 @@ const MainDesign = () => {
             params.allowOther = false;
             params.otherText = '';
         } else if (type.typeName === 'radio') {
-            params.options = [{key: uuid(), text: '选项 1'}, {key: uuid(), text: '选项 2'}];
+            params.options = [{key: uuid(), text: '选项 1',value:uuid()}, {key: uuid(), text: '选项 2',value:uuid()}];
             params.isRequired = false;
             params.allowOther = false;
             params.otherText = '';

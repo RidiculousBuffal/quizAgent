@@ -91,6 +91,7 @@ public class QuizController {
     @GetMapping("/{quizId}")
     public SaResult getQuizById(@PathVariable Long quizId) {
         try {
+
             QuizDto quizDto = quizService.getQuizById(quizId);
             return SaResult.ok()
                     .setCode(COMMON.SUCCESS_CODE)

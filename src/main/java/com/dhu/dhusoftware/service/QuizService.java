@@ -45,6 +45,7 @@ public class QuizService {
 
     /**
      * 创建或更新问卷
+     *
      * @param quizDto 问卷数据传输对象
      * @return QuizDto 更新后的问卷数据
      */
@@ -82,6 +83,7 @@ public class QuizService {
 
     /**
      * 删除问卷
+     *
      * @param quizId 问卷ID
      * @return 是否成功
      */
@@ -105,10 +107,14 @@ public class QuizService {
 
     /**
      * 获取问卷详情
+     *
      * @param quizId 问卷ID
      * @return QuizDto 问卷数据
      */
     public QuizDto getQuizById(Long quizId) {
+        if (quizId < 0) {
+            return null;
+        }
         Quiz quiz = quizMapper.getQuizById(quizId);
         if (quiz == null) {
             throw new IllegalArgumentException(QuizConstants.NOT_FOUND);
@@ -120,6 +126,7 @@ public class QuizService {
 
     /**
      * 获取当前用户的问卷列表
+     *
      * @return List<QuizDto> 问卷列表
      */
     public List<QuizDto> listQuizzesByCurrentUser() {
@@ -138,7 +145,8 @@ public class QuizService {
 
     /**
      * 批量更新问卷的问题列表（包括创建、更新、删除、排序）
-     * @param quizId 问卷ID
+     *
+     * @param quizId       问卷ID
      * @param questionDtos 问题列表
      * @return 更新后的问题列表
      */

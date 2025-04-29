@@ -1,38 +1,50 @@
-import { useQuestionStore } from "../../../store/question/QuestionStore.ts";
-import { App } from "antd";
-import { useShallow } from "zustand/react/shallow";
-import { useCallback } from "react";
+// src/lib/Questions/QuestionWarpper/QuestionPreviewWrapper.tsx
+import React from "react";
+import { useQuestionStore } from "../../../store/question/QuestionStore";
 
-function QuestionPreviewWrapper({ id }: { id: number }) {
-    const question = useQuestionStore(useShallow(state => state.findQuestion(id)))
-    const { message } = App.useApp()
-    const answer = useQuestionStore(useShallow(state => state.findAnswer(id)))
-    const setAnswer = useQuestionStore(useShallow(state => state.setAnswer))
-
-    // Use useCallback to prevent unnecessary re-renders
-    const handleAnswerChange = useCallback((value: any) => {
-        try {
-            // Only update the store if the value has actually changed
-            if (JSON.stringify(value) !== JSON.stringify(answer)) {
-                setAnswer(id, value)
-            }
-        } catch (error) {
-            console.error("Error updating answer:", error);
-            message.error("发生错误，无法保存答案").then()
-        }
-    }, [id, setAnswer, answer, message]);
-
-    if (question == undefined) {
-        return <></>
-    } else {
-        const PreviewComponent = question.getPreviewComponent()
-        return <PreviewComponent
-            question={question}
-            value={answer || question.getDefaultValue()}
-            onChange={handleAnswerChange}
-            showValidation={true}
-        />
-    }
+interface QuestionPreviewWrapperProps {
+    id: number;
+    questionValue?: any;
+    onValueChange?: (value: any) => void;
+    showValidation?: boolean;
 }
 
-export default QuestionPreviewWrapper
+const QuestionViewWrapper: React.FC<QuestionPreviewWrapperProps> = ({
+                                                                        id,
+                                                                        questionValue,
+                                                                        onValueChange,
+                                                                        showValidation = false
+                                                                    }) => {
+    // Use store to find the question
+    const question = useQuestionStore(state => state.findQuestion(id));
+
+    // Only get the store answer if we're not being passed a value and onChange
+    const storeAnswer = useQuestionStore(state =>
+        !onValueChange ? state.findAnswer(id) : null
+    );
+
+    const setStoreAnswer = useQuestionStore(state => state.setAnswer);
+
+    if (!question) {
+        return <div>Question not found</div>;
+    }
+
+    // Use the passed value and onChange if provided (answering mode)
+    // or fall back to store values (preview mode)
+    const value = questionValue !== undefined ? questionValue : storeAnswer;
+    const handleChange = onValueChange || ((val: any) => setStoreAnswer(id, val));
+
+    // Get the preview component from the question
+    const PreviewComponent = question.previewComponent;
+
+    return (
+        <PreviewComponent
+            question={question}
+            value={value}
+            onChange={handleChange}
+            showValidation={showValidation}
+        />
+    );
+};
+
+export default QuestionViewWrapper;
