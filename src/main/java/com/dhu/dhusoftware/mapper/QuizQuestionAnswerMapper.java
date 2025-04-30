@@ -1,10 +1,7 @@
 package com.dhu.dhusoftware.mapper;
 
 import com.dhu.dhusoftware.pojo.Quizquestionanswer;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -20,4 +17,7 @@ public interface QuizQuestionAnswerMapper {
      * Batch insert multiple quiz question answers
      */
     int batchInsertQuizQuestionAnswers(@Param("answers") List<Quizquestionanswer> answers);
+
+    @Select("select count(distinct uniqueSubmitId) from quizquestionanswer, quiz where quiz.quizId = quizquestionanswer.quizId and creator = #{userId}")
+    int getTotalResponseByUserId (String userId);
 }

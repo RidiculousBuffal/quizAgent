@@ -9,6 +9,7 @@ import MainDesign from "./pages/quizDesign/MainDesign.tsx";
 import '../index.css'
 import DoQuizPage from "./pages/doQuiz/DoQuizPage.tsx";
 import QuizCompletionPage from "./pages/doQuiz/QuizCompletionPage.tsx";
+import QuizSquare from "./pages/home/QuizSquare.tsx";
 
 // Protected route component
 
@@ -26,6 +27,7 @@ function MyApp() {
             <Route path="/quizdesign" element={<MainDesign/>}/>
             <Route path="/doQuiz/:quizId" element={<DoQuizPage/>}/>
             <Route path="/quizComplete" element={<QuizCompletionPage />}/>
+            <Route path="/quizSquare" element={<QuizSquare />}/>
         </Routes>
         <DebugFloater></DebugFloater>
     </>

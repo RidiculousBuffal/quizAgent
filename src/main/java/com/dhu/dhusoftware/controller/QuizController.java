@@ -4,20 +4,24 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.util.SaResult;
 import com.dhu.dhusoftware.constant.COMMON;
 import com.dhu.dhusoftware.constant.QuizConstants;
+import com.dhu.dhusoftware.dto.QuizDisplayDTO;
 import com.dhu.dhusoftware.dto.QuizDto;
 import com.dhu.dhusoftware.dto.QuizQuestionDto;
 import com.dhu.dhusoftware.mapper.QuizPermissionMapper;
 import com.dhu.dhusoftware.pojo.Quiz;
 import com.dhu.dhusoftware.pojo.Result;
 import com.dhu.dhusoftware.service.QuizService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 问卷控制器，处理问卷创建、更新、删除等请求
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/quiz")
 @SaCheckLogin

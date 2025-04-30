@@ -1,5 +1,6 @@
 import {fetchAPI} from "./base.ts";
-import {QuizDto} from "./types/questionType.ts";
+import {quizDisplayType, QuizDto} from "./types/questionType.ts";
+import {QuizInfoType} from "../components/modal/QuizInfoEdit.tsx";
 
 
 export async function createOrEditQuiz(quizName: string, description: string, quizStartTime: string | null, quizEndTime: string | null, quizId?: number
@@ -51,4 +52,11 @@ export async function updateQuizStatus(quizId: number, status: number) {
 
 export async function getQuizDetail(quizId: number): Promise<QuizDto | null> {
     return await fetchAPI<QuizDto>(`/api/quiz/${quizId}`, {});
+}
+
+export async function getQuizDisplay(value?: string): Promise<quizDisplayType[] | null> {
+    return await fetchAPI<quizDisplayType[]>(`/public/quiz/getAllQuizList`, {
+        method: 'POST',
+        body: value
+    });
 }

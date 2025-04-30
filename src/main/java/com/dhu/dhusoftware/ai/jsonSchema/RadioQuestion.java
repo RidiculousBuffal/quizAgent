@@ -22,6 +22,7 @@ public record RadioQuestion(
             @JsonPropertyDescription("必须是uuid_v4格式")
             @JsonProperty(required = true) String id,
             @JsonProperty(required = true) String text,
+            @JsonPropertyDescription("必须是uuid_v4格式")
             @JsonProperty(required = true) String value
     ) {
     }

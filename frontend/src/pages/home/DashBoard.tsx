@@ -3,7 +3,7 @@ import {useLogto} from '@logto/react';
 import {useUserStore} from '../../store/user/UserStore.ts';
 import {UserOutlined, FormOutlined, LineChartOutlined, TeamOutlined} from '@ant-design/icons';
 import {useNavigate} from "react-router";
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import QuizInfoEdit, {QuizInfoType} from '../../components/modal/QuizInfoEdit.tsx';
 import {useForm} from 'antd/es/form/Form';
 import {useQuizStore} from '../../store/quiz/QuizStore.ts';
@@ -11,6 +11,7 @@ import {createOrEditQuiz, deleteQuizById, getQuizList} from '../../api/quizApi.t
 import QuizTable from '../../components/table/QuizTable.tsx';
 import dayjs from 'dayjs';
 import QuizPublishPermissionModal from "../../components/modal/QuestionPermissionModal.tsx";
+import {getTotalResponse} from "../../api/quizQuestionAnswerApi.ts";
 
 const {Header, Content, Footer, Sider} = Layout;
 const {Title, Text} = Typography;
@@ -35,6 +36,8 @@ const Dashboard: React.FC = () => {
     const [surveyData, setSurveyData] = useState<quizShowType[]>([])
     const [publishModalOpen, setPublishModalOpen] = useState(false);
     const [publishModalQuiz, setPublishModalQuiz] = useState<quizShowType | null>(null);
+    const [totalResponse, setTotalResponse] = useState<number | null>(0);
+    const nav = useNavigate();
 
     const handleOpenPublishPermission = (record: quizShowType) => {
         setPublishModalQuiz(record);
@@ -76,6 +79,14 @@ const Dashboard: React.FC = () => {
         getCurQuizList()
     }, [])
 
+    useEffect(() => {
+        const getNumOfResponse = async () => {
+            const data = await getTotalResponse();
+            setTotalResponse(data)
+        }
+        getNumOfResponse();
+    }, []);
+
     const editSurveyById = (quizId: number) => {
         setCurEditQuizId(quizId)
         navigator("/quizDesign")
@@ -101,6 +112,10 @@ const Dashboard: React.FC = () => {
         setCurEditSurveyId(record.quizId)
         formEditData.setFieldsValue(initialValue)
         setQuizModalEditVisible(true)
+    }
+
+    const backToHome = () => {
+        nav("/")
     }
 
     const handleEditQuizDesign = async () => {
@@ -213,9 +228,12 @@ const Dashboard: React.FC = () => {
                             flexShrink: 0,
                             display: 'flex',
                             alignItems: 'center', // 垂直居中
+                            justifyContent: 'space-between'
                         }}
                     >
                         <Title level={3} style={{margin: 0}}>仪表盘</Title>
+                        <Button type="text" size="large"
+                                style={{fontWeight: 500}} onClick={() => backToHome()}>回到主页</Button>
                     </Header>
 
                     <Content style={{
@@ -246,7 +264,7 @@ const Dashboard: React.FC = () => {
                                 <Card>
                                     <Statistic
                                         title="得到的总回复"
-                                        value={0}
+                                        value={totalResponse ?? 0}
                                         prefix={<TeamOutlined/>}
                                     />
                                 </Card>

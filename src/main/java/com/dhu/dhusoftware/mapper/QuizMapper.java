@@ -1,5 +1,6 @@
 package com.dhu.dhusoftware.mapper;
 
+import com.dhu.dhusoftware.dto.QuizDisplayDTO;
 import com.dhu.dhusoftware.pojo.Quiz;
 import com.dhu.dhusoftware.pojo.Quizpermission;
 import org.apache.ibatis.annotations.*;
@@ -33,5 +34,7 @@ public interface QuizMapper {
 
     @Select("select quiz.creator from quiz, quizpermission where quiz.quizId = quizpermission.quizId and quizpermission.quizId = #{quizId}")
     String getCreatorFromQuizPermissionByQuizId(Quizpermission quizpermission);
+
+    List<QuizDisplayDTO> listQuizDisplayInfo(@Param("value") String value);
 
 }

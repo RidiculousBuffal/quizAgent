@@ -2,11 +2,13 @@ package com.dhu.dhusoftware.service;
 
 import com.dhu.dhusoftware.constant.PermissionConstants;
 import com.dhu.dhusoftware.constant.QuizPermissionTypeConstants;
+import com.dhu.dhusoftware.dto.QuizDisplayDTO;
 import com.dhu.dhusoftware.dto.QuizDto;
 import com.dhu.dhusoftware.dto.QuizPermissionDto;
 import com.dhu.dhusoftware.dto.QuizQuestionDto;
 import com.dhu.dhusoftware.mapper.QuizMapper;
 import com.dhu.dhusoftware.mapper.QuizPermissionTypeMapper;
+import com.dhu.dhusoftware.mapper.QuizQuestionAnswerMapper;
 import com.dhu.dhusoftware.mapper.QuizQuestionMapper;
 import com.dhu.dhusoftware.pojo.Quiz;
 import com.dhu.dhusoftware.pojo.Quizquestion;
@@ -42,6 +44,7 @@ public class QuizService {
 
     @Autowired
     private QuizPermissionTypeMapper quizPermissionTypeMapper;
+
 
     /**
      * 创建或更新问卷
@@ -196,6 +199,10 @@ public class QuizService {
         }
 
         return updatedDtos;
+    }
+
+    public List<QuizDisplayDTO> getQuizDisplay (String value) {
+        return quizMapper.listQuizDisplayInfo(value);
     }
 
     /**
