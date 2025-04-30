@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dhu.dhusoftware.mapper.QuizMapper">
+    <select id="listQuizDisplayInfo" resultType="com.dhu.dhusoftware.dto.QuizDisplayDTO">
+        select
+        q.quizId,
+        q.quizName,
+        q.quizDescription,
+        q.quizStartTime,
+        q.quizEndTime,
+        user.userName,
+        count(distinct a.uniqueSubmitId) as responses
+        from
+        quiz q
+        join quizpermission p on q.quizId = p.quizId
+        left join quizquestionanswer a on p.quizId = a.quizId
+        join user on creator = userId
+        right join futurequiz.quizquestion q2 on q.quizId = q2.quizId
+        where
+        p.quizPermissionTypeId = 1
+        <if test="value != null and value != ''">
+            AND (
+            q.quizName LIKE CONCAT('%', #{value}, '%')
+            OR q.quizDescription LIKE CONCAT('%', #{value}, '%')
+            )
+        </if>
+        group by
+        q.quizId, q.quizName, q.quizDescription, q.quizStartTime, q.quizEndTime, user.userName
+    </select>
+
+</mapper>

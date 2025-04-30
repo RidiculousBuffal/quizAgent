@@ -54,8 +54,9 @@ export async function getQuizDetail(quizId: number): Promise<QuizDto | null> {
     return await fetchAPI<QuizDto>(`/api/quiz/${quizId}`, {});
 }
 
-export async function getQuizDisplay(): Promise<quizDisplayType[] | null> {
+export async function getQuizDisplay(value?: string): Promise<quizDisplayType[] | null> {
     return await fetchAPI<quizDisplayType[]>(`/public/quiz/getAllQuizList`, {
-        method: 'POST'
+        method: 'POST',
+        body: value
     });
 }

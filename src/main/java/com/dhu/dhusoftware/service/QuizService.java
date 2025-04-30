@@ -201,8 +201,8 @@ public class QuizService {
         return updatedDtos;
     }
 
-    public List<QuizDisplayDTO> getQuizDisplay () {
-        return quizMapper.listQuizDisplayInfo();
+    public List<QuizDisplayDTO> getQuizDisplay (String value) {
+        return quizMapper.listQuizDisplayInfo(value);
     }
 
     /**

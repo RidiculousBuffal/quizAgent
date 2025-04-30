@@ -35,26 +35,6 @@ public interface QuizMapper {
     @Select("select quiz.creator from quiz, quizpermission where quiz.quizId = quizpermission.quizId and quizpermission.quizId = #{quizId}")
     String getCreatorFromQuizPermissionByQuizId(Quizpermission quizpermission);
 
-    @Select("""
-    select
-      q.quizId,
-      q.quizName,
-      q.quizDescription,
-      q.quizStartTime,
-      q.quizEndTime,
-      user.userName,
-      count(distinct a.uniqueSubmitId) as responses
-    from
-      quiz q
-      join quizpermission p on q.quizId = p.quizId
-      left join quizquestionanswer a on p.quizId = a.quizId
-      join user on creator = userId
-      right join futurequiz.quizquestion q2 on q.quizId = q2.quizId
-    where
-      p.quizPermissionTypeId = 1
-    group by
-      q.quizId, q.quizName, q.quizDescription, q.quizStartTime, q.quizEndTime, q.creator
-""")
-    List<QuizDisplayDTO> listQuizDisplayInfo();
+    List<QuizDisplayDTO> listQuizDisplayInfo(@Param("value") String value);
 
 }

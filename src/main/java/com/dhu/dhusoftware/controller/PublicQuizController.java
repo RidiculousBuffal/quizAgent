@@ -11,10 +11,7 @@ import com.dhu.dhusoftware.service.QuizSubmissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -60,12 +57,12 @@ public class PublicQuizController {
     }
 
     /**
-     * @return 返回public的quiz列表
+     * @return 返回public的quiz列表(参数可选，为过滤list存在)
      */
     @PostMapping("/getAllQuizList")
-    public Result getAllQuizList() {
+    public Result getAllQuizList(@RequestBody(required = false) String value) {
         try {
-            List<QuizDisplayDTO> quizDisplayDTOList = quizService.getQuizDisplay();
+            List<QuizDisplayDTO> quizDisplayDTOList = quizService.getQuizDisplay(value);
             return Result.success("这就是数据表!!", quizDisplayDTOList);
         } catch (Exception e) {
             logger.error(String.valueOf(e));
