@@ -11,6 +11,7 @@ import {createOrEditQuiz, deleteQuizById, getQuizList} from '../../api/quizApi.t
 import QuizTable from '../../components/table/QuizTable.tsx';
 import dayjs from 'dayjs';
 import QuizPublishPermissionModal from "../../components/modal/QuestionPermissionModal.tsx";
+import {getTotalResponse} from "../../api/quizQuestionAnswerApi.ts";
 
 const {Header, Content, Footer, Sider} = Layout;
 const {Title, Text} = Typography;
@@ -35,6 +36,7 @@ const Dashboard: React.FC = () => {
     const [surveyData, setSurveyData] = useState<quizShowType[]>([])
     const [publishModalOpen, setPublishModalOpen] = useState(false);
     const [publishModalQuiz, setPublishModalQuiz] = useState<quizShowType | null>(null);
+    const [totalResponse, setTotalResponse] = useState<number | null>(0);
 
     const handleOpenPublishPermission = (record: quizShowType) => {
         setPublishModalQuiz(record);
@@ -75,6 +77,14 @@ const Dashboard: React.FC = () => {
         }
         getCurQuizList()
     }, [])
+
+    useEffect(() => {
+        const getATotalResponse = async () => {
+            const data = await getTotalResponse();
+            setTotalResponse(data);
+        }
+        getATotalResponse();
+    }, []);
 
     const editSurveyById = (quizId: number) => {
         setCurEditQuizId(quizId)
@@ -246,7 +256,7 @@ const Dashboard: React.FC = () => {
                                 <Card>
                                     <Statistic
                                         title="得到的总回复"
-                                        value={0}
+                                        value={totalResponse ?? 0}
                                         prefix={<TeamOutlined/>}
                                     />
                                 </Card>
