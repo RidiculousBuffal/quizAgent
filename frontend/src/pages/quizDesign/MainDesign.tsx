@@ -1,3 +1,4 @@
+// 修改MainDesign.tsx，添加AI助手按钮和侧边栏
 import React, {useEffect, useState, useCallback} from "react";
 import {v4 as uuid} from 'uuid'
 import {Layout, Button, Divider, Empty, Typography, message, Spin, Segmented} from "antd";
@@ -18,7 +19,8 @@ import {
     CheckSquareOutlined,
     CheckOutlined,
     LoadingOutlined,
-    EyeOutlined
+    EyeOutlined,
+    RobotOutlined
 } from "@ant-design/icons";
 import {useQuestionStore} from "../../store/question/QuestionStore";
 import QuestionTypeList from "./QuestionTypeList";
@@ -31,6 +33,7 @@ import {deleteQuestionBackend, getAllQuestionsInQuiz, saveAllQuestions} from "..
 import {useQuizStore} from "../../store/quiz/QuizStore.ts";
 import {ArrowLeft} from "lucide-react";
 import {useNavigate} from "react-router";
+import AIAssistant from "../../components/AIAssistant/AIAssistant.tsx"; // 导入AI助手组件
 
 const {Header, Sider, Content} = Layout;
 const {Title, Text} = Typography;
@@ -68,6 +71,8 @@ const MainDesign = () => {
     const [isSaving, setIsSaving] = useState(false);
     // 当前模式：编辑或预览
     const [mode, setMode] = useState<'edit' | 'preview'>('edit');
+    // 是否显示AI助手
+    const [showAIAssistant, setShowAIAssistant] = useState(false);
 
     // 从全局store获取和操作问题数据
     const questionAnswer = useQuestionStore((s) => s.questionAnswer);
@@ -139,7 +144,7 @@ const MainDesign = () => {
     }, [hasUnsavedChanges, savingStatus, saveQuestions]);
 
     const handleAddQuestion = (type: QuestionType) => {
-        // 自动补充各题型不同参数，id 建议用 Date.now()
+        // 自动补充各题型不同参数
         const id = Date.now();
         const params: any = {
             id,
@@ -155,7 +160,11 @@ const MainDesign = () => {
             params.inlineMode = false;
             params.isRequired = false;
         } else if (type.typeName === 'checkbox') {
-            params.options = [{key: uuid(), text: '选项 1',value:uuid()}, {key: uuid(), text: '选项 2',value:uuid()}];
+            params.options = [{key: uuid(), text: '选项 1', value: uuid()}, {
+                key: uuid(),
+                text: '选项 2',
+                value: uuid()
+            }];
             params.isRequired = false;
             params.randomizeOptions = false;
             params.displayInColumns = 1;
@@ -163,7 +172,11 @@ const MainDesign = () => {
             params.allowOther = false;
             params.otherText = '';
         } else if (type.typeName === 'radio') {
-            params.options = [{key: uuid(), text: '选项 1',value:uuid()}, {key: uuid(), text: '选项 2',value:uuid()}];
+            params.options = [{key: uuid(), text: '选项 1', value: uuid()}, {
+                key: uuid(),
+                text: '选项 2',
+                value: uuid()
+            }];
             params.isRequired = false;
             params.allowOther = false;
             params.otherText = '';
@@ -258,7 +271,15 @@ const MainDesign = () => {
                         />
                         {renderSaveStatus()}
                     </div>
-                    <div style={{display: "flex",gap:"10px"}}>
+                    <div style={{display: "flex", gap: "10px"}}>
+                        {/* AI助手按钮 */}
+                        <Button
+                            icon={<RobotOutlined/>}
+                            type={showAIAssistant ? "primary" : "default"}
+                            onClick={() => setShowAIAssistant(!showAIAssistant)}
+                        >
+                            AI助手
+                        </Button>
                         <Button icon={<ArrowLeft/>} onClick={() => {
                             nav('/dashboard')
                         }}>返回</Button>
@@ -274,7 +295,10 @@ const MainDesign = () => {
                     </div>
                 </div>
             </Header>
-            <Layout>
+
+            {/* 主布局区域 - 使用Flex布局实现左中右结构 */}
+            <Layout style={{ position: 'relative', height: 'calc(100vh - 64px)' }}>
+                {/* 左侧题目列表 */}
                 <Sider width="20%" style={{background: "#fff", padding: "16px", overflowY: "auto"}}>
                     <QuestionTypeList
                         questionTypes={questionTypes}
@@ -309,7 +333,15 @@ const MainDesign = () => {
                         </DndContext>
                     )}
                 </Sider>
-                <Content style={{padding: "20px", background: "#f5f5f5", overflowY: "auto"}}>
+
+                {/* 中部内容区，调整右边距，为AI助手预留空间 */}
+                <Content style={{
+                    padding: "20px",
+                    background: "#f5f5f5",
+                    overflowY: "auto",
+                    marginRight: showAIAssistant ? '360px' : 0,
+                    transition: 'margin-right 0.3s'
+                }}>
                     {activeId && questions.find(q => q.id === activeId) ? (
                         mode === 'edit' ? (
                             <QuestionEditWrapper id={activeId}/>
@@ -320,6 +352,24 @@ const MainDesign = () => {
                         <Empty description="请从左侧添加或选择题目进行编辑" style={{marginTop: "100px"}}/>
                     )}
                 </Content>
+
+                {/* 右侧AI助手 - 固定在右侧 */}
+                {showAIAssistant && (
+                    <div style={{
+                        position: 'fixed',
+                        width: '360px',
+                        top: '64px', // Header高度
+                        bottom: 0,
+                        right: 0,
+                        background: "#fff",
+                        borderLeft: "1px solid #f0f0f0",
+                        zIndex: 100,
+                        boxShadow: '-2px 0 8px rgba(0, 0, 0, 0.06)',
+                        overflow: 'hidden'
+                    }}>
+                        <AIAssistant onClose={() => setShowAIAssistant(false)}/>
+                    </div>
+                )}
             </Layout>
         </Layout>
     );

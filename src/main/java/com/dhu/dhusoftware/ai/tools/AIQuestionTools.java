@@ -30,7 +30,7 @@ public class AIQuestionTools {
         if (contextQuizId == null) {
             throw new IllegalArgumentException("quizId must be provided either as parameter or in context.");
         }
-        return "问题已经插入到数据库,信息为:" + fillBlankQuestionService.processAndSaveFillBlank(fillBlankPayLoad, contextQuizId);
+        return fillBlankQuestionService.processAndSaveFillBlank(fillBlankPayLoad, contextQuizId);
     }
 
     @Tool(description = "生成单选题")
@@ -41,7 +41,7 @@ public class AIQuestionTools {
         if (contextQuizId == null) {
             throw new IllegalArgumentException("quizId must be provided either as parameter or in context.");
         }
-        return "问题已经插入到数据库,信息为:" + radioQuestionService.processAndSaveRadioQuestion(radioQuestionPayLoad, contextQuizId);
+        return radioQuestionService.processAndSaveRadioQuestion(radioQuestionPayLoad, contextQuizId);
     }
 
     @Tool(description = "生成多选题")
@@ -52,6 +52,6 @@ public class AIQuestionTools {
         if (contextQuizId == null) {
             throw new IllegalArgumentException("quizId must be provided either as parameter or in context.");
         }
-        return "问题已经插入到数据库,信息为:" + checkboxQuestionService.processAndSaveCheckboxQuestion(checkboxQuestionPayLoad, contextQuizId);
+        return checkboxQuestionService.processAndSaveCheckboxQuestion(checkboxQuestionPayLoad, contextQuizId);
     }
 }

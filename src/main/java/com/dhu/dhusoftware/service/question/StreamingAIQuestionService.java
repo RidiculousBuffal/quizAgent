@@ -5,6 +5,7 @@ import com.dhu.dhusoftware.ai.tools.AIQuestionTools;
 import com.dhu.dhusoftware.mapper.AIGenerationHistoryMapper;
 import com.dhu.dhusoftware.pojo.AIGenerationHistory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.ai.chat.messages.*;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -89,11 +90,51 @@ public class StreamingAIQuestionService {
                 // 2️⃣ 流正常结束或异常时，把最终结果写回数据库
                 .doFinally(sig -> {
                     try {
-                        Map<String, Object> map = Map.of("aiResponse", buffer.toString());
-                        his.setGeneratedResult(new ObjectMapper().writeValueAsString(map));
+                        String fullResponse = buffer.toString();
+                        ObjectMapper mapper = new ObjectMapper();
+
+                        // 分离工具调用和普通文本
+                        List<Map<String, Object>> toolCalls = new ArrayList<>();
+                        StringBuilder plainText = new StringBuilder();
+
+                        // 按行处理以识别工具调用JSON
+                        String[] lines = fullResponse.split("\n");
+                        for (String line : lines) {
+                            line = line.trim();
+                            if (line.startsWith("{\"type\":\"toolCall\"") || line.startsWith("{\"tool\":")) {
+                                try {
+                                    // 解析工具调用JSON
+                                    Map<String, Object> toolData = mapper.readValue(line, Map.class);
+                                    toolCalls.add(toolData);
+                                } catch (Exception e) {
+                                    // 非JSON则作为普通文本
+                                    if (!line.isEmpty()) {
+                                        plainText.append(line).append("\n");
+                                    }
+                                }
+                            } else if (!line.isEmpty()) {
+                                // 普通文本行
+                                plainText.append(line).append("\n");
+                            }
+                        }
+
+                        // 创建结构化响应
+                        Map<String, Object> structuredResponse = new HashMap<>();
+                        structuredResponse.put("text", plainText.toString().trim());
+                        structuredResponse.put("toolCalls", toolCalls);
+
+                        his.setGeneratedResult(mapper.writeValueAsString(structuredResponse));
                     } catch (Exception e) {
+                        // 解析失败时使用简单格式
                         his.setStatus(false);
-                        his.setErrorMsg(e.getMessage());
+                        his.setErrorMsg("Failed to parse response: " + e.getMessage());
+                        try {
+                            his.setGeneratedResult(new ObjectMapper().writeValueAsString(
+                                    Map.of("aiResponse", buffer.toString())
+                            ));
+                        } catch (Exception ex) {
+                            his.setErrorMsg(his.getErrorMsg() + "; " + ex.getMessage());
+                        }
                     } finally {
                         historyMapper.updateAIGenerationHistory(his);
                     }
@@ -134,7 +175,7 @@ public class StreamingAIQuestionService {
                             .subscribeOn(Schedulers.boundedElastic())   // 工具可能阻塞
                             .flatMapMany(exec -> {
                                 String toolStr = extractToolResult(exec);
-                                Prompt next    = new Prompt(exec.conversationHistory(), opts);
+                                Prompt next = new Prompt(exec.conversationHistory(), opts);
                                 return Flux.concat(
                                         Flux.just(toolStr),
                                         streamRound(next, opts, round + 1, maxRounds)
@@ -152,7 +193,31 @@ public class StreamingAIQuestionService {
         Message last = hist.get(hist.size() - 1);
         if (last instanceof ToolResponseMessage trm) {
             return trm.getResponses().stream()
-                    .map(r -> "\n[ToolCall] " + r.name() + " &rarr; " + r.responseData() + "\n")
+                    .map(r -> {
+                        try {
+                            ObjectMapper mapper = new ObjectMapper();
+                            ObjectNode toolNode = mapper.createObjectNode();
+
+                            // 核心改变：创建结构化JSON
+                            toolNode.put("type", "toolCall");
+                            toolNode.put("tool", r.name());
+
+                            // 解析并内嵌工具返回的JSON数据
+                            String responseData = r.responseData().toString();
+                            if (responseData.startsWith("问题已经插入到数据库,信息为:")) {
+                                // 提取纯JSON部分
+                                responseData = responseData.substring(responseData.indexOf("{"));
+                            }
+
+                            // 添加原始工具结果
+                            toolNode.set("result", mapper.readTree(responseData));
+
+                            return "\n" + mapper.writeValueAsString(toolNode) + "\n";
+                        } catch (Exception e) {
+                            // 如果解析失败，回退到原始格式
+                            return "\n[ToolCall] " + r.name() + " &rarr; " + r.responseData() + "\n";
+                        }
+                    })
                     .reduce("", String::concat);
         }
         return "";

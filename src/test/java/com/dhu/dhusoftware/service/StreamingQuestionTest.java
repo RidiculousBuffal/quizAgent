@@ -16,7 +16,7 @@ class StreamingQuestionTest {
     void testStreamQuestion() {
         // ==== 测试参数 ====
         String userId = "ha1cwqjsdxj8";
-        Long quizId = 2L;
+        Long quizId = 5L;
         String question = "出一些历史方面的题目,1道单选题,1道多选题,1道填空题";
         String model = "gpt-4o-2024-11-20";
 
