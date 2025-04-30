@@ -79,6 +79,14 @@ const Dashboard: React.FC = () => {
         getCurQuizList()
     }, [])
 
+    useEffect(() => {
+        const getNumOfResponse = async () => {
+            const data = await getTotalResponse();
+            setTotalResponse(data)
+        }
+        getNumOfResponse();
+    }, []);
+
     const editSurveyById = (quizId: number) => {
         setCurEditQuizId(quizId)
         navigator("/quizDesign")
