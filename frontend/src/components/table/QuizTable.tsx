@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Popconfirm, Space, Table, Tag } from 'antd';
+import {Badge, Button, Popconfirm, Space, Table, Tag} from 'antd';
 import { SettingOutlined } from "@ant-design/icons";
+import type {PresetStatusColorType} from "antd/es/_util/colors";
 
 export interface quizShowType {
     quizId: number;
@@ -20,9 +21,9 @@ interface QuizTableProps {
 }
 
 // 状态映射
-const statusMap: Record<number, { text: string; color: string }> = {
-    0: { text: '待发布', color: 'default' },
-    1: { text: '已发布', color: 'blue' },
+const statusMap: Record<number, { text: string; status: PresetStatusColorType }> = {
+    0: { text: '待发布', status: 'error' },
+    1: { text: '已发布', status: 'processing' },
 };
 
 const QuizTable: React.FC<QuizTableProps> = ({ surveyData, onChangeInfo, onEdit, onDelete, onPublishPermission }) => {
@@ -88,10 +89,10 @@ const QuizTable: React.FC<QuizTableProps> = ({ surveyData, onChangeInfo, onEdit,
             title: '状态',
             dataIndex: 'status',
             key: 'status',
-            width: 80,
+            width: 90,
             render: (status: number) => {
                 const s = statusMap[status] || { text: '未知', color: 'gray' };
-                return <Tag color={s.color}>{s.text}</Tag>;
+                return <Badge status={s.status} text={s.text} />;
             }
         },
         {

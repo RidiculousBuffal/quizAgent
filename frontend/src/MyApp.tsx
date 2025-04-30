@@ -29,7 +29,7 @@ function MyApp() {
             <Route path="/quizComplete" element={<QuizCompletionPage />}/>
             <Route path="/quizSquare" element={<QuizSquare />}/>
         </Routes>
-        <DebugFloater></DebugFloater>
+        {/*<DebugFloater></DebugFloater>*/}
     </>
 }
 

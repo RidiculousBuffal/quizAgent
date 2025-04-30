@@ -15,4 +15,5 @@ public class Quizquestionanswer {
     private String details;
     private String answerUser;
     private String uniqueSubmitId;
+    private java.sql.Timestamp answerTime;
 }
