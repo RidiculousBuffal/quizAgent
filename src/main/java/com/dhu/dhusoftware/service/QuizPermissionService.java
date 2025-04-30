@@ -51,6 +51,9 @@ public class QuizPermissionService {
      * @return boolean
      */
     public boolean hasPermission(Long quizId) {
+        if (quizMapper.getQuizById(quizId).getStatus() == 0) {
+            return false;
+        }
         Quizpermission quizpermission = quizPermissionMapper.getQuizPermissionByQuizId(quizId);
         if (quizpermission == null) {
             throw new IllegalArgumentException(QuizConstants.NOT_FOUND);
