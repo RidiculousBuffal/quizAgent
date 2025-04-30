@@ -19,7 +19,7 @@
         join user on creator = userId
         right join quizquestion q2 on q.quizId = q2.quizId
         where
-        p.quizPermissionTypeId = 1
+        p.quizPermissionTypeId = 1 and q.status = 1
         <if test="value != null and value != ''">
             AND (
             q.quizName LIKE CONCAT('%', #{value}, '%')
