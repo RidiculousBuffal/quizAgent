@@ -26,3 +26,11 @@ export interface quizDisplayType {
     userName: string;
     responses: number;
 }
+
+export interface SpecificAnswerDTO {
+    questionName: string;
+    questionDescription: string;
+    details: string;
+    questionDetails: string;
+    answer: string;
+}
