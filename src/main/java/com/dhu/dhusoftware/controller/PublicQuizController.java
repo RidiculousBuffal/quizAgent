@@ -3,8 +3,10 @@ package com.dhu.dhusoftware.controller;
 import cn.dev33.satoken.util.SaResult;
 import com.dhu.dhusoftware.constant.COMMON;
 import com.dhu.dhusoftware.constant.QuizConstants;
+import com.dhu.dhusoftware.dto.QuizDisplayDTO;
 import com.dhu.dhusoftware.dto.QuizSubmissionDTO;
 import com.dhu.dhusoftware.pojo.Result;
+import com.dhu.dhusoftware.service.QuizService;
 import com.dhu.dhusoftware.service.QuizSubmissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -24,6 +27,9 @@ public class PublicQuizController {
 
     @Autowired
     private QuizSubmissionService quizSubmissionService;
+
+    @Autowired
+    private QuizService quizService;
 
     @PostMapping("/submit")
     public Result submitQuizAnswers(@RequestBody QuizSubmissionDTO submission) {
@@ -50,6 +56,20 @@ public class PublicQuizController {
         } catch (Exception e) {
             logger.error("Error processing quiz submission: {}", e.getMessage(), e);
             return Result.error(e.getMessage(), null);
+        }
+    }
+
+    /**
+     * @return 返回public的quiz列表
+     */
+    @PostMapping("/getAllQuizList")
+    public Result getAllQuizList() {
+        try {
+            List<QuizDisplayDTO> quizDisplayDTOList = quizService.getQuizDisplay();
+            return Result.success("这就是数据表!!", quizDisplayDTOList);
+        } catch (Exception e) {
+            logger.error(String.valueOf(e));
+            return Result.error(String.valueOf(e), 1);
         }
     }
 }

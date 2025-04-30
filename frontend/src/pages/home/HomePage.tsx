@@ -1,20 +1,20 @@
 import React from 'react';
-import { Layout, Typography, Button, Row, Col, Card, Space, Progress } from 'antd';
-import { useLogto } from '@logto/react';
-import { RobotOutlined, FormOutlined, LineChartOutlined } from '@ant-design/icons';
-import { useNavigate } from "react-router";
-import { logout, useUserStore } from "../../store/user/UserStore.ts";
+import {Layout, Typography, Button, Row, Col, Card, Space, Progress} from 'antd';
+import {useLogto} from '@logto/react';
+import {RobotOutlined, FormOutlined, LineChartOutlined} from '@ant-design/icons';
+import {useNavigate} from "react-router";
+import {logout, useUserStore} from "../../store/user/UserStore.ts";
 
-const { Header, Content, Footer } = Layout;
-const { Title, Paragraph } = Typography;
+const {Header, Content, Footer} = Layout;
+const {Title, Paragraph} = Typography;
 
 const HomePage: React.FC = () => {
-    const { signIn, signOut, isAuthenticated } = useLogto();
+    const {signIn, signOut, isAuthenticated} = useLogto();
     const isSignedBackend = useUserStore(state => state.isSignedIn)
     const nav = useNavigate();
 
     return (
-        <Layout className="layout" style={{ minHeight: '100vh', background: '#f8f9fa' }}>
+        <Layout className="layout" style={{minHeight: '100vh', background: '#f8f9fa'}}>
             <Header style={{
                 background: '#fff',
                 display: 'flex',
@@ -24,20 +24,28 @@ const HomePage: React.FC = () => {
                 boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
                 borderBottom: '1px solid #eee'
             }}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{display: 'flex', alignItems: 'center'}}>
                     <RobotOutlined style={{
                         fontSize: '28px',
                         marginRight: '16px',
                         color: '#333',
                         transform: 'rotate(-10deg)'
-                    }} />
-                    <Title level={3} style={{ margin: 0, color: '#333', fontWeight: 600 }}>AI Quiz Agent</Title>
+                    }}/>
+                    <Title level={3} style={{margin: 0, color: '#333', fontWeight: 600}}>AI Quiz Agent</Title>
                 </div>
                 <Space size="large">
                     <Button
                         size="large"
                         type="text"
-                        style={{ fontWeight: 500 }}
+                        style={{fontWeight: 500}}
+                        onClick={() => nav('/quizSquare')}
+                    >
+                        QuizSquare
+                    </Button>
+                    <Button
+                        size="large"
+                        type="text"
+                        style={{fontWeight: 500}}
                         onClick={() => nav('/dashboard')}
                     >
                         DashBoard
@@ -45,7 +53,7 @@ const HomePage: React.FC = () => {
                     <Button
                         type="text"
                         size="large"
-                        style={{ fontWeight: 500 }}
+                        style={{fontWeight: 500}}
                         onClick={() => isAuthenticated ?
                             signOut(import.meta.env.VITE_APP_URL).then(logout) :
                             signIn(`${import.meta.env.VITE_APP_URL}/callback`)}
@@ -55,7 +63,7 @@ const HomePage: React.FC = () => {
                 </Space>
             </Header>
 
-            <Content style={{ padding: '80px 50px' }}>
+            <Content style={{padding: '80px 50px'}}>
                 <Row gutter={[48, 48]} align="middle" justify="center">
                     <Col xs={24} md={12}>
                         <div style={{
@@ -74,7 +82,7 @@ const HomePage: React.FC = () => {
                                 alignItems: 'center'
                             }}>
                                 {/* 环形进度条 */}
-                                <div style={{ position: 'absolute', transform: 'rotate(15deg)' }}>
+                                <div style={{position: 'absolute', transform: 'rotate(15deg)'}}>
                                     <Progress
                                         type="circle"
                                         percent={78}
@@ -99,7 +107,7 @@ const HomePage: React.FC = () => {
                                       transparent 10px,
                                       transparent 20px
                                     )`
-                                }} />
+                                }}/>
 
                                 {/* 动态点阵 */}
                                 <div style={{
@@ -115,7 +123,7 @@ const HomePage: React.FC = () => {
                                             borderRadius: item % 2 ? '50%' : '4px',
                                             opacity: item * 0.3,
                                             transform: `scale(${1 - item * 0.1})`
-                                        }} />
+                                        }}/>
                                     ))}
                                 </div>
 
@@ -130,8 +138,8 @@ const HomePage: React.FC = () => {
                                     background: '#fff',
                                     boxShadow: '0 8px 24px rgba(0,0,0,0.05)'
                                 }}>
-                                    <div style={{ fontFamily: 'monospace', color: '#666' }}>AI Analysis</div>
-                                    <div style={{ fontSize: '24px', fontWeight: 600 }}>87%</div>
+                                    <div style={{fontFamily: 'monospace', color: '#666'}}>AI Analysis</div>
+                                    <div style={{fontSize: '24px', fontWeight: 600}}>87%</div>
                                 </div>
                             </div>
 
@@ -147,7 +155,7 @@ const HomePage: React.FC = () => {
                     </Col>
                 </Row>
 
-                <div style={{ margin: '120px 0' }}>
+                <div style={{margin: '120px 0'}}>
                     <Title level={2} style={{
                         textAlign: 'center',
                         marginBottom: '80px',
@@ -158,9 +166,21 @@ const HomePage: React.FC = () => {
                     </Title>
                     <Row gutter={[48, 48]}>
                         {[
-                            { icon: <RobotOutlined />, title: "AI-Powered Analysis", content: "Our intelligent agents analyze responses in real-time, providing deeper insights than traditional surveys." },
-                            { icon: <FormOutlined />, title: "Dynamic Questionnaires", content: "Create adaptive surveys that change based on previous answers, ensuring relevant data collection." },
-                            { icon: <LineChartOutlined />, title: "Comprehensive Reports", content: "Get detailed reports with visualizations and AI-generated insights from your survey responses." }
+                            {
+                                icon: <RobotOutlined/>,
+                                title: "AI-Powered Analysis",
+                                content: "Our intelligent agents analyze responses in real-time, providing deeper insights than traditional surveys."
+                            },
+                            {
+                                icon: <FormOutlined/>,
+                                title: "Dynamic Questionnaires",
+                                content: "Create adaptive surveys that change based on previous answers, ensuring relevant data collection."
+                            },
+                            {
+                                icon: <LineChartOutlined/>,
+                                title: "Comprehensive Reports",
+                                content: "Get detailed reports with visualizations and AI-generated insights from your survey responses."
+                            }
                         ].map((item, index) => (
                             <Col xs={24} md={8} key={index}>
                                 <Card
@@ -189,9 +209,9 @@ const HomePage: React.FC = () => {
                                     }
                                 >
                                     <Card.Meta
-                                        title={<div style={{ fontSize: '20px', fontWeight: 500 }}>{item.title}</div>}
-                                        description={<div style={{ color: '#666', lineHeight: 1.6 }}>{item.content}</div>}
-                                        style={{ padding: '24px' }}
+                                        title={<div style={{fontSize: '20px', fontWeight: 500}}>{item.title}</div>}
+                                        description={<div style={{color: '#666', lineHeight: 1.6}}>{item.content}</div>}
+                                        style={{padding: '24px'}}
                                     />
                                 </Card>
                             </Col>
@@ -207,9 +227,9 @@ const HomePage: React.FC = () => {
                 padding: '48px 24px',
                 borderTop: '1px solid #333'
             }}>
-                <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+                <div style={{maxWidth: '800px', margin: '0 auto'}}>
                     AI Quiz Agent ©{new Date().getFullYear()} — Intelligent Survey Platform
-                    <div style={{ marginTop: '16px', fontSize: '12px', letterSpacing: '1px' }}>
+                    <div style={{marginTop: '16px', fontSize: '12px', letterSpacing: '1px'}}>
                         THOUGHTFULLY DESIGNED IN NEW YORK
                     </div>
                 </div>

@@ -16,3 +16,13 @@ export interface QuizDto {
     status: number;
     creator: string | null;
 }
+
+export interface quizDisplayType {
+    quizId: string;
+    quizName: string;
+    quizDescription: string;
+    quizStartTime: string;
+    quizEndTime: string;
+    userName: string;
+    responses: number;
+}

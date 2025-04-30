@@ -3,7 +3,7 @@ import {useLogto} from '@logto/react';
 import {useUserStore} from '../../store/user/UserStore.ts';
 import {UserOutlined, FormOutlined, LineChartOutlined, TeamOutlined} from '@ant-design/icons';
 import {useNavigate} from "react-router";
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import QuizInfoEdit, {QuizInfoType} from '../../components/modal/QuizInfoEdit.tsx';
 import {useForm} from 'antd/es/form/Form';
 import {useQuizStore} from '../../store/quiz/QuizStore.ts';
@@ -37,6 +37,7 @@ const Dashboard: React.FC = () => {
     const [publishModalOpen, setPublishModalOpen] = useState(false);
     const [publishModalQuiz, setPublishModalQuiz] = useState<quizShowType | null>(null);
     const [totalResponse, setTotalResponse] = useState<number | null>(0);
+    const nav = useNavigate();
 
     const handleOpenPublishPermission = (record: quizShowType) => {
         setPublishModalQuiz(record);
@@ -78,14 +79,6 @@ const Dashboard: React.FC = () => {
         getCurQuizList()
     }, [])
 
-    useEffect(() => {
-        const getATotalResponse = async () => {
-            const data = await getTotalResponse();
-            setTotalResponse(data);
-        }
-        getATotalResponse();
-    }, []);
-
     const editSurveyById = (quizId: number) => {
         setCurEditQuizId(quizId)
         navigator("/quizDesign")
@@ -111,6 +104,10 @@ const Dashboard: React.FC = () => {
         setCurEditSurveyId(record.quizId)
         formEditData.setFieldsValue(initialValue)
         setQuizModalEditVisible(true)
+    }
+
+    const backToHome = () => {
+        nav("/")
     }
 
     const handleEditQuizDesign = async () => {
@@ -223,9 +220,12 @@ const Dashboard: React.FC = () => {
                             flexShrink: 0,
                             display: 'flex',
                             alignItems: 'center', // 垂直居中
+                            justifyContent: 'space-between'
                         }}
                     >
                         <Title level={3} style={{margin: 0}}>仪表盘</Title>
+                        <Button type="text" size="large"
+                                style={{fontWeight: 500}} onClick={() => backToHome()}>回到主页</Button>
                     </Header>
 
                     <Content style={{
