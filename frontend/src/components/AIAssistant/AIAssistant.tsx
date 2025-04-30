@@ -1,492 +1,361 @@
-import React, {useState, useRef, useEffect, useCallback, useMemo} from 'react';
-import {Bubble} from '@ant-design/x';
-import {Sender} from '@ant-design/x';
-import {Card, Typography, Select, Space, Flex, Badge, Button, Divider, Spin, Tooltip, Tag, GetProp} from 'antd';
+// AIAssistant.tsx
+import React, {
+    useState,
+    useRef,
+    useEffect,
+    useCallback,
+    useMemo,
+} from "react";
+import MarkdownIt from "markdown-it";
+import {Bubble, Sender} from "@ant-design/x";
+import {
+    Card,
+    Typography,
+    Select,
+    Space,
+    Flex,
+    Badge,
+    Button,
+    Divider,
+    Spin,
+} from "antd";
 import {
     RobotOutlined,
     UserOutlined,
     CloseOutlined,
-    ApiOutlined,
-    CheckCircleOutlined,
-    CheckSquareOutlined,
-    FormOutlined
-} from '@ant-design/icons';
-import {useQuizStore} from '../../store/quiz/QuizStore';
-import {getAllQuestionsInQuiz} from '../../api/questionapi';
-import message from '../../components/globalMessage/index';
-import {BASE_URL} from '../../api/base.ts';
-import {useUserStore} from '../../store/user/UserStore';
-import MarkdownIt from 'markdown-it';
-import {getAIGenerationHistory} from "../../api/aigenerationapi.ts";
+} from "@ant-design/icons";
 
-const {Text, Title, Paragraph} = Typography;
+import {useQuizStore} from "../../store/quiz/QuizStore";
+import {useQuestionStore} from "../../store/question/QuestionStore";
+import {getAllQuestionsInQuiz} from "../../api/questionapi";
+import {getAIGenerationHistory} from "../../api/aigenerationapi";
+import {BASE_URL} from "../../api/base";
+import {useUserStore} from "../../store/user/UserStore";
+import message from "../../components/globalMessage";
+import ToolCallMessage from "./ToolCallMessage";
+import {ChatMessage} from "../../store/ai/ChatSlice.ts";
+import {
+    useChatStore,
+} from '../../store/ai/ChatStore.ts'          // ★ 新增
+
+const {Text, Title} = Typography;
 const md = new MarkdownIt();
 
-// 定义消息类型
-interface Message {
-    role: 'ai' | 'user' | 'tool';
-    content: string;
-    key: string | number;
+/* -------------------------------------------------- */
+/*            工具：安全解析 JSON / Markdown           */
+
+/* -------------------------------------------------- */
+function safeParseToolCall(raw: string) {
+    try {
+        return JSON.parse(raw);
+    } catch {
+        const repaired = raw.replace(
+            /"result":"({[\s\S]*})"/,
+            (_, inner) => `"result":${inner.replace(/\\"/g, '"')}`,
+        );
+        return JSON.parse(repaired);
+    }
 }
 
-
-// 工具调用组件
-const ToolCallMessage: React.FC<{ tool: string; result?: any }> = ({tool, result}) => {
-    // 根据工具名称确定工具类型和显示信息
-    const getToolInfo = () => {
-        if (tool.includes('Radio')) {
-            return {
-                type: '单选题',
-                color: '#1677ff',
-                icon: <CheckCircleOutlined/>,
-                title: result?.title || '单选题'
-            };
-        } else if (tool.includes('CheckBox')) {
-            return {
-                type: '多选题',
-                color: '#52c41a',
-                icon: <CheckSquareOutlined/>,
-                title: result?.title || '多选题'
-            };
-        } else if (tool.includes('FillBlank')) {
-            return {
-                type: '填空题',
-                color: '#faad14',
-                icon: <FormOutlined/>,
-                title: result?.title || '填空题'
-            };
-        } else {
-            return {
-                type: '题目',
-                color: '#722ed1',
-                icon: <ApiOutlined/>,
-                title: '题目已创建'
-            };
-        }
-    };
-
-    const toolInfo = getToolInfo();
-
-    // 提取选项信息（适用于单选和多选题）
-    const getOptionsText = () => {
-        if (!result?.options || !Array.isArray(result.options)) return null;
-
-        return (
-            <Paragraph type="secondary" style={{fontSize: '12px', margin: 0, marginTop: 4}}>
-                选项: {result.options.map((opt: any) => opt.text).join(', ')}
-            </Paragraph>
-        );
-    };
-
-    return (
-        <Card
-            size="small"
-            style={{
-                marginBottom: 8,
-                background: '#f8f8f8',
-                borderLeft: `3px solid ${toolInfo.color}`,
-            }}
-            bodyStyle={{padding: '8px 12px'}}
-        >
-            <Space direction="vertical" size={0} style={{width: '100%'}}>
-                <Flex align="center">
-                    {toolInfo.icon}
-                    <Tooltip title="点击问题列表查看详情">
-                        <Tag color={toolInfo.color} style={{margin: '0 8px'}}>
-                            {toolInfo.type}
-                        </Tag>
-                    </Tooltip>
-                    <Text strong style={{fontSize: '14px'}}>{toolInfo.title}</Text>
-                </Flex>
-                {result?.description && (
-                    <Text type="secondary" style={{fontSize: '12px', display: 'block', marginTop: 2}}>
-                        {result.description}
-                    </Text>
-                )}
-                {getOptionsText()}
-            </Space>
-        </Card>
-    );
-};
-
-// 检测是否是工具调用JSON
-const isToolCallJson = (text: string) => {
-    try {
-        if (!text) return false;
-        const trimmed = text.trim();
-        if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
-            const data = JSON.parse(trimmed);
-            return data.type === 'toolCall' || (data.tool !== undefined);
-        }
-        return false;
-    } catch (e) {
-        return false;
-    }
-};
-
-// 从老格式中提取工具名称
-const extractToolName = (text: string) => {
-    const matches = text.match(/\[ToolCall\] (\S+) &rarr;/);
-    return matches ? matches[1] : '';
-};
-
-// 获取AI生成历史
-
-
-// 主组件
+/* ================================================== */
+/*                 组件主体  AIAssistant               */
+/* ================================================== */
 const AIAssistant: React.FC<{ onClose?: () => void }> = ({onClose}) => {
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [inputValue, setInputValue] = useState('');
+    /* ------------- local state (非消息) ------------- */
+    const [inputValue, setInputValue] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [modelName, setModelName] = useState('gpt-4.1');
+    const [modelName, setModelName] = useState("gpt-4.1");
     const [needRefresh, setNeedRefresh] = useState(false);
     const [isLoadingHistory, setIsLoadingHistory] = useState(false);
-    const [showLoadingSpinner, setShowLoadingSpinner] = useState(false); // 新增：延迟显示加载状态
+    const [showLoadingSpinner, setShowLoadingSpinner] = useState(false);
+
+    /* ------------- refs ------------- */
     const bubbleListRef = useRef<any>(null);
+    const historyLoadedRef = useRef(false);
+
+    /* ------------- Zustand 外部 store ------------- */
+    const messages = useChatStore((s) => s.messages);        // ⚡ 全局消息
+    const appendMessages = useCallback(
+        (msg: ChatMessage | ChatMessage[]) =>
+            useChatStore.getState().appendMessages(msg),
+        [],
+    );
+    const patchMessage = useCallback(
+        (key: string | number, partial: Partial<ChatMessage>) =>
+            useChatStore.getState().patchMessage(key, partial),
+        [],
+    );
+    const resetMessages = useCallback(
+        (msgs?: ChatMessage[]) => useChatStore.getState().resetMessages(msgs),
+        [],
+    );
+
+    /* ------------- 其它外部 stores ------------- */
     const currentQuizId = useQuizStore((q) => q.curEditQuizId);
+    const setRawQuestions = useQuestionStore((s) => s.setRawQuestions);
 
-    // 渲染Markdown内容 - 使用useCallback缓存
-    const renderMarkdown = useCallback((content: string) => {
-        if (!content) return null;
-        return <div dangerouslySetInnerHTML={{__html: md.render(content)}}/>;
-    }, []);
+    /* ------------- helper：渲染 Markdown / ToolCall ------------- */
+    const renderMarkdown = useCallback(
+        (txt: string) =>
+            txt ? (
+                <div
+                    dangerouslySetInnerHTML={{
+                        __html: md.render(txt),
+                    }}
+                />
+            ) : null,
+        [],
+    );
 
-    // 设置欢迎消息 - 使用useCallback包装
-    const setWelcomeMessage = useCallback(() => {
-        setMessages([{
-            role: 'ai',
-            content: '👋 我是你的问卷设计助手，可以帮你生成各种类型的问卷题目。请告诉我你想创建什么主题的问卷，需要包含哪些类型的问题，我将为你自动生成相关题目。',
-            key: 'welcome',
-        }]);
-    }, []);
-
-    // 渲染消息内容 - 使用useCallback包装
-    const renderMessage = useCallback((content: string, role: string) => {
-        if (role === 'tool') {
-            try {
-                // 尝试解析为新格式JSON
-                if (content.startsWith('{') && content.endsWith('}')) {
-                    const toolData = JSON.parse(content);
-                    return (
-                        <ToolCallMessage
-                            tool={toolData.tool || ''}
-                            result={toolData.result}
-                        />
-                    );
-                }
-
-                // 尝试解析旧格式
-                if (content.includes('[ToolCall]')) {
-                    const toolName = extractToolName(content);
-
-                    // 尝试提取JSON部分
-                    const jsonMatch = content.match(/&rarr; (.+)$/);
-                    if (jsonMatch && jsonMatch[1]) {
+    const renderMessage = useCallback(
+        (content: any, role: string) => {
+            if (role === "tool") {
+                const obj =
+                    typeof content === "string" ? safeParseToolCall(content) : content;
+                if (obj?.type === "toolCall") {
+                    let resultData = obj.result;
+                    if (typeof resultData === "string") {
                         try {
-                            const jsonString = jsonMatch[1].replace(/^"/, '').replace(/"$/, '');
-                            const jsonData = JSON.parse(jsonString);
-                            return (
-                                <ToolCallMessage
-                                    tool={toolName}
-                                    result={jsonData}
-                                />
-                            );
-                        } catch (e) {
-                            // JSON解析失败，返回简单工具调用
-                            return <ToolCallMessage tool={toolName}/>;
+                            resultData = JSON.parse(resultData);
+                        } catch {
+                            /* ignore */
                         }
                     }
-
-                    // 无法提取JSON，返回简单工具调用
-                    return <ToolCallMessage tool={toolName}/>;
+                    return <ToolCallMessage tool={obj.tool} result={resultData}/>;
                 }
-            } catch (e) {
-                console.error('Failed to parse tool message:', e);
-                // 都解析失败了，返回简单提示
-                return (
-                    <Card size="small" style={{marginBottom: 8, background: '#f8f8f8'}}>
-                        <Text type="secondary">题目已创建</Text>
-                    </Card>
-                );
+                return <ToolCallMessage tool="unknown"/>;
             }
-        }
+            return renderMarkdown(String(content));
+        },
+        [renderMarkdown],
+    );
 
-        // 常规markdown渲染
-        return renderMarkdown(content);
-    }, [renderMarkdown]);
+    /* ---------------- 欢迎词 ---------------- */
+    const setWelcomeMessage = useCallback(() => {
+        resetMessages([
+            {
+                role: "ai",
+                content:
+                    "👋 我是你的问卷设计助手，可以帮你生成各种类型的问卷题目。请告诉我你想创建什么主题的问卷，需要包含哪些类型的问题，我将为你自动生成相关题目。",
+                key: "welcome",
+            },
+        ]);
+    }, [resetMessages]);
 
-    // 加载历史记录 - 使用useCallback包装
+    /* ================================================= */
+    /*               历史记录加载 &rarr; 写入 store            */
+    /* ================================================= */
     const loadChatHistory = useCallback(async () => {
-        if (!currentQuizId || isLoadingHistory) return;
-
+        if (historyLoadedRef.current || !currentQuizId) return;
         setIsLoadingHistory(true);
+
         try {
             const history = await getAIGenerationHistory(currentQuizId);
-            if (history && history.length > 0) {
-                const historyMessages: Message[] = [];
+            if (history?.length) {
+                const list: ChatMessage[] = [];
 
-                history.forEach((item, index) => {
-                    // 添加用户问题
-                    if (item.inputPrompt) {
-                        const userPrompt = item.inputPrompt.includes('User: ')
-                            ? item.inputPrompt.split('User: ')[1]
-                            : item.inputPrompt;
-
-                        historyMessages.push({
-                            role: 'user',
-                            content: userPrompt,
-                            key: `history-user-${index}`,
+                history.forEach((h, idx) => {
+                    if (h.inputPrompt)
+                        list.push({
+                            role: "user",
+                            content: h.inputPrompt.replace(/^User:\s*/i, ""),
+                            key: `h-user-${idx}`,
                         });
-                    }
 
-                    // 添加AI回答
-                    if (item.generatedResult) {
+                    if (h.generatedResult) {
                         try {
-                            // 尝试解析新的结构化JSON格式
-                            const resultData = JSON.parse(item.generatedResult);
+                            const obj: {
+                                text: string,
+                                toolCalls: [],
+                                aiResponse: string
+                            } = JSON.parse(h.generatedResult);
 
-                            // 处理新格式：包含text和toolCalls字段
-                            if (resultData.text !== undefined || resultData.toolCalls !== undefined) {
-                                // 添加普通文本内容
-                                if (resultData.text && resultData.text.trim()) {
-                                    historyMessages.push({
-                                        role: 'ai',
-                                        content: resultData.text,
-                                        key: `history-ai-${index}`,
-                                    });
-                                }
-
-                                // 添加工具调用
-                                if (resultData.toolCalls && resultData.toolCalls.length > 0) {
-                                    resultData.toolCalls.forEach((tool: any, toolIdx: number) => {
-                                        historyMessages.push({
-                                            role: 'tool',
-                                            content: JSON.stringify(tool),
-                                            key: `history-tool-${index}-${toolIdx}`,
-                                        });
-                                    });
-                                }
-                            }
-                            // 处理旧格式：aiResponse字段
-                            else if (resultData.aiResponse) {
-                                const aiResponse = resultData.aiResponse;
-
-                                // 检查是否包含工具调用
-                                if (aiResponse.includes('[ToolCall]')) {
-                                    // 分离工具调用和普通文本
-                                    const parts = aiResponse.split('[ToolCall]');
-
-                                    // 添加普通文本部分
-                                    if (parts[0].trim()) {
-                                        historyMessages.push({
-                                            role: 'ai',
-                                            content: parts[0].trim(),
-                                            key: `history-ai-${index}`,
-                                        });
-                                    }
-
-                                    // 添加工具调用部分
-                                    parts.slice(1).forEach((part: string, toolIdx: number) => {
-                                        if (part.trim()) {
-                                            historyMessages.push({
-                                                role: 'tool',
-                                                content: `[ToolCall] ${part}`,
-                                                key: `history-tool-${index}-${toolIdx}`,
-                                            });
-                                        }
-                                    });
-                                } else {
-                                    // 纯文本响应
-                                    historyMessages.push({
-                                        role: 'ai',
-                                        content: aiResponse,
-                                        key: `history-ai-${index}`,
-                                    });
-                                }
+                            if (obj.text || obj.toolCalls) {
+                                // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                                obj.text?.trim() &&
+                                list.push({
+                                    role: "ai",
+                                    content: obj.text,
+                                    key: `h-ai-${idx}`,
+                                });
+                                obj.toolCalls?.forEach((t: any, i: number) =>
+                                    list.push({
+                                        role: "tool",
+                                        content: JSON.stringify(t),
+                                        key: `h-tool-${idx}-${i}`,
+                                    }),
+                                );
+                            } else if (obj.aiResponse) {
+                                const segs = obj.aiResponse.split("[ToolCall]");
+                                // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                                segs[0].trim() &&
+                                list.push({
+                                    role: "ai",
+                                    content: segs[0].trim(),
+                                    key: `h-ai-${idx}`,
+                                });
+                                segs.slice(1).forEach((s: string, i: number) =>
+                                    list.push({
+                                        role: "tool",
+                                        content: `[ToolCall] ${s}`,
+                                        key: `h-tool-${idx}-${i}`,
+                                    }),
+                                );
                             } else {
-                                // 直接显示JSON数据
-                                historyMessages.push({
-                                    role: 'ai',
-                                    content: item.generatedResult,
-                                    key: `history-ai-${index}`,
+                                list.push({
+                                    role: "ai",
+                                    content: h.generatedResult,
+                                    key: `h-ai-${idx}`,
                                 });
                             }
-                        } catch (e) {
-                            // JSON解析失败，直接作为文本显示
-                            historyMessages.push({
-                                role: 'ai',
-                                content: item.generatedResult,
-                                key: `history-ai-${index}`,
+                        } catch {
+                            list.push({
+                                role: "ai",
+                                content: h.generatedResult,
+                                key: `h-ai-${idx}`,
                             });
                         }
                     }
                 });
 
-                if (historyMessages.length > 0) {
-                    setMessages(historyMessages);
-                } else {
-                    setWelcomeMessage();
-                }
+                resetMessages(list.length ? list : [{role: "ai", content: "", key: "empty"}]);
             } else {
                 setWelcomeMessage();
             }
-        } catch (error) {
-            console.error('Failed to load chat history:', error);
+            historyLoadedRef.current = true;
+        } catch (err) {
+            console.error(err);
             setWelcomeMessage();
         } finally {
             setIsLoadingHistory(false);
         }
-    }, [currentQuizId, isLoadingHistory, setWelcomeMessage]);
+    }, [currentQuizId, resetMessages, setWelcomeMessage]);
 
-    // 刷新问题列表 - 使用useCallback包装
+    /* ================================================= */
+    /*                拉取新题写入 QuestionStore          */
+    /* ================================================= */
     const refreshQuestions = useCallback(async () => {
-        if (needRefresh && currentQuizId) {
-            try {
-                const result = await getAllQuestionsInQuiz(currentQuizId);
-                if (result) {
-                    message.success('问题已生成并添加到列表中');
-                    setNeedRefresh(false);
-                }
-            } catch (error) {
-                console.error('Failed to refresh questions:', error);
-            }
-        }
-    }, [needRefresh, currentQuizId]);
-
-    // 处理流式响应 - 使用useCallback包装
-    const handleStreamResponse = useCallback(async (stream: ReadableStream<Uint8Array>, aiMessageKey: string) => {
-        if (!stream) return;
-
-        const reader = stream.getReader();
-        const decoder = new TextDecoder();
-
-        let textBuffer = '';
-        let jsonBuffer = '';
-        let isInJsonBlock = false;
-        let jsonBlockDepth = 0;
-
-        // 收集工具消息，以便批量更新
-        const toolMessages: Message[] = [];
+        if (!needRefresh || !currentQuizId) return;
 
         try {
-            while (true) {
-                const {value, done} = await reader.read();
-                if (done) break;
+            const list = await getAllQuestionsInQuiz(currentQuizId);
+            if (list) {
+                setRawQuestions(list);
+                message.success("新的题目已添加到列表");
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setNeedRefresh(false);
+        }
+    }, [needRefresh, currentQuizId, setRawQuestions]);
 
-                const chunk = decoder.decode(value, {stream: true});
+    /* ================================================= */
+    /*               处理流式响应 &rarr; store                */
+    /* ================================================= */
+    const handleStreamResponse = useCallback(
+        async (stream: ReadableStream<Uint8Array>, aiKey: string) => {
+            if (!stream) return;
 
-                // 逐字符处理，更精确地识别JSON块
-                for (let i = 0; i < chunk.length; i++) {
-                    const char = chunk[i];
+            const reader = stream.getReader();
+            const decoder = new TextDecoder();
+            let buf = "";
+            let plain = "";
+            let pendingToolMsgs: ChatMessage[] = [];
 
-                    if (char === '{' && !isInJsonBlock) {
-                        isInJsonBlock = true;
-                        jsonBlockDepth = 1;
-                        jsonBuffer = char;
-                    } else if (isInJsonBlock) {
-                        jsonBuffer += char;
+            try {
+                while (true) {
+                    const {done, value} = await reader.read();
+                    if (done) break;
 
-                        if (char === '{') {
-                            jsonBlockDepth++;
-                        } else if (char === '}') {
-                            jsonBlockDepth--;
+                    buf += decoder.decode(value, {stream: true});
 
-                            // JSON块结束
-                            if (jsonBlockDepth === 0) {
-                                try {
-                                    const jsonData = JSON.parse(jsonBuffer);
+                    /* 按行拆，SSE 每行一条指令 */
+                    while (buf.includes("\n")) {
+                        const idx = buf.indexOf("\n");
+                        const line = buf.slice(0, idx);       // ★ 不再 trim()，保持前后空格
+                        buf = buf.slice(idx + 1);
 
-                                    // 检查是否是工具调用
-                                    if (jsonData.type === 'toolCall' || jsonData.tool) {
-                                        // 添加到工具消息列表，稍后批量更新
-                                        const toolKey = `tool-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-                                        toolMessages.push({
-                                            role: 'tool',
-                                            content: jsonBuffer,
-                                            key: toolKey,
-                                        });
+                        if (line === "") continue;            // SSE 事件分隔行，忽略
 
-                                        setNeedRefresh(true);
-                                    } else {
-                                        // 普通JSON，加到文本中
-                                        textBuffer += jsonBuffer;
-                                    }
-                                } catch (e) {
-                                    // 解析失败，当作普通文本
-                                    textBuffer += jsonBuffer;
+                        if (!line.startsWith("data:")) continue;
+
+                        /* 去掉前缀，但完全保留原始内容 */
+                        const data = line.slice(5);           // 可能是 "" / JSON / 普通文本
+
+                        /* ---------- ① 空 data: ==> 换行 ---------- */
+                        if (data === "") {
+                            plain += "\n";
+                            continue;
+                        }
+
+                        /* ---------- ② 尝试解析 ToolCall ---------- */
+                        if (data[0] === "{") {
+                            try {
+                                const obj = safeParseToolCall(data);
+                                if (obj?.type === "toolCall") {
+                                    pendingToolMsgs.push({
+                                        role: "tool",
+                                        content: JSON.stringify(obj),
+                                        key: `tool-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+                                    });
+                                    setNeedRefresh(true);
+                                    continue;                       // ToolCall 不进入正文
                                 }
-
-                                // 重置JSON状态
-                                isInJsonBlock = false;
-                                jsonBuffer = '';
+                            } catch {
+                                /* fall through 当成普通文本处理 */
                             }
                         }
-                    } else {
-                        // 普通文本字符
-                        textBuffer += char;
+
+                        /* ---------- ③ 普通文本片段 ---------- */
+                        plain += data;                        // ★ 不再附加额外换行
+                    }
+
+                    /* 流式刷新 UI */
+                    patchMessage(aiKey, {
+                        content: plain.replace(/\n{3,}/g, "\n\n"), // 折叠 3 连空行
+                    });
+                    if (pendingToolMsgs.length) {
+                        appendMessages(pendingToolMsgs);
+                        pendingToolMsgs = [];
                     }
                 }
-
-                // 批量更新消息
-                if (textBuffer || toolMessages.length > 0) {
-                    setMessages(prev => {
-                        // 首先更新AI消息
-                        const updatedMessages = prev.map(msg =>
-                            msg.key === aiMessageKey
-                                ? {...msg, content: textBuffer}
-                                : msg
-                        );
-
-                        // 然后添加所有收集的工具消息
-                        if (toolMessages.length > 0) {
-                            return [...updatedMessages, ...toolMessages];
-                        }
-                        return updatedMessages;
-                    });
-
-                    // 清空工具消息列表
-                    toolMessages.length = 0;
-                }
+            } finally {
+                patchMessage(aiKey, {
+                    content: plain.replace(/\n{3,}/g, "\n\n"),
+                });
+                if (pendingToolMsgs.length) appendMessages(pendingToolMsgs);
             }
-        } catch (error) {
-            console.error('Error processing stream:', error);
-        }
-    }, []);
+        },
+        [appendMessages, patchMessage],
+    );
 
-    // 发送消息到后端 - 使用useCallback包装
+    /* ================================================= */
+    /*                   发送消息                        */
+    /* ================================================= */
     const sendMessage = useCallback(async () => {
         if (!inputValue.trim() || isLoading) return;
         if (!currentQuizId) {
-            message.error('请先创建或选择一个问卷');
+            message.error("请先创建或选择一个问卷");
             return;
         }
 
-        // 添加用户消息
-        const userMessage = {
-            role: 'user',
-            content: inputValue.trim(),
-            key: `user-${Date.now()}`,
-        };
+        const userKey = `user-${Date.now()}`;
+        const aiKey = `ai-${Date.now()}`;
 
-        setMessages(prev => [...prev, userMessage as Message]);
-        setInputValue('');
+        appendMessages([
+            {role: "user", content: inputValue.trim(), key: userKey},
+            {role: "ai", content: "", key: aiKey},
+        ]);
+        setInputValue("");
         setIsLoading(true);
 
-        // 添加空AI消息占位
-        const aiMessageKey = `ai-${Date.now()}`;
-        setMessages(prev => [...prev, {
-            role: 'ai',
-            content: '',
-            key: aiMessageKey,
-        }]);
-
         try {
-            // 发送请求 - 使用普通fetch处理流式响应
-            const response = await fetch(`${BASE_URL}/api/question/generate`, {
-                method: 'POST',
+            const resp = await fetch(`${BASE_URL}/api/question/generate`, {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
-                    'satoken': useUserStore.getState().saToken || '',
+                    "Content-Type": "application/json",
+                    satoken: useUserStore.getState().saToken || "",
                 },
                 body: JSON.stringify({
                     quizId: currentQuizId,
@@ -494,154 +363,160 @@ const AIAssistant: React.FC<{ onClose?: () => void }> = ({onClose}) => {
                     modelName,
                 }),
             });
-
-            if (!response.ok) {
-                throw new Error(`网络错误: ${response.status}`);
-            }
-
-            if (!response.body) {
-                throw new Error('服务器未返回响应流');
-            }
-
-            // 处理流式响应
-            await handleStreamResponse(response.body, aiMessageKey);
-
-        } catch (error) {
-            console.error('Error generating response:', error);
-            message.error('生成回答失败，请稍后重试');
-
-            // 更新错误消息
-            setMessages(prev => prev.map(msg =>
-                msg.key === aiMessageKey
-                    ? {...msg, content: '😢 抱歉，生成回答时出现错误，请稍后重试。'}
-                    : msg
-            ));
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            if (!resp.body) throw new Error("empty body");
+            await handleStreamResponse(resp.body, aiKey);
+        } catch (err) {
+            console.error(err);
         } finally {
             setIsLoading(false);
         }
-    }, [inputValue, isLoading, currentQuizId, handleStreamResponse, modelName]);
+    }, [
+        inputValue,
+        isLoading,
+        currentQuizId,
+        modelName,
+        appendMessages,
+        handleStreamResponse,
+    ]);
 
-    // 延迟显示加载状态，避免短时间内的闪烁
-    useEffect(() => {
-        let timer: ReturnType<typeof setTimeout>;
-        if (isLoadingHistory) {
-            timer = setTimeout(() => setShowLoadingSpinner(true), 200);
-        } else {
-            setShowLoadingSpinner(false);
-        }
-        return () => clearTimeout(timer);
-    }, [isLoadingHistory]);
-
-    // 加载历史记录和欢迎消息
+    /* ================================================= */
+    /*                       effects                     */
+    /* ================================================= */
     useEffect(() => {
         if (currentQuizId) {
             loadChatHistory();
         } else {
             setWelcomeMessage();
+            historyLoadedRef.current = false;
         }
     }, [currentQuizId, loadChatHistory, setWelcomeMessage]);
 
-    // 监听需要刷新的标志，刷新问题列表
     useEffect(() => {
         refreshQuestions();
     }, [refreshQuestions]);
 
-    // 模型选项
-    const modelOptions = useMemo(() => [
-        {value: 'gpt-4.1', label: 'gpt-4.1'},
-        {value: 'DeepSeek-V3', label: 'DeepSeek-V3'},
-        {value: 'gemini-2.5-pro-preview-03-25', label: 'gemini-2.5-pro'},
-    ], []);
+    useEffect(() => {
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        if (isLoadingHistory) {
+            timer = setTimeout(() => setShowLoadingSpinner(true), 200);
+        } else {
+            setShowLoadingSpinner(false);
+        }
+        return () => {
+            if (timer) clearTimeout(timer);
+        };
+    }, [isLoadingHistory]);
 
-    // 定义对话角色样式 - 使用useMemo缓存并解决类型问题
-    const roles = useMemo<GetProp<typeof Bubble.List, 'roles'>>(() => ({
-        ai: {
-            placement: 'start',
-            avatar: {icon: <RobotOutlined/>, style: {background: '#1677ff', color: '#fff'}},
-            messageRender: (content: string) => renderMessage(content, 'ai')
-        },
-        user: {
-            placement: 'end',
-            avatar: {icon: <UserOutlined/>, style: {background: '#87d068', color: '#fff'}},
-        },
-        tool: {
-            placement: 'start',
-            variant: 'borderless' as const,
-            avatar: {
-                style: {
-                    // 使用display:none替代visibility:hidden，避免类型问题
-                    display: 'none'
-                }
+    /* ================================================= */
+    /*                  气泡角色 / 选项                  */
+    /* ================================================= */
+    const roles = useMemo(
+        () => ({
+            ai: {
+                placement: "start",
+                avatar: {
+                    icon: <RobotOutlined/>,
+                    style: {background: "#1677ff", color: "#fff"},
+                },
+                messageRender: (c: any) => renderMessage(c, "ai"),
             },
-            messageRender: (content: string) => renderMessage(content, 'tool')
-        },
-    }), [renderMessage]);
+            user: {
+                placement: "end",
+                avatar: {
+                    icon: <UserOutlined/>,
+                    style: {background: "#87d068", color: "#fff"},
+                },
+            },
+            tool: {
+                placement: "start",
+                variant: "borderless" as const,
+                avatar: {style: {display: "none"}},
+                messageRender: (c: any) => renderMessage(c, "tool"),
+            },
+        }),
+        [renderMessage],
+    );
 
+    const modelOptions = [
+        {value: "gpt-4.1", label: "gpt-4.1"},
+        {value: "DeepSeek-V3", label: "DeepSeek-V3"},
+        {value: "gemini-2.5-pro-preview-03-25", label: "gemini-2.5-pro"},
+    ];
+
+    /* ================================================= */
+    /*                       JSX                         */
+    /* ================================================= */
     return (
         <Card
+            bordered={false}
+            style={{height: "100%", display: "flex", flexDirection: "column"}}
+            bodyStyle={{
+                flex: 1,
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+                padding: 12,
+            }}
             title={
                 <Flex justify="space-between" align="center">
                     <Badge dot={needRefresh} color="blue">
-                        <Title level={5} style={{margin: 0}}>AI问卷助手</Title>
+                        <Title level={5} style={{margin: 0}}>
+                            AI问卷助手
+                        </Title>
                     </Badge>
                     <Select
                         value={modelName}
                         onChange={setModelName}
                         options={modelOptions}
-                        style={{width: 120}}
+                        style={{width: 140}}
                         disabled={isLoading}
                     />
                 </Flex>
             }
-            extra={onClose && (
-                <Button type="text" icon={<CloseOutlined/>} onClick={onClose}/>
-            )}
-            style={{height: '100%', display: 'flex', flexDirection: 'column'}}
-            bodyStyle={{
-                flex: 1,
-                overflow: 'hidden',
-                display: 'flex',
-                flexDirection: 'column',
-                padding: '12px'
-            }}
-            bordered={false}
+            extra={
+                onClose && (
+                    <Button type="text" icon={<CloseOutlined/>} onClick={onClose}/>
+                )
+            }
         >
             {showLoadingSpinner ? (
-                <Flex align="center" justify="center" style={{flex: 1}}>
+                <Flex flex={1} align="center" justify="center">
                     <Space direction="vertical" align="center">
                         <Spin size="large"/>
-                        <Text type="secondary">加载对话历史...</Text>
+                        <Text type="secondary">加载中...</Text>
                     </Space>
                 </Flex>
             ) : (
-                <div style={{
-                    flex: 1,
-                    overflowY: 'auto',
-                    padding: '0 4px',
-                    marginBottom: 16
-                }}>
+                <div
+                    style={{
+                        flex: 1,
+                        overflowY: "auto",
+                        padding: "0 4px",
+                        marginBottom: 16,
+                    }}
+                >
                     {messages.length > 0 && (
                         <Bubble.List
                             ref={bubbleListRef}
-                            roles={roles}
+                            roles={roles as any}
                             items={messages}
-                            autoScroll={true}
+                            autoScroll
                         />
                     )}
                 </div>
             )}
 
-            <Divider style={{margin: '8px 0'}}/>
+            <Divider style={{margin: "8px 0"}}/>
 
             <Sender
                 value={inputValue}
                 onChange={setInputValue}
                 onSubmit={sendMessage}
-                placeholder={isLoading ? "AI正在生成回答..." : "请描述你需要的问卷内容..."}
+                submitType="enter"
+                placeholder={isLoading ? "AI 正在生成..." : "请描述你需要的问卷内容..."}
                 loading={isLoading}
                 disabled={isLoading || !currentQuizId || isLoadingHistory}
-                submitType="enter"
-
                 allowSpeech
             />
         </Card>
