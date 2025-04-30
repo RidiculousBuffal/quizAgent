@@ -24,11 +24,11 @@ function QuestionTest() {
         title: '您喜欢的水果有哪些？',
         isRequired: true,
         options: [
-            {id: 1, text: '苹果', value: '1'},
-            {id: 2, text: '香蕉', value: '2'},
-            {id: 3, text: '橙子', value: '3'},
-            {id: 4, text: '葡萄', value: '4'},
-            {id: 5, text: '西瓜', value: '5'},
+            {id: '1', text: '苹果', value: '1'},
+            {id: '2', text: '香蕉', value: '2'},
+            {id: '3', text: '橙子', value: '3'},
+            {id: '4', text: '葡萄', value: '4'},
+            {id: '5', text: '西瓜', value: '5'},
         ],
         allowOther: true,
         otherText: '其他水果',
@@ -36,7 +36,7 @@ function QuestionTest() {
         maxSelected: 3,
         randomizeOptions: true,
         displayInColumns: 2,
-        exclusiveOptions: [5] // 西瓜是互斥选项
+        exclusiveOptions: ['5'] // 西瓜是互斥选项
     });
 
     // 保存问题到问卷
