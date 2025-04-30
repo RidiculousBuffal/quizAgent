@@ -53,7 +53,7 @@ const DoQuizPage: React.FC = () => {
                 const hasPermission = await checkQuizPermission(Number(quizId));
 
                 if (hasPermission === false) {
-                    setPermissionError("您没有权限访问此问卷，可能需要登录或获取特定授权");
+                    setPermissionError("您没有权限访问此问卷，此问卷还没发布或者可能需要登录或获取特定授权");
                     return;
                 }
 
