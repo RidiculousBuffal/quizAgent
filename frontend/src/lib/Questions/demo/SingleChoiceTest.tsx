@@ -24,8 +24,8 @@ function SingleChoiceTest() {
         title: '请选择您的性别',
         isRequired: true,
         options: [
-            {id: 1, text: '男', value: '1'},
-            {id: 2, text: '女', value: '2'}
+            {id: '1', text: '男', value: '1'},
+            {id: '2', text: '女', value: '2'}
         ]
     });
 
