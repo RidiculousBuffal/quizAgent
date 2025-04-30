@@ -1,2 +1,2 @@
 alter table quizquestionanswer
-    add answerTime timestamp null;
+    add answerTime timestamp not null default now();
