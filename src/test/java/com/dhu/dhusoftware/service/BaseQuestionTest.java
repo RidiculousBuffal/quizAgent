@@ -17,9 +17,9 @@ public class BaseQuestionTest {
     @Test
     public void testGenerateQuestion() {
         // 测试参数
-        String userId = "ha1cwqjsdxj8";
-        Long quizId = 2L;
-        String question = "出一些历史方面的题目,1道单选题,1道多选题,1道填空题";
+        String userId = "fak8idt8w8nc";
+        Long quizId = 43L;
+        String question = "出一些原神方面的题目,2道单选题,3道多选题,1道填空题";
         String modelName = "gpt-4o-2024-11-20";
 
         // 调用服务方法

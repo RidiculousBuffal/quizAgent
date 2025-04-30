@@ -15,9 +15,9 @@ class StreamingQuestionTest {
     @Test
     void testStreamQuestion() {
         // ==== 测试参数 ====
-        String userId = "ha1cwqjsdxj8";
-        Long quizId = 5L;
-        String question = "出一些历史方面的题目,1道单选题,1道多选题,1道填空题";
+        String userId = "fak8idt8w8nc";
+        Long quizId = 43L;
+        String question = "出一些崩坏星穹铁道方面的题目,2道单选题,2道多选题,2道填空题";
         String model = "gpt-4o-2024-11-20";
 
         // ==== 订阅流并实时打印 ====
@@ -26,7 +26,5 @@ class StreamingQuestionTest {
                 .doOnError(Throwable::printStackTrace)        // 打印异常
                 .doOnComplete(() -> System.out.println("\n--- stream completed ---"))
                 .blockLast();
-
-
     }
 }
