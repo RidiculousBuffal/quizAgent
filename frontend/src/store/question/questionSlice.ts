@@ -1,8 +1,8 @@
-import { BaseQuestion } from "../../lib/Questions/BaseQuestion";
-import { StateCreator } from "zustand/vanilla";
-import { QuestionFactory } from "../../lib/Questions/QuestionFactory";
-import { MiddlewareTypes } from "../baseType.ts";
-import { arrayMove } from '@dnd-kit/sortable';
+import {BaseQuestion} from "../../lib/Questions/BaseQuestion";
+import {StateCreator} from "zustand/vanilla";
+import {QuestionFactory} from "../../lib/Questions/QuestionFactory";
+import {MiddlewareTypes} from "../baseType.ts";
+import {arrayMove} from '@dnd-kit/sortable';
 import {QuestionState} from "./QuestionStore.ts";
 
 export type QuestionAnswer = {
@@ -49,7 +49,7 @@ export const createQuestionSlice: StateCreator<
         set({
             questionAnswer: questions.map((q, i) => ({
                 question: toQuestionInstance(q),
-                answer: answers[i],
+                answer: typeof answers[i] == 'string' ? JSON.parse(answers[i]) : answers[i],
             })),
         });
     },
@@ -57,7 +57,7 @@ export const createQuestionSlice: StateCreator<
     setAnswer: (id, newAnswer) => {
         set({
             questionAnswer: get().questionAnswer.map((qa) =>
-                qa.question.id === id ? { ...qa, answer: newAnswer } : qa
+                qa.question.id === id ? {...qa, answer: newAnswer} : qa
             ),
         });
     },
@@ -81,7 +81,7 @@ export const createQuestionSlice: StateCreator<
                 qa.question.sort = idx;          // 或 idx + 1，随你习惯
             });
 
-            return { questionAnswer: moved };
+            return {questionAnswer: moved};
         });
     },
 
@@ -95,7 +95,7 @@ export const createQuestionSlice: StateCreator<
         set({
             questionAnswer: [
                 ...get().questionAnswer,
-                { question: toQuestionInstance(question), answer: null }
+                {question: toQuestionInstance(question), answer: null}
             ]
         });
     },
@@ -104,7 +104,7 @@ export const createQuestionSlice: StateCreator<
         set({
             questionAnswer: get().questionAnswer.map((qa) =>
                 qa.question.id === id
-                    ? { ...qa, question: toQuestionInstance(updatedQuestion) }
+                    ? {...qa, question: toQuestionInstance(updatedQuestion)}
                     : qa
             ),
         });
