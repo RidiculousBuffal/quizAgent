@@ -254,7 +254,7 @@ const MultipleChoicePreviewComponent: React.FC<MultipleChoicePreviewProps> = ({
                     {displayOptions.map((opt) => (
                         <Checkbox
                             key={opt.id || opt.key}
-                            value={opt.id || opt.key}
+                            value={opt.value}
                             disabled={
                                 safeValue.some((v) =>
                                     exclusiveOptions.includes(v),
