@@ -28,6 +28,7 @@
     "@react-pdf-viewer/get-file": "^3.12.0",
     "@react-three/drei": "^9.76.5",
     "@react-three/fiber": "^8.12.1",
+    "@types/d3-cloud": "^1.2.9",
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^22.9.3",
     "@types/react-redux": "^7.1.34",
@@ -35,6 +36,7 @@
     "antd": "^5.24.3",
     "antd-style": "^3.7.1",
     "auto-zustand-selectors-hook": "^3.0.1",
+    "d3-cloud": "^1.2.7",
     "dayjs": "^1.11.13",
     "immer": "^10.1.1",
     "lucide-react": "^0.469.0",
@@ -45,8 +47,10 @@
     "react-layout-kit": "^1.9.0",
     "react-router": "^7.0.1",
     "react-router-dom": "^7.0.1",
+    "recharts": "^2.15.3",
     "three": "^0.152.2",
     "uuid": "^11.1.0",
+    "xlsx": "^0.18.5",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
