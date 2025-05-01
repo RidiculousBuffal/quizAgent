@@ -14,6 +14,11 @@ export interface BaseQuestionPreviewParams {
     question: any
 }
 
+export interface BaseDisplayParams {
+    question: any,
+    answer: any
+}
+
 export interface BaseQuestionEditParams {
     question: any,
     onChange: (question: any) => void;
@@ -43,6 +48,7 @@ export abstract class BaseQuestion {
     //组件
     component: React.ComponentType<BaseQuestionEditParams>;
     previewComponent: React.ComponentType<BaseQuestionPreviewParams>;
+    displayComponent: React.ComponentType<BaseDisplayParams>
 
     // 构造函数
     constructor(params: BaseQuestionParams) {
@@ -58,12 +64,15 @@ export abstract class BaseQuestion {
         // 子类需要实现这两个属性
         this.component = this.getComponent();
         this.previewComponent = this.getPreviewComponent();
+        this.displayComponent = this.getDisplayComponent();
     }
 
     //抽象方法
     abstract getComponent(): React.ComponentType<BaseQuestionEditParams>;
 
     abstract getPreviewComponent(): React.ComponentType<BaseQuestionPreviewParams>;
+
+    abstract getDisplayComponent(): React.ComponentType<BaseDisplayParams>;
 
     abstract getDefaultValue(): any;
 

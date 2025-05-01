@@ -1,8 +1,11 @@
-import {BaseQuestion} from "../BaseQuestion.ts";
+import {BaseDisplayParams, BaseQuestion} from "../BaseQuestion.ts";
 import {QuestionOption, SingleChoiceQuestionParams} from "../radio/radio.ts";
 import MultipleChoiceEditComponent from "./MultiChoiceEdit.tsx";
 import MultipleChoicePreviewComponent from "./MultiChoicePreview.tsx";
 import {v4 as uuid} from 'uuid'
+import React from "react";
+import SingleRadioDisplay from "../radio/SingleRadioDisplay.tsx";
+import MultiChoiceDisplay from "./MultiChoiceDisplay.tsx";
 
 export interface MultiChoiceParams extends SingleChoiceQuestionParams {
     minSelected?: number;
@@ -134,6 +137,10 @@ export class MultipleChoiceQuestion extends BaseQuestion {
             text: text,
             value: uuid()
         });
+    }
+
+    getDisplayComponent(): React.ComponentType<BaseDisplayParams> {
+        return MultiChoiceDisplay;
     }
 
     removeOption(optionId: string): void {

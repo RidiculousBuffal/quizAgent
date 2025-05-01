@@ -1,7 +1,10 @@
 import {v4 as uuid} from 'uuid'
-import {BaseQuestion, BaseQuestionParams} from "../BaseQuestion.ts";
+import {BaseDisplayParams, BaseQuestion, BaseQuestionParams} from "../BaseQuestion.ts";
 import SingleRadioEdit from "./SingleRadioEdit.tsx";
 import SingleRadioPreview from "./SingleRadioPreview.tsx";
+import {json} from "node:stream/consumers";
+import React from "react";
+import SingleRadioDisplay from "./SingleRadioDisplay.tsx";
 
 export interface QuestionOption {
     id: string;
@@ -93,5 +96,9 @@ export class SingleChoiceQuestion extends BaseQuestion {
 
     removeOption(optionId: string): void {
         this.options = this.options.filter(opt => opt.id !== optionId);
+    }
+
+    getDisplayComponent(): React.ComponentType<BaseDisplayParams> {
+        return SingleRadioDisplay;
     }
 }

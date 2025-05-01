@@ -1,6 +1,9 @@
-import { BaseQuestion, BaseQuestionParams } from "../BaseQuestion.ts";
+import {BaseDisplayParams, BaseQuestion, BaseQuestionParams} from "../BaseQuestion.ts";
 import InputEdit from "./inputEdit.tsx";
 import InputPreview from "./inputPreview.tsx";
+import React from "react";
+import SingleRadioDisplay from "../radio/SingleRadioDisplay.tsx";
+import FillBlankDisplay from "./FillBlankDisplay.tsx";
 
 export interface FillBlankParams extends BaseQuestionParams {
     blankCount: number;                // 填空数量
@@ -61,7 +64,7 @@ export class FillBlankQuestion extends BaseQuestion {
         if (this.isRequired) {
             const isEmpty = values.some(value => !value || value.trim() === '');
             if (isEmpty) {
-                return { isValid: false, message: '此题为必答题，所有填空都需要填写' };
+                return {isValid: false, message: '此题为必答题，所有填空都需要填写'};
             }
         }
 
@@ -84,6 +87,10 @@ export class FillBlankQuestion extends BaseQuestion {
         }
 
         return true;
+    }
+
+    getDisplayComponent(): React.ComponentType<BaseDisplayParams> {
+        return FillBlankDisplay;
     }
 
     toJSON(): object {
