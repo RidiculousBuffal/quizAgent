@@ -32,6 +32,6 @@ public interface QuizQuestionAnswerMapper {
             "WHERE qq.quizId = #{quizId}")
     List<QuizAnswerDTO> getAnswerListByQuizId(String quizId);
 
-    @Select("select question.questionName, question.questionDescription, quizquestionanswer.details, question.questionDetails from question, quizquestionanswer where question.questionId = quizquestionanswer.questionId")
+    @Select("select quizquestionanswer.quizId,quizquestionanswer.details,user.userName from  quizquestionanswer left join user on quizquestionanswer.answerUser = user.userId  where quizquestionanswer.uniqueSubmitId=#{uniqueSubmitId}")
     List<SpecificAnswerDTO> getAnswerByUniqueSubmitId(String uniqueSubmitId);
 }

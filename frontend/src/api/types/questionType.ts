@@ -1,4 +1,5 @@
 import {ALLQuestionTypes} from "../../lib/Questions/QuestionType.ts";
+import {BaseQuestion} from "../../lib/Questions/BaseQuestion.ts";
 
 type ValueOf<T> = T[keyof T];
 export type questionTypeAPI = {
@@ -7,6 +8,7 @@ export type questionTypeAPI = {
     typeDescription: string,
     typeSchema?: string
 }
+
 export interface QuizDto {
     quizId: number;
     quizName: string;
@@ -28,9 +30,8 @@ export interface quizDisplayType {
 }
 
 export interface SpecificAnswerDTO {
-    questionName: string;
-    questionDescription: string;
-    details: string;
-    questionDetails: string;
-    answer: string;
+    question: BaseQuestion[];
+    answer: string[];
+    user: string | null;
+
 }

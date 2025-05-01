@@ -12,6 +12,7 @@ import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/quizQuestionAnswer")
@@ -21,7 +22,7 @@ public class QuizQuestionAnswerController {
     private QuizQuestionAnswerService quizQuestionAnswerService;
 
     @GetMapping("/getTotalResponse")
-    public SaResult getTotalResponse (){
+    public SaResult getTotalResponse() {
         try {
             String userId = StpUtil.getLoginIdAsString();
             int totalUser = quizQuestionAnswerService.getTotalResponse(userId);
@@ -45,7 +46,7 @@ public class QuizQuestionAnswerController {
     }
 
     @GetMapping("/getSpecifiedResponseNum/{quizId}")
-    public SaResult getSpecifiedResponseNum (@PathVariable String quizId) {
+    public SaResult getSpecifiedResponseNum(@PathVariable String quizId) {
         try {
             String userId = StpUtil.getLoginIdAsString();
             int totalUser = quizQuestionAnswerService.getSpecifiedResponseNum(quizId);
@@ -69,7 +70,7 @@ public class QuizQuestionAnswerController {
     }
 
     @GetMapping("/getAnswerListByQuizId/{quizId}")
-    public SaResult getAnswerListByQuizId(@PathVariable String quizId){
+    public SaResult getAnswerListByQuizId(@PathVariable String quizId) {
         try {
             List<QuizAnswerDTO> answerList = quizQuestionAnswerService.getAnswerListByQuizId(quizId);
             return SaResult.ok()
@@ -94,7 +95,7 @@ public class QuizQuestionAnswerController {
     @GetMapping("/getAnswerByUniqueSubmitId/{uniqueSubmitId}")
     public SaResult getAnswerByUniqueSubmitId(@PathVariable String uniqueSubmitId) {
         try {
-            List<SpecificAnswerDTO> specificAnswerDTOS = quizQuestionAnswerService.getAnswerByUniqueSubmitId(uniqueSubmitId);
+            Map<String, Object> specificAnswerDTOS = quizQuestionAnswerService.getAnswerByUniqueSubmitId(uniqueSubmitId);
             return SaResult.ok()
                     .setCode(COMMON.SUCCESS_CODE)
                     .setMsg(QuizConstants.SUCCESS_MSG)
