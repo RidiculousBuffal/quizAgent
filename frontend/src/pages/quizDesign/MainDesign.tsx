@@ -176,7 +176,6 @@ const MainDesign: React.FC = () => {
                 Object.assign(params, {
                     options: [
                         {key: uuid(), text: '选项 1', value: uuid()},
-                        {key: uuid(), text: '选项 2', value: uuid()},
                     ],
                     isRequired: false,
                     randomizeOptions: false,
