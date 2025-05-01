@@ -6,7 +6,7 @@ import type { TableProps } from 'antd';
 const { Text } = Typography;
 
 interface QuizType {
-    quizId: string;
+    quizId: number;
     quizName: string;
     quizDescription: string;
     quizStartTime: string;

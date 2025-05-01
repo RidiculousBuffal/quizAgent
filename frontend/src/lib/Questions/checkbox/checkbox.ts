@@ -1,4 +1,4 @@
-import {BaseDisplayParams, BaseQuestion} from "../BaseQuestion.ts";
+import {BaseDisplayParams, BaseQuestion, BaseStatisticsProps} from "../BaseQuestion.ts";
 import {QuestionOption, SingleChoiceQuestionParams} from "../radio/radio.ts";
 import MultipleChoiceEditComponent from "./MultiChoiceEdit.tsx";
 import MultipleChoicePreviewComponent from "./MultiChoicePreview.tsx";
@@ -6,6 +6,8 @@ import {v4 as uuid} from 'uuid'
 import React from "react";
 import SingleRadioDisplay from "../radio/SingleRadioDisplay.tsx";
 import MultiChoiceDisplay from "./MultiChoiceDisplay.tsx";
+import MultipleChoiceStatistics from "./MultipleChoiceStatistics.tsx";
+import {json} from "node:stream/consumers";
 
 export interface MultiChoiceParams extends SingleChoiceQuestionParams {
     minSelected?: number;
@@ -159,5 +161,9 @@ export class MultipleChoiceQuestion extends BaseQuestion {
 
     isExclusiveOption(optionId: string): boolean {
         return this.exclusiveOptions.includes(optionId);
+    }
+
+    getStatisticsComponent(): React.ComponentType<BaseStatisticsProps> {
+        return MultipleChoiceStatistics;
     }
 }

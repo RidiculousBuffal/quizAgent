@@ -1,7 +1,10 @@
 package com.dhu.dhusoftware.service;
 
 
+import cn.dev33.satoken.stp.StpUtil;
+import com.dhu.dhusoftware.dto.AnswerResponse;
 import com.dhu.dhusoftware.dto.QuizAnswerDTO;
+import com.dhu.dhusoftware.dto.QuizDto;
 import com.dhu.dhusoftware.dto.SpecificAnswerDTO;
 import com.dhu.dhusoftware.mapper.QuizQuestionAnswerMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -13,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.LongBuffer;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,6 +39,34 @@ public class QuizQuestionAnswerService {
 
     public List<QuizAnswerDTO> getAnswerListByQuizId(String quizId) {
         return quizQuestionAnswerMapper.getAnswerListByQuizId(quizId);
+    }
+
+    public List<Map<String, Object>> getAllAnswersInOneQuiz(Long quizId) throws JsonProcessingException {
+        List<Map<String, Object>> questions = questionService.getQuizQuestionDetailsByQuizId(quizId);
+        List<Map<String, Object>> res = new ArrayList<>();
+        questions.forEach(x -> {
+            Map<String, Object> inner = new HashMap<>();
+            inner.put("question", x);
+            Long questionId = (Long) x.get("id");
+            List<AnswerResponse> allAnswersInOneQuizByQuizIdAndQuestionId = quizQuestionAnswerMapper.getAllAnswersInOneQuizByQuizIdAndQuestionId(quizId, questionId);
+            List<Map<String, Object>> answers = new ArrayList<>();
+            final Long[] cnt = {1L};
+            allAnswersInOneQuizByQuizIdAndQuestionId.forEach(y -> {
+                if (y.getUsername() == null) {
+                    y.setUsername("匿名用户 " + cnt[0]);
+                    cnt[0]++;
+                }
+                answers.add(y.getMap());
+            });
+            inner.put("answers", answers);
+            res.add(inner);
+        });
+        return res;
+    }
+
+    public List<QuizDto> getQuizzesHasResp() {
+        String userId = StpUtil.getLoginIdAsString();
+        return quizQuestionAnswerMapper.getQuizzesHasResp(userId);
     }
 
     public Map<String, Object> getAnswerByUniqueSubmitId(String uniqueSubmitId) throws JsonProcessingException {

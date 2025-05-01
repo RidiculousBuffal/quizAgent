@@ -1,9 +1,11 @@
-import {BaseDisplayParams, BaseQuestion, BaseQuestionParams} from "../BaseQuestion.ts";
+import {BaseDisplayParams, BaseQuestion, BaseQuestionParams, BaseStatisticsProps} from "../BaseQuestion.ts";
 import InputEdit from "./inputEdit.tsx";
 import InputPreview from "./inputPreview.tsx";
 import React from "react";
 import SingleRadioDisplay from "../radio/SingleRadioDisplay.tsx";
 import FillBlankDisplay from "./FillBlankDisplay.tsx";
+import FillBlankStatistics from "./FillBlankStatistics.tsx";
+import {json} from "node:stream/consumers";
 
 export interface FillBlankParams extends BaseQuestionParams {
     blankCount: number;                // 填空数量
@@ -103,5 +105,9 @@ export class FillBlankQuestion extends BaseQuestion {
 
     static fromJSON(json: any): FillBlankQuestion {
         return new FillBlankQuestion(json);
+    }
+
+    getStatisticsComponent(): React.ComponentType<BaseStatisticsProps> {
+        return FillBlankStatistics;
     }
 }

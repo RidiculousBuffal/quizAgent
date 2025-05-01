@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {Badge, Button, Popconfirm, Space, Table, Tag} from 'antd';
+import {Badge, Button, Popconfirm, Space, Table} from 'antd';
 import { SettingOutlined } from "@ant-design/icons";
 import type {PresetStatusColorType} from "antd/es/_util/colors";
 

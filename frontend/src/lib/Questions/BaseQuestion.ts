@@ -1,5 +1,6 @@
 import React from "react";
 import {QuestionType} from "./QuestionType";
+import {SingleChoiceQuestion} from "./radio/radio.ts";
 
 export interface BaseValidationRule {
     required: boolean;
@@ -35,6 +36,14 @@ export interface BaseQuestionParams {
     validationRules?: BaseValidationRule[];
 }
 
+export interface BaseStatisticsProps {
+    question: any;
+    answers: Array<{
+        user: string;
+        parsedAnswer: any;
+    }>;
+}
+
 export abstract class BaseQuestion {
     //基本属性:
     id: number;
@@ -49,6 +58,7 @@ export abstract class BaseQuestion {
     component: React.ComponentType<BaseQuestionEditParams>;
     previewComponent: React.ComponentType<BaseQuestionPreviewParams>;
     displayComponent: React.ComponentType<BaseDisplayParams>
+    statisticComponent: React.ComponentType<BaseStatisticsProps>
 
     // 构造函数
     constructor(params: BaseQuestionParams) {
@@ -65,6 +75,7 @@ export abstract class BaseQuestion {
         this.component = this.getComponent();
         this.previewComponent = this.getPreviewComponent();
         this.displayComponent = this.getDisplayComponent();
+        this.statisticComponent = this.getStatisticsComponent();
     }
 
     //抽象方法
@@ -77,6 +88,8 @@ export abstract class BaseQuestion {
     abstract getDefaultValue(): any;
 
     abstract validate(value: any): boolean | { isValid: boolean, message?: string };
+
+    abstract getStatisticsComponent(): React.ComponentType<BaseStatisticsProps>
 
     toJSON(): object {
         return {

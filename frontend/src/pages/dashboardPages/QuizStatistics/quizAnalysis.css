@@ -1,0 +1,17 @@
+.quiz-card {
+    transition: all 0.3s;
+}
+
+.quiz-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.quiz-statistics .ant-card {
+    margin-bottom: 16px;
+}
+
+.ant-statistic-title {
+    font-size: 14px;
+}
+

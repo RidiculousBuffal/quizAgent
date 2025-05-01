@@ -10,8 +10,9 @@ import '../index.css'
 import DoQuizPage from "./pages/doQuiz/DoQuizPage.tsx";
 import QuizCompletionPage from "./pages/doQuiz/QuizCompletionPage.tsx";
 import QuizSquare from "./pages/home/QuizSquare.tsx";
-
-// Protected route component
+import QuizAnalysisDetail from "./pages/dashboardPages/QuizAnalysisDetail.tsx";
+import QuizAnalysisCenter from "./pages/dashboardPages/QuizAnalysis.tsx";
+import ReceivedQuizzes from "./pages/dashboardPages/ReceivedQuizzes.tsx";
 
 
 function MyApp() {
@@ -26,8 +27,12 @@ function MyApp() {
             <Route path="*" element={<Navigate to="/"/>}/>
             <Route path="/quizdesign" element={<MainDesign/>}/>
             <Route path="/doQuiz/:quizId" element={<DoQuizPage/>}/>
-            <Route path="/quizComplete" element={<QuizCompletionPage />}/>
-            <Route path="/quizSquare" element={<QuizSquare />}/>
+            <Route path="/quizComplete" element={<QuizCompletionPage/>}/>
+            <Route path="/quizSquare" element={<QuizSquare/>}/>
+
+            <Route path="/quiz-analysis" element={<ProtectedRoute element={<QuizAnalysisCenter/>}/>}/>
+            <Route path="/quiz-analysis/:quizId" element={<ProtectedRoute element={<QuizAnalysisDetail/>}/>}/>
+            <Route path="/quiz-responses/:quizId" element={<ProtectedRoute element={<ReceivedQuizzes/>}/>}/>
         </Routes>
         {/*<DebugFloater></DebugFloater>*/}
     </>

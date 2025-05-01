@@ -21,6 +21,21 @@ public class QuizQuestionAnswerController {
     @Resource
     private QuizQuestionAnswerService quizQuestionAnswerService;
 
+    @GetMapping("/getAnalysisDataInQuiz/{quizId}")
+    public SaResult getAnalysisDataInQuiz(@PathVariable Long quizId) {
+        try {
+            List<Map<String, Object>> allAnswersInOneQuiz = quizQuestionAnswerService.getAllAnswersInOneQuiz(quizId);
+            return SaResult.ok()
+                    .setCode(COMMON.SUCCESS_CODE)
+                    .setMsg(QuizConstants.SUCCESS_MSG)
+                    .setData(allAnswersInOneQuiz);
+        } catch (Exception e) {
+            return SaResult.ok()
+                    .setCode(COMMON.FAILURE_CODE)
+                    .setMsg(QuizConstants.FAILURE_MSG);
+        }
+    }
+
     @GetMapping("/getTotalResponse")
     public SaResult getTotalResponse() {
         try {
@@ -45,10 +60,14 @@ public class QuizQuestionAnswerController {
         }
     }
 
+    @GetMapping("/getQuizzesHasResp")
+    public SaResult getQuizzesHasResp() {
+        return SaResult.ok().setCode(COMMON.SUCCESS_CODE).setMsg(QuizConstants.SUCCESS_MSG).setData(quizQuestionAnswerService.getQuizzesHasResp());
+    }
+
     @GetMapping("/getSpecifiedResponseNum/{quizId}")
     public SaResult getSpecifiedResponseNum(@PathVariable String quizId) {
         try {
-            String userId = StpUtil.getLoginIdAsString();
             int totalUser = quizQuestionAnswerService.getSpecifiedResponseNum(quizId);
             return SaResult.ok()
                     .setCode(COMMON.SUCCESS_CODE)

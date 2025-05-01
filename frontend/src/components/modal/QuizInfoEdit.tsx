@@ -8,7 +8,7 @@ const { RangePicker } = DatePicker;
 export interface QuizInfoType {
     title: string;
     description: string;
-    timeRange: Dayjs[]
+    timeRange?: Dayjs[]
 }
 
 interface QuizModalProps {

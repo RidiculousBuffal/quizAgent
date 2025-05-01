@@ -1,17 +1,17 @@
 // src/components/dashboard/ReceivedQuizzes.tsx
 import React, {useEffect, useState} from 'react';
-import {Typography, Card, Button, Space, Modal} from 'antd';
+import {Typography, Card, Button, Space, Modal, Alert} from 'antd';
 import {DownloadOutlined} from '@ant-design/icons';
 import {getQuizList} from '../../api/quizApi';
-import {getAnswerList, getTotalResponseByQuizId} from '../../api/quizQuestionAnswerApi';
+import {getAnswerList, getQuizzesHasResp, getTotalResponseByQuizId} from '../../api/quizQuestionAnswerApi';
 import QuizList from './receiveQuizes/QuizList';
 import ResponseList from './receiveQuizes/ResponseList';
 import ResponseDetail from './receiveQuizes/ResponseDetail';
 
 const {Title} = Typography;
 
-interface QuizType {
-    quizId: string;
+export interface QuizType {
+    quizId: number;
     quizName: string;
     quizDescription: string;
     quizStartTime: string;
@@ -44,14 +44,14 @@ const ReceivedQuizzes: React.FC = () => {
         const fetchQuizzes = async () => {
             try {
                 setLoading(true);
-                const data = await getQuizList();
+                const data = await getQuizzesHasResp()
                 // 只保留已发布的问卷
-                const publishedQuizzes = (data as QuizType[]).filter(quiz => quiz.status === 1);
-                setQuizzes(publishedQuizzes);
+
+                setQuizzes(data!);
 
                 // 为每个问卷获取回复数
                 const counts: { [key: string]: number } = {};
-                for (const quiz of publishedQuizzes) {
+                for (const quiz of data!) {
                     try {
                         const count = await getTotalResponseByQuizId(quiz.quizId);
                         counts[quiz.quizId] = count ?? 0;
@@ -105,11 +105,11 @@ const ReceivedQuizzes: React.FC = () => {
     return (
         <div style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
             <Title level={4} style={{marginBottom: '16px'}}>收到的问卷回复</Title>
-
+            <Alert style={{marginBottom:"16px",borderRadius:"0"}} message="仅至少有1个回复的问卷会被列在此处" type="info" />
             {/* 问卷列表或回复列表 */}
             {selectedQuiz === null ? (
                 <Card
-                    title="我的已发布问卷"
+
                     style={{flex: 1, overflowY: 'auto'}}
                 >
                     <QuizList
