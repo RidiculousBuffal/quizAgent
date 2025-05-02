@@ -29,7 +29,7 @@ const extractKeywords = (texts: string[]): {word: string, count: number}[] => {
         const words = text.toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").split(/\s+/);
         words.forEach(word => {
             // 过滤过短的词
-            if (word.length > 1) {
+            if (word.length >= 1) {
                 wordCount[word] = (wordCount[word] || 0) + 1;
             }
         });
@@ -38,7 +38,7 @@ const extractKeywords = (texts: string[]): {word: string, count: number}[] => {
     // 转换为数组并排序
     return Object.entries(wordCount)
         .map(([word, count]) => ({ word, count }))
-        .filter(item => item.count > 1) // 只保留出现次数大于1的词
+        .filter(item => item.count >= 1) // 只保留出现次数大于1的词
         .sort((a, b) => b.count - a.count)
         .slice(0, 50); // 取出现频率最高的50个词
 };
