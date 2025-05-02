@@ -29,7 +29,7 @@ public interface QuizMapper {
     @Select("SELECT * FROM quiz")
     List<Quiz> listAllQuizzes();
 
-    @Update("UPDATE quiz SET status = IF(NOW() BETWEEN quiz.quizStartTime AND quiz.quizEndTime, 1, 0)")
+    @Update("UPDATE quiz SET status = IF(NOW() > quiz.quizEndTime, 0,status)")
     void updateQuizStatusByTime();
 
     @Select("select quiz.creator from quiz, quizpermission where quiz.quizId = quizpermission.quizId and quizpermission.quizId = #{quizId}")

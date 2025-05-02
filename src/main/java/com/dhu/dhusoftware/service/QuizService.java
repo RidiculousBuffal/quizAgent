@@ -206,11 +206,8 @@ public class QuizService {
     }
 
     /**
-     * 定时任务方法，用于根据当前时间更新问卷状态。
-     * 该方法每隔30秒执行一次，调用 quizMapper.updateQuizStatusByTime() 方法，
-     * 根据问卷的开始时间和结束时间自动更新问卷的状态。
-     * 如果当前时间在问卷的开始时间和结束时间之间，问卷状态将被设置为有效（1），
-     * 否则设置为无效（0）。
+     *  定时任务方法，用于根据当前时间更新问卷状态。
+        当前时间大于结束时间自动取消发布
      */
     @Scheduled(fixedRate = 30000)
     public void updateQuizStatus() {
