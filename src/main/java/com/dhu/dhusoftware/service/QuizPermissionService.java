@@ -25,7 +25,6 @@ public class QuizPermissionService {
 
     @Autowired
     private QuizPermissionTypeMapper quizPermissionTypeMapper;
-
     @Autowired
     private QuizMapper quizMapper;
 
@@ -38,7 +37,11 @@ public class QuizPermissionService {
     public Quizpermission getPermissionByQuizId(Long quizId) {
         Quizpermission quizpermission = quizPermissionMapper.getQuizPermissionByQuizId(quizId);
         if (quizpermission == null) {
-            throw new IllegalArgumentException(QuizConstants.NOT_FOUND);
+            QuizPermissionDto quizPermissionDto = new QuizPermissionDto();
+            quizPermissionDto.setQuizId(quizId);
+            quizPermissionDto.setQuizPermissionTypeId(quizPermissionTypeMapper.getQuizPermissionIdByType(QuizPermissionTypeConstants.PUBLIC));
+            this.updateOrInsertQuizPermission(quizPermissionDto);
+            quizpermission = quizPermissionMapper.getQuizPermissionByQuizId(quizId);
         }
 
         return quizpermission;
@@ -121,9 +124,11 @@ public class QuizPermissionService {
             quizPermissionMapper.addQuizPermission(quizpermission);
         } else {
             String quizCreatorId = quizMapper.getCreatorFromQuizPermissionByQuizId(quizpermission);
+            System.out.println(quizCreatorId);
             String curUserId = StpUtil.getLoginIdAsString();
+            System.out.println(curUserId);
             // 这里对操作者和quiz的创建者进行验证
-            if (Objects.equals(quizCreatorId, curUserId)) {
+            if (Objects.equals(quizCreatorId, curUserId) || quizCreatorId == null) {
                 quizPermissionMapper.updateQuizPermission(quizpermission);
             } else {
                 throw new SecurityException(QuizConstants.PERMISSION_DENIED_MSG);

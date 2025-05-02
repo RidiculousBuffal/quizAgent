@@ -1,6 +1,5 @@
 import React from "react";
 import {QuestionType} from "./QuestionType";
-import {SingleChoiceQuestion} from "./radio/radio.ts";
 
 export interface BaseValidationRule {
     required: boolean;

@@ -1,0 +1,170 @@
+/* essay.css */
+/* 现有的essay.css基础上添加 */
+
+/* KaTeX样式增强 */
+.katex-display {
+    margin: 1.5em 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.katex-inline {
+    display: inline-block;
+    margin: 0 0.2em;
+    line-height: normal;
+}
+
+.katex-error {
+    color: #e53935;
+    background-color: #ffebee;
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+
+/* Mermaid相关样式 */
+.mermaid-container {
+    width: 100%;
+    overflow-x: auto;
+    text-align: center;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.mermaid-container svg {
+    margin: 0 auto;
+    max-width: 100%;
+}
+
+.error-message {
+    color: #e53935;
+    padding: 16px;
+    border: 1px dashed #ffcdd2;
+    background-color: #ffebee;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+/* 增强MD编辑器外观 */
+.w-md-editor-toolbar {
+    border-radius: 4px 4px 0 0 !important;
+}
+
+.w-md-editor-content {
+    border-radius: 0 0 4px 4px !important;
+}
+
+.markdown-features-hint {
+    padding: 8px 12px;
+    background-color: #f0f7ff;
+    border-radius: 4px;
+    border-left: 4px solid #1890ff;
+    margin-bottom: 16px;
+}
+.markdown-editor-container {
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.markdown-editor-container .w-md-editor {
+    box-shadow: none;
+    border: 1px solid #d9d9d9;
+}
+
+.markdown-editor-container .w-md-editor:hover {
+    border-color: #4096ff;
+}
+
+.markdown-editor-container .w-md-editor-toolbar {
+    border-bottom: 1px solid #f0f0f0;
+    background-color: #fafafa;
+}
+
+.markdown-display {
+    padding: 16px;
+    background-color: #fafafa;
+    border-radius: 4px;
+    border: 1px solid #f0f0f0;
+}
+
+.markdown-display h1,
+.markdown-display h2,
+.markdown-display h3,
+.markdown-display h4,
+.markdown-display h5,
+.markdown-display h6 {
+    margin-top: 24px;
+    margin-bottom: 16px;
+}
+
+.markdown-display h1 {
+    font-size: 28px;
+}
+
+.markdown-display h2 {
+    font-size: 24px;
+}
+
+.markdown-display code {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+.markdown-display pre {
+    background-color: #f6f8fa;
+    padding: 16px;
+    border-radius: 6px;
+    overflow: auto;
+}
+
+.markdown-display blockquote {
+    padding-left: 16px;
+    border-left: 4px solid #ddd;
+    color: #666;
+    margin: 16px 0;
+}
+
+.markdown-display ul,
+.markdown-display ol {
+    padding-left: 24px;
+    margin: 16px 0;
+}
+
+.markdown-display table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+}
+
+.markdown-display table th,
+.markdown-display table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.markdown-display table th {
+    background-color: #f0f0f0;
+    text-align: left;
+}
+
+.markdown-display img {
+    max-width: 100%;
+    margin: 16px 0;
+}
+
+.text-display {
+    padding: 16px;
+    background-color: #fafafa;
+    border-radius: 4px;
+    border: 1px solid #f0f0f0;
+    white-space: pre-wrap;
+    min-height: 120px;
+}
+
+.word-count {
+    margin-top: 8px;
+    text-align: right;
+    color: #888;
+    font-size: 12px;
+}

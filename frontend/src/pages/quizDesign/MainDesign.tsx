@@ -64,22 +64,28 @@ const questionTypes: {
 }[] = [
     {
         key: 'single',
-        icon: <CheckCircleOutlined />,
+        icon: <CheckCircleOutlined/>,
         title: '单选题',
         type: {typeId: 1, typeName: 'radio', typeDescription: '单选题'},
     },
     {
         key: 'multi',
-        icon: <CheckSquareOutlined />,
+        icon: <CheckSquareOutlined/>,
         title: '多选题',
         type: {typeId: 2, typeName: 'checkbox', typeDescription: '多选题'},
     },
     {
         key: 'input',
-        icon: <EditOutlined />,
+        icon: <EditOutlined/>,
         title: '填空题',
         type: {typeId: 3, typeName: 'fillblank', typeDescription: '填空题'},
     },
+    {
+        key: 'essay',
+        icon: <EditOutlined/>,
+        title: '简答题',
+        type: {typeId: 4, typeName: 'essay', typeDescription: '简答题'},
+    }
 ];
 
 /* ====================================================================== */
@@ -154,6 +160,7 @@ const MainDesign: React.FC = () => {
 
     /* ================== 题目增删改排 ================== */
     const handleAddQuestion = (type: QuestionType) => {
+        console.log(type)
         const id = Date.now();
         const params: any = {
             id,
@@ -195,6 +202,13 @@ const MainDesign: React.FC = () => {
                     allowOther: false,
                     otherText: '',
                 });
+                break;
+            case 'essay':
+                Object.assign(params, {
+                    placeholder: '',
+                    allowMarkdown: true,
+                    hideWordCount: false
+                })
                 break;
         }
 
@@ -248,7 +262,7 @@ const MainDesign: React.FC = () => {
             case 'saving':
                 return (
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <Spin indicator={<LoadingOutlined style={{fontSize: 18}} spin />} />
+                        <Spin indicator={<LoadingOutlined style={{fontSize: 18}} spin/>}/>
                         <Text type="secondary" style={{marginLeft: 8}}>
                             问卷保存中...
                         </Text>
@@ -257,7 +271,7 @@ const MainDesign: React.FC = () => {
             case 'saved':
                 return (
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <CheckOutlined style={{color: '#52c41a', fontSize: 16}} />
+                        <CheckOutlined style={{color: '#52c41a', fontSize: 16}}/>
                         <Text type="success" style={{marginLeft: 8}}>
                             已保存
                         </Text>
@@ -290,8 +304,8 @@ const MainDesign: React.FC = () => {
                         </Title>
                         <Segmented
                             options={[
-                                {value: 'edit', label: (<><EditOutlined /> 编辑模式</>)},
-                                {value: 'preview', label: (<><EyeOutlined /> 预览模式</>)},
+                                {value: 'edit', label: (<><EditOutlined/> 编辑模式</>)},
+                                {value: 'preview', label: (<><EyeOutlined/> 预览模式</>)},
                             ]}
                             value={mode}
                             onChange={(v) => setMode(v as 'edit' | 'preview')}
@@ -302,17 +316,17 @@ const MainDesign: React.FC = () => {
 
                     <div style={{display: 'flex', gap: 10}}>
                         <Button
-                            icon={<RobotOutlined />}
+                            icon={<RobotOutlined/>}
                             type={showAIAssistant ? 'primary' : 'default'}
                             onClick={() => setShowAIAssistant(!showAIAssistant)}
                         >
                             AI助手
                         </Button>
-                        <Button icon={<ArrowLeft />} onClick={() => nav('/dashboard')}>
+                        <Button icon={<ArrowLeft/>} onClick={() => nav('/dashboard')}>
                             返回
                         </Button>
                         <Button
-                            icon={<SaveOutlined />}
+                            icon={<SaveOutlined/>}
                             type="primary"
                             onClick={saveQuestions}
                             loading={isSaving}
@@ -328,12 +342,12 @@ const MainDesign: React.FC = () => {
             <Layout style={{position: 'relative', height: 'calc(100vh - 64px)'}}>
                 {/* 左侧：题型+题目列表 */}
                 <Sider width="20%" style={{background: '#fff', padding: 16, overflowY: 'auto'}}>
-                    <QuestionTypeList questionTypes={questionTypes} onAddQuestion={handleAddQuestion} />
-                    <Divider />
+                    <QuestionTypeList questionTypes={questionTypes} onAddQuestion={handleAddQuestion}/>
+                    <Divider/>
                     <Title level={5}>题目列表</Title>
 
                     {questions.length === 0 ? (
-                        <Empty description="暂无题目" />
+                        <Empty description="暂无题目"/>
                     ) : (
                         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                             <SortableContext items={questions.map((q) => q.id)} strategy={verticalListSortingStrategy}>
@@ -367,9 +381,9 @@ const MainDesign: React.FC = () => {
                     }}
                 >
                     {activeId && questions.find((q) => q.id === activeId) ? (
-                        mode === 'edit' ? <QuestionEditWrapper id={activeId} /> : <QuestionViewWrapper id={activeId} />
+                        mode === 'edit' ? <QuestionEditWrapper id={activeId}/> : <QuestionViewWrapper id={activeId}/>
                     ) : (
-                        <Empty description="请从左侧添加或选择题目进行编辑" style={{marginTop: 100}} />
+                        <Empty description="请从左侧添加或选择题目进行编辑" style={{marginTop: 100}}/>
                     )}
                 </Content>
 
@@ -388,7 +402,7 @@ const MainDesign: React.FC = () => {
                             boxShadow: '-2px 0 8px rgba(0,0,0,.06)',
                         }}
                     >
-                        <AIAssistant onClose={() => setShowAIAssistant(false)} />
+                        <AIAssistant onClose={() => setShowAIAssistant(false)}/>
                     </div>
                 )}
             </Layout>
