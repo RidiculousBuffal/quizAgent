@@ -35,7 +35,9 @@ const MultipleChoicePreviewComponent: React.FC<MultipleChoicePreviewProps> = ({
                                                                                   showValidation = false,
                                                                               }) => {
     // Ensure value is always an array
-    const safeValue = Array.isArray(value) ? value : [];
+    const safeValue = useMemo(() => {
+        return Array.isArray(value) ? value : [];
+    }, [value])
     const [otherValue, setOtherValue] = useState('');
     const otherInputRef = useRef<GetRef<typeof Input>>(null);
 
@@ -92,6 +94,7 @@ const MultipleChoicePreviewComponent: React.FC<MultipleChoicePreviewProps> = ({
     /* ---------- 处理勾选变化 ---------- */
     const handleCheckboxChange = (checked: string[]) => {
         // Handle null/undefined checked value
+        console.log("changed")
         if (!checked) {
             onChange([]);
             return;
@@ -178,7 +181,7 @@ const MultipleChoicePreviewComponent: React.FC<MultipleChoicePreviewProps> = ({
                 'other:',
             ]);
         }
-    }, [safeValue, isOtherSelected, otherValue]);
+    }, [safeValue, isOtherSelected, otherValue, onChange]);
 
     /* ---------- 校验 ---------- */
     const validation = showValidation && typeof question.validate === 'function'
@@ -217,15 +220,17 @@ const MultipleChoicePreviewComponent: React.FC<MultipleChoicePreviewProps> = ({
 
     const renderOtherInput = () =>
         isOtherSelected ? (
-            <Input
-                ref={otherInputRef}
-                value={otherValue}
-                onChange={handleOtherInputChange}
-                onClick={(e) => e.stopPropagation()}
-                onMouseDown={(e) => e.stopPropagation()}
-                style={{width: 200}}
-                autoFocus
-            />
+            <>
+                <Input
+                    ref={otherInputRef}
+                    value={otherValue}
+                    onChange={handleOtherInputChange}
+                    onClick={(e) => e.stopPropagation()}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    style={{width: '70%'}}
+                    autoFocus
+                />
+            </>
         ) : null;
 
     // Helper function to check if option is exclusive
@@ -281,7 +286,7 @@ const MultipleChoicePreviewComponent: React.FC<MultipleChoicePreviewProps> = ({
                                 >
                                     {question.otherText || "其他"}
                                 </Checkbox>
-                                {renderOtherInput()}
+
                             </Space>
                         </StopPropagation>
                     )}
@@ -290,34 +295,33 @@ const MultipleChoicePreviewComponent: React.FC<MultipleChoicePreviewProps> = ({
         }
 
         /* 多列 */
-        return group(
-            <Row>
-                {displayOptions.map((opt) => (
-                    <Col
-                        span={24 / columns}
-                        key={opt.id || opt.key}
-                        style={{marginBottom: 8}}
-                    >
-                        <Checkbox
-                            value={opt.id || opt.key}
-                            disabled={
-                                safeValue.some((v) =>
-                                    exclusiveOptions.includes(v),
-                                ) && !exclusiveOptions.includes(opt.id || opt.key)
-                            }
+        return <>
+            {group(
+                <Row>
+                    {displayOptions.map((opt) => (
+                        <Col
+                            span={24 / columns}
+                            key={opt.id || opt.key}
+                            style={{marginBottom: 8}}
                         >
-                            {opt.text}
-                            {isExclusiveOption(opt.id || opt.key) && (
-                                <Tag color="blue" style={{marginLeft: 8}}>
-                                    互斥选项
-                                </Tag>
-                            )}
-                        </Checkbox>
-                    </Col>
-                ))}
-
-                {question.allowOther && (
-                    <Col span={24} style={{marginTop: 8}}>
+                            <Checkbox
+                                value={opt.id || opt.key}
+                                disabled={
+                                    safeValue.some((v) =>
+                                        exclusiveOptions.includes(v),
+                                    ) && !exclusiveOptions.includes(opt.id || opt.key)
+                                }
+                            >
+                                {opt.text}
+                                {isExclusiveOption(opt.id || opt.key) && (
+                                    <Tag color="blue" style={{marginLeft: 8}}>
+                                        互斥选项
+                                    </Tag>
+                                )}
+                            </Checkbox>
+                        </Col>
+                    ))}
+                    {question.allowOther && (
                         <StopPropagation>
                             <Space>
                                 <Checkbox
@@ -328,14 +332,16 @@ const MultipleChoicePreviewComponent: React.FC<MultipleChoicePreviewProps> = ({
                                 >
                                     {question.otherText || "其他"}
                                 </Checkbox>
-                                {renderOtherInput()}
+
                             </Space>
                         </StopPropagation>
-                    </Col>
-                )}
-            </Row>,
-            {width: '100%'},
-        );
+                    )}
+
+                </Row>,
+                {width: '100%'},
+            )}
+
+        </>
     };
 
     /* ---------- 最终 JSX ---------- */
@@ -354,9 +360,14 @@ const MultipleChoicePreviewComponent: React.FC<MultipleChoicePreviewProps> = ({
                     {question.description}
                 </div>
             )}
-
-            {renderOptions()}
-
+            <Space direction={"vertical"} style={{width: "100%"}}>
+                <Row>
+                    {renderOptions()}
+                </Row>
+                <Row>
+                    {renderOtherInput()}
+                </Row>
+            </Space>
             {showValidation && !isValid && (
                 <Text type="danger">{errorMessage}</Text>
             )}
