@@ -47,41 +47,49 @@ const InputPreview: React.FC<InputPreviewProps> = ({
                                                        onChange,
                                                        showValidation = false
                                                    }) => {
-    // Use a ref to track if this is the first render or a value-driven update
-    const isFirstRender = useRef(true);
-    const prevValueRef = useRef<string[]>(['']);
-
-    // Initialize state safely
+    // 初始化逻辑
     const blankCount = question?.blankCount || 1;
     const defaultValue = Array(blankCount).fill('');
-    const initialValue = Array.isArray(value) && value.length === blankCount
-        ? value
-        : defaultValue;
 
-    const [answers, setAnswers] = useState<string[]>(initialValue);
+    // 使用一个更可靠的方式来管理内部状态
+    const [answers, setAnswers] = useState<string[]>(() => {
+        // 确保初始值是有效的
+        if (Array.isArray(value) && value.length === blankCount) {
+            return [...value]; // 创建新数组，避免引用问题
+        }
+        return [...defaultValue];
+    });
+
+    // 添加 questionId 作为 ref，用来追踪是否切换了问题
+    const questionIdRef = useRef<number>(question?.id);
     const [validationResult, setValidationResult] = useState<{ isValid: boolean; message?: string } | boolean>(true);
 
-    // 安全获取属性的辅助函数
-    const getBlankCount = () => question?.blankCount || 1;
-    const getBlankLabels = () => question?.blankLabels || [];
-    const getAnswerType = () => question?.answerType || 'text';
-    const getPlaceholder = () => question?.placeholder || '请在此输入';
-    const isInlineMode = () => question?.inlineMode || false;
-    const getInlineText = () => question?.inlineText || '';
-    const isRequired = () => question?.isRequired || false;
-    const getTitle = () => question?.title || '';
-    const getDescription = () => question?.description || '';
-
-    // Update internal state when prop changes, but avoid calling onChange
+    // 当问题ID变化或value变化时，重置内部状态
     useEffect(() => {
-        if (Array.isArray(value) &&
-            JSON.stringify(value) !== JSON.stringify(prevValueRef.current)) {
-            prevValueRef.current = [...value];
-            setAnswers(value);
-        }
-    }, [value]);
+        // 检测到不同的问题ID，重置状态
+        if (questionIdRef.current !== question?.id) {
+            questionIdRef.current = question?.id;
 
-    // Handle validation separately from onChange
+            // 新问题，重新初始化答案
+            if (Array.isArray(value) && value.length === blankCount) {
+                setAnswers([...value]);
+            } else {
+                setAnswers([...defaultValue]);
+            }
+            return;
+        }
+
+        // 同一个问题但value更新了
+        if (Array.isArray(value) && value.length === blankCount) {
+            // 进行深比较，避免不必要的更新
+            const needsUpdate = value.some((v, i) => v !== answers[i]);
+            if (needsUpdate) {
+                setAnswers([...value]); // 创建新数组，避免引用问题
+            }
+        }
+    }, [value, question?.id, blankCount, defaultValue]);
+
+    // 验证逻辑
     useEffect(() => {
         if (showValidation && typeof question?.validate === 'function') {
             try {
@@ -94,30 +102,30 @@ const InputPreview: React.FC<InputPreviewProps> = ({
         }
     }, [answers, question, showValidation]);
 
-    // When user changes an answer, update state and notify parent
-    const handleAnswerChange = (index: number, value: string) => {
+    // 用户更改答案处理函数
+    const handleAnswerChange = (index: number, newValue: string) => {
         const newAnswers = [...answers];
-        newAnswers[index] = value;
+        newAnswers[index] = newValue;
 
-        // Update local state
+        // 更新内部状态
         setAnswers(newAnswers);
 
-        // Notify parent, but avoid doing this on initial render or when
-        // the change was triggered by the value prop
-        if (!isFirstRender.current && onChange) {
-            // Use setTimeout to break the potential update cycle
-            setTimeout(() => {
-                onChange(newAnswers);
-            }, 0);
+        // 通知父组件
+        if (onChange) {
+            onChange(newAnswers);
         }
     };
 
-    // After first render, mark that we're no longer in first render
-    useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-        }
-    }, []);
+    // 安全获取属性的辅助函数
+    const getBlankCount = () => question?.blankCount || 1;
+    const getBlankLabels = () => question?.blankLabels || [];
+    const getAnswerType = () => question?.answerType || 'text';
+    const getPlaceholder = () => question?.placeholder || '请在此输入';
+    const isInlineMode = () => question?.inlineMode || false;
+    const getInlineText = () => question?.inlineText || '';
+    const isRequired = () => question?.isRequired || false;
+    const getTitle = () => question?.title || '';
+    const getDescription = () => question?.description || '';
 
     // 渲染行内模式的填空题
     const renderInlineBlank = () => {
