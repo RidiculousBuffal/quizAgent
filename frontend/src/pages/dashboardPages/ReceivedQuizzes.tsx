@@ -1,8 +1,8 @@
-// src/components/dashboard/ReceivedQuizzes.tsx
+
 import React, {useEffect, useState} from 'react';
 import {Typography, Card, Button, Space, Modal, Alert} from 'antd';
 import {DownloadOutlined} from '@ant-design/icons';
-import {getQuizList} from '../../api/quizApi';
+
 import {getAnswerList, getQuizzesHasResp, getTotalResponseByQuizId} from '../../api/quizQuestionAnswerApi';
 import QuizList from './receiveQuizes/QuizList';
 import ResponseList from './receiveQuizes/ResponseList';
@@ -25,7 +25,7 @@ export interface QuizResponseType {
     answerTime: string;
 }
 
-const ReceivedQuizzes: React.FC = () => {
+const ReceivedQuizzes = ({quizId}: { quizId: number }) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [quizzes, setQuizzes] = useState<QuizType[]>([]);
     const [selectedQuiz, setSelectedQuiz] = useState<QuizType | null>(null);
@@ -105,7 +105,8 @@ const ReceivedQuizzes: React.FC = () => {
     return (
         <div style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
             <Title level={4} style={{marginBottom: '16px'}}>收到的问卷回复</Title>
-            <Alert style={{marginBottom:"16px",borderRadius:"0"}} message="仅至少有1个回复的问卷会被列在此处" type="info" />
+            <Alert style={{marginBottom: "16px", borderRadius: "0"}} message="仅至少有1个回复的问卷会被列在此处"
+                   type="info"/>
             {/* 问卷列表或回复列表 */}
             {selectedQuiz === null ? (
                 <Card

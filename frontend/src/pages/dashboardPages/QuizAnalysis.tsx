@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {Typography, Row, Col, Card, Button, Empty, Spin, Statistic, Badge, Divider, Alert} from 'antd';
-import {BarChartOutlined, EyeOutlined, LinkOutlined, CalendarOutlined} from '@ant-design/icons';
-import {useNavigate} from 'react-router-dom';
-import {getQuizList} from '../../api/quizApi';
+import {BarChartOutlined, EyeOutlined, LinkOutlined, CalendarOutlined, ArrowLeftOutlined} from '@ant-design/icons';
 import {getQuizzesHasResp, getTotalResponseByQuizId} from '../../api/quizQuestionAnswerApi';
+import QuizAnalysisDetail from './QuizAnalysisDetail';
+import ReceivedQuizzes from './ReceivedQuizzes';
 import dayjs from 'dayjs';
 
 const {Title, Text, Paragraph} = Typography;
@@ -23,7 +23,10 @@ const QuizAnalysisCenter: React.FC = () => {
     const [quizzes, setQuizzes] = useState<QuizType[]>([]);
     const [loading, setLoading] = useState(true);
     const [responseCounts, setResponseCounts] = useState<{ [key: number]: number }>({});
-    const navigate = useNavigate();
+
+    // State to track the current view
+    const [currentView, setCurrentView] = useState('list'); // 'list', 'analysis', 'responses'
+    const [selectedQuizId, setSelectedQuizId] = useState<number | null>(null);
 
     useEffect(() => {
         const fetchQuizzes = async () => {
@@ -67,14 +70,22 @@ const QuizAnalysisCenter: React.FC = () => {
         }
     };
 
-    // 进入问卷分析页面
+    // 进入问卷分析页面 - 不再导航，而是更改内部状态
     const goToAnalysis = (quizId: number) => {
-        navigate(`/quiz-analysis/${quizId}`);
+        setSelectedQuizId(quizId);
+        setCurrentView('analysis');
     };
 
-    // 进入问卷回复页面
+    // 进入问卷回复页面 - 不再导航，而是更改内部状态
     const goToResponses = (quizId: number) => {
-        navigate(`/quiz-responses/${quizId}`);
+        setSelectedQuizId(quizId);
+        setCurrentView('responses');
+    };
+
+    // 返回列表视图
+    const backToList = () => {
+        setCurrentView('list');
+        setSelectedQuizId(null);
     };
 
     // 生成问卷链接
@@ -90,25 +101,107 @@ const QuizAnalysisCenter: React.FC = () => {
         });
     };
 
-    if (loading) {
-        return (
-            <div style={{textAlign: 'center', padding: '50px'}}>
-                <Spin size="large" tip="加载问卷中..."/>
-            </div>
-        );
-    }
+    // 渲染页面内容的函数
+    const renderContent = () => {
+        if (loading) {
+            return (
+                <div style={{textAlign: 'center', padding: '50px'}}>
+                    <Spin size="large" tip="加载问卷中..."/>
+                </div>
+            );
+        }
 
-    if (quizzes.length === 0) {
-        return (
-            <div style={{padding: '24px'}}>
-                <Title level={4}>我的问卷</Title>
-                <Empty
-                    description="您还没有创建任何问卷"
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                />
-            </div>
-        );
-    }
+        // 根据当前视图状态显示不同内容
+        switch (currentView) {
+            case 'analysis':
+                return (
+                    <div>
+                        <Button
+                            type="link"
+                            icon={<ArrowLeftOutlined />}
+                            onClick={backToList}
+                            style={{ marginBottom: '16px' }}
+                        >
+                            返回问卷列表
+                        </Button>
+                        {selectedQuizId && <QuizAnalysisDetail quizId={selectedQuizId} />}
+                    </div>
+                );
+            case 'responses':
+                return (
+                    <div>
+                        <Button
+                            type="link"
+                            icon={<ArrowLeftOutlined />}
+                            onClick={backToList}
+                            style={{ marginBottom: '16px' }}
+                        >
+                            返回问卷列表
+                        </Button>
+                        {selectedQuizId && <ReceivedQuizzes quizId={selectedQuizId} />}
+                    </div>
+                );
+            case 'list':
+            default:
+                if (quizzes.length === 0) {
+                    return (
+                        <Empty
+                            description="您还没有创建任何问卷"
+                            image={Empty.PRESENTED_IMAGE_SIMPLE}
+                        />
+                    );
+                }
+                return (
+                    <Row gutter={[16, 16]} style={{marginTop: '16px'}}>
+                        {quizzes.map((quiz) => (
+                            <Col xs={24} sm={12} lg={8} key={quiz.quizId}>
+                                <Card
+                                    hoverable
+                                    className="quiz-card"
+                                    style={{height: '100%'}}
+                                    actions={getActionsList(quiz)}
+                                >
+                                    <Meta
+                                        title={
+                                            <div style={{
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center'
+                                            }}>
+                                                <Text strong ellipsis style={{maxWidth: '70%'}}>{quiz.quizName}</Text>
+                                                {getStatusBadge(quiz.status)}
+                                            </div>
+                                        }
+                                        description={
+                                            <div style={{height: '100%'}}>
+                                                <Paragraph ellipsis={{rows: 2}} style={{marginBottom: 16}}>
+                                                    {quiz.quizDescription || '无描述'}
+                                                </Paragraph>
+
+                                                <div style={{display: 'flex', alignItems: 'center', marginBottom: 8}}>
+                                                    <CalendarOutlined style={{marginRight: 8}}/>
+                                                    <Text type="secondary">
+                                                        {quiz.quizStartTime ? dayjs(quiz.quizStartTime).format('YYYY-MM-DD') : '无起始日期'}
+                                                        {quiz.quizEndTime ? ` 至 ${dayjs(quiz.quizEndTime).format('YYYY-MM-DD')}` : ''}
+                                                    </Text>
+                                                </div>
+
+                                                <Statistic
+                                                    title="收到回复"
+                                                    value={responseCounts[quiz.quizId] || 0}
+                                                    valueStyle={{fontSize: '18px'}}
+                                                />
+                                            </div>
+                                        }
+                                    />
+                                </Card>
+                            </Col>
+                        ))}
+                    </Row>
+                );
+        }
+    };
+
     const getActionsList = (quiz: QuizType) => {
         const link = <Button
             type="text"
@@ -137,60 +230,20 @@ const QuizAnalysisCenter: React.FC = () => {
             return [resp, analysis]
         }
     }
+
     return (
         <div style={{padding: '24px'}}>
-            <Title level={4}>我的问卷</Title>
-            <Paragraph type="secondary">
-                在这里查看您的问卷统计数据和回复情况 (仅至少有1个回复的问卷会被列在此处)
-            </Paragraph>
-            <Divider/>
+            <Title level={4}>问卷分析</Title>
+            {currentView === 'list' && (
+                <>
+                    <Paragraph type="secondary">
+                        在这里查看您的问卷统计数据和回复情况 (仅至少有1个回复的问卷会被列在此处)
+                    </Paragraph>
+                    <Divider/>
+                </>
+            )}
 
-            <Row gutter={[16, 16]} style={{marginTop: '16px'}}>
-                {quizzes.map((quiz) => (
-                    <Col xs={24} sm={12} lg={8} key={quiz.quizId}>
-                        <Card
-                            hoverable
-                            className="quiz-card"
-                            style={{height: '100%'}}
-                            actions={getActionsList(quiz)}
-                        >
-                            <Meta
-                                title={
-                                    <div style={{
-                                        display: 'flex',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center'
-                                    }}>
-                                        <Text strong ellipsis style={{maxWidth: '70%'}}>{quiz.quizName}</Text>
-                                        {getStatusBadge(quiz.status)}
-                                    </div>
-                                }
-                                description={
-                                    <div style={{height: '100%'}}>
-                                        <Paragraph ellipsis={{rows: 2}} style={{marginBottom: 16}}>
-                                            {quiz.quizDescription || '无描述'}
-                                        </Paragraph>
-
-                                        <div style={{display: 'flex', alignItems: 'center', marginBottom: 8}}>
-                                            <CalendarOutlined style={{marginRight: 8}}/>
-                                            <Text type="secondary">
-                                                {quiz.quizStartTime ? dayjs(quiz.quizStartTime).format('YYYY-MM-DD') : '无起始日期'}
-                                                {quiz.quizEndTime ? ` 至 ${dayjs(quiz.quizEndTime).format('YYYY-MM-DD')}` : ''}
-                                            </Text>
-                                        </div>
-
-                                        <Statistic
-                                            title="收到回复"
-                                            value={responseCounts[quiz.quizId] || 0}
-                                            valueStyle={{fontSize: '18px'}}
-                                        />
-                                    </div>
-                                }
-                            />
-                        </Card>
-                    </Col>
-                ))}
-            </Row>
+            {renderContent()}
         </div>
     );
 };

@@ -1,12 +1,11 @@
 // src/pages/analysis/QuizAnalysisDetail.tsx
 import React, {useEffect, useState} from 'react';
-import {Card, Breadcrumb, Spin, Alert, Typography} from 'antd';
-import {useParams, Link} from 'react-router-dom';
-import {ArrowLeftOutlined} from '@ant-design/icons';
+import {Card, Spin, Alert} from 'antd';
+
 import QuizStatistics from './QuizStatistics/QuizStatistics';
 import {getQuizDetail} from "../../api/quizApi.ts";
 
-const {Title} = Typography;
+
 
 interface QuizInfo {
     quizId: number;
@@ -15,8 +14,8 @@ interface QuizInfo {
 }
 
 
-const QuizAnalysisDetail: React.FC = () => {
-    const {quizId} = useParams<{ quizId: string }>();
+const QuizAnalysisDetail = ({quizId}:{quizId:number}) => {
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [quizInfo, setQuizInfo] = useState<QuizInfo | null>(null);
@@ -27,7 +26,7 @@ const QuizAnalysisDetail: React.FC = () => {
 
             try {
                 setLoading(true);
-                const quiz = await getQuizDetail(parseInt(quizId));
+                const quiz = await getQuizDetail(quizId);
                 if (quiz) {
                     setQuizInfo(quiz);
                 } else {
@@ -61,18 +60,9 @@ const QuizAnalysisDetail: React.FC = () => {
 
     return (
         <div style={{padding: '24px'}}>
-            <Breadcrumb style={{marginBottom: '16px'}}>
-                <Breadcrumb.Item>
-                    <Link to="/quiz-analysis">
-                        <ArrowLeftOutlined/> 返回问卷列表
-                    </Link>
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>问卷分析</Breadcrumb.Item>
-            </Breadcrumb>
-
             <Card variant={"borderless"}>
                 <QuizStatistics
-                    quizId={parseInt(quizId)}
+                    quizId={quizId}
                     quizName={quizName}
                 />
             </Card>
