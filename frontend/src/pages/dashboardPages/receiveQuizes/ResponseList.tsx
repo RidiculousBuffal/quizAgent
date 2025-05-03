@@ -8,6 +8,7 @@ export interface QuizResponseType {
     uniqueSubmitId: string;
     userName: string;
     answerTime: string;
+
     answers?: {
         questionName: string,
         questionDescription: string,
@@ -19,12 +20,14 @@ interface ResponseListProps {
     responses: QuizResponseType[];
     loading: boolean;
     onViewDetail: (response: QuizResponseType) => void;
+
 }
 
 const ResponseList: React.FC<ResponseListProps> = ({
                                                        responses,
                                                        loading,
-                                                       onViewDetail
+                                                       onViewDetail,
+
                                                    }) => {
     const columns: TableProps<QuizResponseType>['columns'] = [
         {

@@ -84,7 +84,7 @@ const ResponseDetail: React.FC<ResponseDetailProps> = ({
 
             <Divider orientation="left">回答内容</Divider>
 
-            <div style={{ marginTop: '15px' }}>
+            <div style={{ marginTop: '15px',maxHeight:"800px",overflowY:"scroll" }}>
                 {answerData.question.map((question) => (
                     <Card
                         key={question.id}

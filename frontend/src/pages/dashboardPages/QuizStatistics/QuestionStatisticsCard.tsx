@@ -27,7 +27,6 @@ const QuestionStatisticsCard: React.FC<QuestionStatisticsCardProps> = ({
     const StaticComponent = question.getStatisticsComponent()
     // 解析回答数据
     const parsedAnswers = answers.map(item => {
-        console.log(JSON.parse(item.answer))
         try {
             return {
                 user: item.user,

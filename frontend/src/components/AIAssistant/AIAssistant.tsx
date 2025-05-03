@@ -449,14 +449,16 @@ const AIAssistant: React.FC<{ onClose?: () => void }> = ({onClose}) => {
     /* ================================================= */
     return (
         <Card
-            bordered={false}
+            variant={"borderless"}
             style={{height: "100%", display: "flex", flexDirection: "column"}}
-            bodyStyle={{
-                flex: 1,
-                overflow: "hidden",
-                display: "flex",
-                flexDirection: "column",
-                padding: 12,
+            styles={{
+                body: {
+                    flex: 1,
+                    overflow: "hidden",
+                    display: "flex",
+                    flexDirection: "column",
+                    padding: 12,
+                }
             }}
             title={
                 <Flex justify="space-between" align="center">

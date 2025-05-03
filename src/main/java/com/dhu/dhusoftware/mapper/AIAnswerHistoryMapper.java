@@ -7,19 +7,12 @@ import java.util.List;
 
 @Mapper
 public interface AIAnswerHistoryMapper {
-    @Insert("INSERT INTO aianswerhistory(userId, quizId, inputParams, generatedAnswers, generationTime, status, errorMsg, savedCount) VALUES (#{userId}, #{quizId}, #{inputParams}, #{generatedAnswers}, #{generationTime}, #{status}, #{errorMsg}, #{savedCount})")
-    @Options(useGeneratedKeys = true, keyProperty = "historyId")
-    int addAIAnswerHistory(AIAnswerHistory history);
+    @Insert("insert into aianswerhistory(historyId, userId, quizId, inputParams) VALUES (#{historyId},#{userId},#{quizId},#{inputParams})")
+    boolean insertAIAnswerHistory(Long historyId, String userId, Long quizId, String inputParams);
 
-    @Select("SELECT * FROM aianswerhistory WHERE historyId = #{historyId}")
-    AIAnswerHistory getAIAnswerHistoryById(Long historyId);
+    @Select("select * from aianswerhistory where quizId=#{quizId} and userId=#{userId} order by historyId")
+    List<AIAnswerHistory>ListHistory(Long quizId,String userId);
 
-    @Update("UPDATE aianswerhistory SET generatedAnswers = #{generatedAnswers}, status = #{status}, errorMsg = #{errorMsg}, savedCount = #{savedCount} WHERE historyId = #{historyId}")
-    int updateAIAnswerHistory(AIAnswerHistory history);
-
-    @Select("SELECT * FROM aianswerhistory WHERE userId = #{userId} ORDER BY generationTime DESC")
-    List<AIAnswerHistory> listByUserId(String userId);
-
-    @Select("SELECT * FROM aianswerhistory WHERE quizId = #{quizId} ORDER BY generationTime DESC")
-    List<AIAnswerHistory> listByQuizId(Long quizId);
+    @Update("update aianswerhistory set generatedAnswers = #{aiAnswer} where historyId = #{historyId}")
+    boolean updateAIAnswer(Long historyId,String aiAnswer);
 }

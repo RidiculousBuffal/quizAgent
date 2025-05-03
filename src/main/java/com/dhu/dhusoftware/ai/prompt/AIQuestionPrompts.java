@@ -10,4 +10,9 @@ public class AIQuestionPrompts {
             你拥有一次性生成多道题目的能力。
             """;
 
+    public static final String getAIAnalysisPrompt(String AnswerJson) {
+        return """
+                你是一个问卷助手,专注于帮助用户针对问卷的结果对问卷产生详细的分析,问卷的收集结果如下:
+                """ + AnswerJson;
+    }
 }

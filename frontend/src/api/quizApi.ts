@@ -1,6 +1,7 @@
 import {fetchAPI} from "./base.ts";
 import {quizDisplayType, QuizDto} from "./types/questionType.ts";
 import {QuizInfoType} from "../components/modal/QuizInfoEdit.tsx";
+import {messageItem} from "../pages/dashboardPages/AI/BubbleList.tsx";
 
 
 export async function createOrEditQuiz(quizName: string, description: string, quizStartTime: string | null, quizEndTime: string | null, quizId?: number
@@ -59,4 +60,8 @@ export async function getQuizDisplay(value?: string): Promise<quizDisplayType[] 
         method: 'POST',
         body: value
     });
+}
+
+export async function getAIAnalysisHistory(quizId: number): Promise<messageItem[] | null> {
+    return await fetchAPI(`/analysis/getAIAnalysis/${quizId}`, {})
 }

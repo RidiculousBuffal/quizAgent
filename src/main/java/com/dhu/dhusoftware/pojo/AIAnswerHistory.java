@@ -21,5 +21,4 @@ public class AIAnswerHistory {
     private Timestamp generationTime; // 生成时间，默认当前时间
     private Boolean status; // 状态：1成功，0失败
     private String errorMsg; // 生成失败时的错误信息
-    private Integer savedCount; // 保存到系统的答案份数
 }

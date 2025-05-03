@@ -1,5 +1,6 @@
 package com.dhu.dhusoftware.mapper;
 
+import com.dhu.dhusoftware.pojo.AIAnswerHistory;
 import com.dhu.dhusoftware.pojo.AIGenerationHistory;
 import org.apache.ibatis.annotations.*;
 
