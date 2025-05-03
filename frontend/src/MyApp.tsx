@@ -31,8 +31,6 @@ function MyApp() {
             <Route path="/quizSquare" element={<QuizSquare/>}/>
 
             <Route path="/quiz-analysis" element={<ProtectedRoute element={<QuizAnalysisCenter/>}/>}/>
-            <Route path="/quiz-analysis/:quizId" element={<ProtectedRoute element={<QuizAnalysisDetail/>}/>}/>
-            <Route path="/quiz-responses/:quizId" element={<ProtectedRoute element={<ReceivedQuizzes/>}/>}/>
         </Routes>
         {/*<DebugFloater></DebugFloater>*/}
     </>
