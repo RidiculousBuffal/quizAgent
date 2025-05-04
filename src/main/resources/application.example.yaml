@@ -1,6 +1,6 @@
 spring:
   application:
-    name: dhuSoftware
+    name: futurequiz
   datasource:
     url: jdbc:mysql://localhost:3306/dhusoftware?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
     password: 123456
@@ -8,26 +8,47 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   servlet:
     multipart:
-      max-file-size: 10000
-      max-request-size: 10000
-
+      max-file-size: 10000MB
+      max-request-size: 10000MB
+  ai:
+    openai:
+      base-url:
+      api-key:
+  http:
+    client:
+      connect-timeout: 200s
+      read-timeout: 200s
+  data:
+    redis:
+      database: 1
+      host: 127.0.0.1
+      port: 6379
+      timeout: 10s
+      lettuce:
+        pool:
+          max-active: 200
+          max-wait: -1ms
+          max-idle: 10
+          min-idle: 0
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
+  mapper-locations: classpath*:mapper/**/*.xml
+
+
+logto:
+  jwks-uri:  # JWKS 公钥 URI
+  issuer:       # 发行者 (issuer)
+  app-id:                # APP ID (Audience)
 
 server:
   port: 13145
-
-logto:
-  jwks-uri: # JWKS 公钥 URI
-  issuer:       # 发行者 (issuer)
-  app-id:                     # APP ID (Audience)
 
 sa-token:
   # token 名称（同时也是 cookie 名称）
   token-name: satoken
   # token 有效期（单位：秒） 默认30天，-1 代表永久有效
-  timeout: 2592000
+  timeout: 2591000
   # token 最低活跃频率（单位：秒），如果 token 超过此时间没有访问系统就会被冻结，默认-1 代表不限制，永不冻结
   active-timeout: -1
   # 是否允许同一账号多地同时登录 （为 true 时允许一起登录, 为 false 时新登录挤掉旧登录）
@@ -38,3 +59,15 @@ sa-token:
   token-style: uuid
   # 是否输出操作日志
   is-log: true
+
+  is-read-header: true
+
+logging:
+  level:
+    cn.dev33.satoken: debug
+
+minio:
+  endpoint:
+  access-key:
+  secret-key:
+  bucket-name:
