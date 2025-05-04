@@ -25,7 +25,7 @@ export interface QuizResponseType {
     answerTime: string;
 }
 
-const ReceivedQuizzes = ({quizId}: { quizId: number }) => {
+const ReceivedQuizzes = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [quizzes, setQuizzes] = useState<QuizType[]>([]);
     const [selectedQuiz, setSelectedQuiz] = useState<QuizType | null>(null);

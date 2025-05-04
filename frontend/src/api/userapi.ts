@@ -1,5 +1,5 @@
 // src/api/userApi.ts（自动补全接口）
-import { fetchAPI } from "./base";
+import {fetchAPI} from "./base";
 
 export interface UserType {
     userId: string;
@@ -16,4 +16,11 @@ export async function autocompleteUsers(keyword: string): Promise<UserType[] | n
 export async function getUserInfo(userId: string): Promise<UserType | null> {
     if (!userId) return null;
     return await fetchAPI<UserType>(`/user/getNameAndEmailById?userId=${encodeURIComponent(userId)}`, {});
+}
+
+export async function updateUserAvatar(url: string): Promise<string | null> {
+    return await fetchAPI('/user/updateUserAvatar', {
+        body: url,
+        method:"POST"
+    })
 }

@@ -16,7 +16,8 @@ public class MinioUploadController {
     @PostMapping("/upload")
     public SaResult uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            return SaResult.ok().setCode(COMMON.SUCCESS_CODE).setData(minioService.upload(file));
+            var data = minioService.upload(file);
+            return SaResult.ok().setCode(COMMON.SUCCESS_CODE).setData(data);
         } catch (Exception e) {
             return SaResult.error().setCode(COMMON.FAILURE_CODE).setData(e.getMessage());
         }

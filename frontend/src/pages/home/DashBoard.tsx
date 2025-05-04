@@ -1,19 +1,19 @@
-import { Layout, Typography, Avatar, Button } from 'antd';
-import { useLogto } from '@logto/react';
-import { useUserStore } from '../../store/user/UserStore.ts';
-import { UserOutlined, FormOutlined, LineChartOutlined, TeamOutlined } from '@ant-design/icons';
-import { useNavigate } from "react-router";
-import React, { useState } from 'react';
+import {Layout, Typography, Avatar, Button} from 'antd';
+import {useLogto} from '@logto/react';
+import {useUserStore} from '../../store/user/UserStore.ts';
+import {UserOutlined, FormOutlined, LineChartOutlined, TeamOutlined} from '@ant-design/icons';
+import {useNavigate} from "react-router";
+import React, {useState} from 'react';
 import MySurveys from '../dashboardPages/MySurveys.tsx';
 import QuizAnalysis from '../dashboardPages/QuizAnalysis.tsx';
 import ReceivedQuizzes from '../dashboardPages/ReceivedQuizzes.tsx';
 import MyAccount from '../dashboardPages/MyAccount.tsx';
 
-const { Header, Content, Footer, Sider } = Layout;
-const { Title, Text } = Typography;
+const {Header, Content, Footer, Sider} = Layout;
+const {Title, Text} = Typography;
 
 const Dashboard: React.FC = () => {
-    const { signOut } = useLogto();
+    const {signOut} = useLogto();
     const user = useUserStore(state => state.user)!;
     const navigator = useNavigate();
     const [activeTab, setActiveTab] = useState('my-quizzes'); // Default to my quizzes
@@ -26,15 +26,15 @@ const Dashboard: React.FC = () => {
     const renderContent = () => {
         switch (activeTab) {
             case 'my-quizzes':
-                return <MySurveys />;
+                return <MySurveys/>;
             case 'quiz-analysis':
-                return <QuizAnalysis />;
+                return <QuizAnalysis/>;
             case 'received-quizzes':
-                return <ReceivedQuizzes />;
+                return <ReceivedQuizzes/>;
             case 'my-account':
-                return <MyAccount />;
+                return <MyAccount/>;
             default:
-                return <MySurveys />;
+                return <MySurveys/>;
         }
     };
 

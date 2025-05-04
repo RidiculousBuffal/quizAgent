@@ -17,15 +17,19 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // 1. 放行所有 OPTIONS 预检请求
+        registry.addInterceptor(new HandlerInterceptor() {
+            @Override
+            public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) {
+                if ("OPTIONS".equalsIgnoreCase(req.getMethod())) {
+                    res.setStatus(HttpServletResponse.SC_OK);
+                    return false;
+                }
+                return true;
+            }
+        }).addPathPatterns("/**").order(0);
+        // 2. Sa-Token
         registry.addInterceptor(new SaInterceptor(handle -> {
-                    System.out.println(handle);
-                    // 拿到当前请求的 SaRequest
-                    SaRequest request = SaHolder.getRequest();
-                    // 跳过预检
-                    if (HttpMethod.OPTIONS.matches(request.getMethod())) {
-                        return;
-                    }
-                    // 其余请求做登录校验
                     SaRouter.match("/**")
                             .notMatch("/login")
                             .notMatch("/quizpermission/public/check/**")
@@ -34,11 +38,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
                             .check(r -> StpUtil.checkLogin());
                 }))
                 .addPathPatterns("/**")
-                .excludePathPatterns("/login")
-                .excludePathPatterns("/public/**")
-                .excludePathPatterns("/quizpermission/public/check/**")
-                .excludePathPatterns("/api/question/listQuestions/**")
-                .excludePathPatterns("/api/quiz/**")
+                .excludePathPatterns(
+                        "/login",
+                        "/public/**",
+                        "/quizpermission/public/check/**",
+                        "/api/question/listQuestions/**",
+                        "/api/quiz/**",
+                        "/upload"
+                )
                 .order(1);
     }
+
 }

@@ -36,4 +36,10 @@ public class UserController {
             return SaResult.error().setCode(COMMON.FAILURE_CODE).setMsg("无效的用户ID");
         }
     }
+
+    @PostMapping("/updateUserAvatar")
+    public SaResult updateUserAvatar(@RequestBody String url) {
+        return SaResult.ok().setCode(COMMON.SUCCESS_CODE).setData(userService.updateUserAvatar(url))
+                ;
+    }
 }
