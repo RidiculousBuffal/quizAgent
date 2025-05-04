@@ -1,10 +1,15 @@
 import React, {useState} from 'react';
-import {Upload, Button, Typography, List, Progress} from 'antd';
+import {Upload, Button, Typography, List, Progress, Modal, Spin} from 'antd';
 import {UploadOutlined, FileOutlined, DeleteOutlined} from '@ant-design/icons';
 import {FileUploadQuestion, FileUploadAnswer} from './FileUploadQuestion.ts';
 
 import '../base.css';
 import {uploadFile} from "../../../api/uploadapi.ts";
+import {
+    shouldConvertToMarkdown,
+    uploadFileForParsing,
+    waitForParsingCompletion
+} from "../../llamaIndex/llamaParseService.ts";
 
 const {Text} = Typography;
 
@@ -32,18 +37,13 @@ const FileUploadPreview: React.FC<FileUploadPreviewProps> = ({
     const [uploading, setUploading] = useState(false);
     const [progress, setProgress] = useState(0);
     const [error, setError] = useState<string | null>(null);
+    const [parsingStatus, setParsingStatus] = useState<string | null>(null);
+    const [parsingModalVisible, setParsingModalVisible] = useState(false);
 
     // 验证结果
     const validationResult = showValidation ? question.validate(safeValue) : true;
     const isValid = typeof validationResult === 'boolean' ? validationResult : validationResult.isValid;
     const errorMessage = typeof validationResult === 'boolean' ? '' : validationResult.message;
-
-    // 将文本文件转换为Markdown的函数
-    const convertToMarkdown = async (file: File): Promise<string> => {
-        return new Promise((resolve) => {
-            resolve("")
-        });
-    };
 
     const handleFileUpload = async (file: File) => {
         // 检查文件类型
@@ -72,6 +72,7 @@ const FileUploadPreview: React.FC<FileUploadPreviewProps> = ({
         setError(null);
 
         try {
+            // 上传文件到主存储
             const fileUrl = await uploadFile({
                 file,
                 onProgress: (percent) => setProgress(percent)
@@ -79,16 +80,37 @@ const FileUploadPreview: React.FC<FileUploadPreviewProps> = ({
 
             let markdownContent = safeValue.markdown_details;
 
-            // 如果是文本文件并且设置了转换为Markdown
-            if (question.convertToMarkdown &&
-                (file.type.includes('text') ||
-                    file.name.endsWith('.txt') ||
-                    file.name.endsWith('.pdf'))) {
+            // 检查是否需要转换为Markdown
+            const shouldParse = question.convertToMarkdown && shouldConvertToMarkdown(file);
+
+            if (shouldParse) {
                 try {
-                    // 执行转换
-                    markdownContent = await convertToMarkdown(file);
-                } catch (e) {
+                    // 显示解析状态模态框
+                    setParsingModalVisible(true);
+                    setParsingStatus('正在准备解析文档...');
+
+                    // 上传文件到LlamaIndex进行解析
+                    const jobId = await uploadFileForParsing(file);
+
+                    // 等待解析完成并获取Markdown结果
+                    markdownContent = await waitForParsingCompletion(jobId, (status) => {
+                        if (status === 'PENDING') {
+                            setParsingStatus('文档解析中，请稍候...');
+                        } else if (status === 'SUCCESS') {
+                            setParsingStatus('解析完成，正在获取结果...');
+                        }
+                    });
+
+                    setParsingStatus('解析完成！');
+
+                    // 短暂延迟后关闭模态框
+                    setTimeout(() => {
+                        setParsingModalVisible(false);
+                    }, 1000);
+                } catch (e: any) {
                     console.error('Failed to convert file to markdown:', e);
+                    setError(`文档解析失败: ${e.message}`);
+                    setParsingModalVisible(false);
                 }
             }
 
@@ -169,6 +191,12 @@ const FileUploadPreview: React.FC<FileUploadPreviewProps> = ({
                     <Text type="secondary" style={{display: 'block'}}>
                         最大文件大小: {question.maxFileSize / (1024 * 1024)} MB, 最多上传 {question.maxFiles} 个文件
                     </Text>
+
+                    {question.convertToMarkdown && (
+                        <Text type="secondary" style={{display: 'block'}}>
+                            支持自动将文档内容转换为可检索的文本格式
+                        </Text>
+                    )}
                 </div>
             </div>
 
@@ -211,6 +239,25 @@ const FileUploadPreview: React.FC<FileUploadPreviewProps> = ({
                     {errorMessage}
                 </Text>
             )}
+
+            {/* 文档解析进度模态框 */}
+            <Modal
+                title="文档解析"
+                open={parsingModalVisible}
+                footer={null}
+                closable={false}
+                maskClosable={false}
+            >
+                <div style={{textAlign: 'center', padding: '20px 0'}}>
+                    <Spin size="large"/>
+                    <div style={{marginTop: 16}}>
+                        <Text>{parsingStatus}</Text>
+                    </div>
+                    <div style={{marginTop: 8}}>
+                        <Text type="secondary">正在使用AI分析文档内容，这可能需要几十秒时间</Text>
+                    </div>
+                </div>
+            </Modal>
         </div>
     );
 };

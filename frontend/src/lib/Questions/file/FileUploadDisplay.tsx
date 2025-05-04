@@ -3,6 +3,7 @@ import {List, Typography, Button, Space} from 'antd';
 import {FileOutlined, DownloadOutlined} from '@ant-design/icons';
 import {FileUploadQuestion, FileUploadAnswer} from './FileUploadQuestion.ts';
 import '../base.css';
+import {Markdown} from "@lobehub/ui";
 
 const {Text, Paragraph} = Typography;
 
@@ -74,7 +75,7 @@ const FileUploadDisplay: React.FC<FileUploadDisplayProps> = ({
                                 <Button
                                     key="download"
                                     type="primary"
-                                    icon={<DownloadOutlined />}
+                                    icon={<DownloadOutlined/>}
                                     onClick={() => handleDownload(item.url, item.name)}
                                 >
                                     下载
@@ -82,7 +83,7 @@ const FileUploadDisplay: React.FC<FileUploadDisplayProps> = ({
                             ]}
                         >
                             <List.Item.Meta
-                                avatar={<FileOutlined style={{fontSize: 24}} />}
+                                avatar={<FileOutlined style={{fontSize: 24}}/>}
                                 title={
                                     <Space>
                                         <a href={item.url} target="_blank" rel="noopener noreferrer">
@@ -113,7 +114,9 @@ const FileUploadDisplay: React.FC<FileUploadDisplayProps> = ({
                     }}>
                         <Paragraph>
                             <pre style={{whiteSpace: 'pre-wrap', wordWrap: 'break-word'}}>
-                                {safeAnswer.markdown_details}
+                                    <Markdown allowHtml={true} children={safeAnswer.markdown_details.toString()}
+                                              fullFeaturedCodeBlock={true} style={{maxWidth: "600px"}} lineHeight={0.1}
+                                              marginMultiple={0.1} headerMultiple={0.1}></Markdown>
                             </pre>
                         </Paragraph>
                     </div>
