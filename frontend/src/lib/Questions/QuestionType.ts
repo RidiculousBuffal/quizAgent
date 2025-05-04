@@ -3,6 +3,7 @@ import {MultiChoiceParams} from "./checkbox/checkbox.ts";
 import {FillBlankParams} from "./input/input.ts";
 import {EssayQuestionParams} from "./essay/essay.ts";
 import {EditOutlined, CheckCircleOutlined, CheckSquareOutlined} from "@ant-design/icons";
+import {FileUploadQuestionParams} from "./file/FileUploadQuestion.ts";
 
 type ValueOf<T> = T[keyof T];
 export type QuestionType = {
@@ -14,13 +15,15 @@ export type ParamsMap = {
     [ALLQuestionTypes.RADIO]: SingleChoiceQuestionParams,
     [ALLQuestionTypes.CHECKBOX]: MultiChoiceParams,
     [ALLQuestionTypes.FILLBLANK]: FillBlankParams,
-    [ALLQuestionTypes.ESSAY]: EssayQuestionParams
+    [ALLQuestionTypes.ESSAY]: EssayQuestionParams,
+    [ALLQuestionTypes.FILE]: FileUploadQuestionParams
 }
 export const ALLQuestionTypes = {
     "RADIO": "radio",
     "CHECKBOX": "checkbox",
     "FILLBLANK": "fillblank",
-    "ESSAY": "essay"
+    "ESSAY": "essay",
+    "FILE": "file"
 } as const
 
 export const questionTypes = [

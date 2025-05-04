@@ -34,6 +34,7 @@ import {
     LoadingOutlined,
     EyeOutlined,
     RobotOutlined,
+    FileAddOutlined
 } from '@ant-design/icons';
 import {useQuestionStore} from '../../store/question/QuestionStore';
 import QuestionTypeList from './QuestionTypeList';
@@ -85,6 +86,12 @@ const questionTypes: {
         icon: <EditOutlined/>,
         title: '简答题',
         type: {typeId: 4, typeName: 'essay', typeDescription: '简答题'},
+    },
+    {
+        key: 'file',
+        icon: <FileAddOutlined/>,
+        title: '文件题',
+        type: {typeId: 5, typeName: 'file', typeDescription: '文件题'}
     }
 ];
 
@@ -209,6 +216,13 @@ const MainDesign: React.FC = () => {
                     hideWordCount: false
                 })
                 break;
+            case 'file':
+                Object.assign(params, {
+                    maxFileSize: 100*1024*1024,
+                    allowedFileTypes: [],
+                    maxFiles: 1,
+                    convertToMarkdown: false
+                })
         }
 
         const newQuestion = QuestionFactory.createQuestion(type, params);

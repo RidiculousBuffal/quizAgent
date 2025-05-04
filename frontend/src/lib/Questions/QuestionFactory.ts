@@ -4,6 +4,7 @@ import {QuestionType} from "./QuestionType.ts";
 import {MultipleChoiceQuestion} from "./checkbox/checkbox.ts";
 import {FillBlankQuestion} from "./input/input.ts";
 import {EssayQuestion} from "./essay/essay.ts";
+import {FileUploadQuestion} from "./file/FileUploadQuestion.ts";
 
 export class QuestionFactory {
     private static _questionTypes: Map<number, typeof BaseQuestion> = new Map();
@@ -49,4 +50,5 @@ QuestionFactory.registerQuestionType(1, SingleChoiceQuestion);
 QuestionFactory.registerQuestionType(2, MultipleChoiceQuestion); // 多选题
 QuestionFactory.registerQuestionType(3, FillBlankQuestion); // 填空题
 QuestionFactory.registerQuestionType(4, EssayQuestion);
+QuestionFactory.registerQuestionType(5, FileUploadQuestion)
 // 注册其他问题类型...
