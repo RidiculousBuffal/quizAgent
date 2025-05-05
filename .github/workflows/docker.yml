@@ -2,12 +2,11 @@ name: Publish Docker Images
 
 on:
   release:
-    types: [ published ]   # 只有发布 Release（点击“Publish release”）才触发
+    types: [ published ]
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         include:
