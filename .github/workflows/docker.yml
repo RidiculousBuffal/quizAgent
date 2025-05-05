@@ -14,12 +14,12 @@ jobs:
           - name: backend
             context: .
             dockerfile: ./Dockerfile
-            repo: ridiculousbuffalo/featurequiz-be
+            repo: ridiculousbuffalo/futurequizbe
           # -------- Frontend --------
           - name: frontend
             context: ./frontend
             dockerfile: ./frontend/Dockerfile
-            repo: ridiculousbuffalo/featurequiz-fe
+            repo: ridiculousbuffalo/futurequizfe
 
     steps:
       - name: Checkout code
