@@ -20,7 +20,7 @@ jobs:
           - name: frontend
             context: ./frontend
             dockerfile: ./frontend/Dockerfile
-            repo: ridiculousbuffalo/featureQuiz-fe
+            repo: ridiculousbuffalo/featurequiz-fe
 
     steps:
       - name: Checkout code
@@ -52,4 +52,4 @@ jobs:
           push: true
           tags: |
             ${{ matrix.repo }}:${{ env.TAG }}
-            ${{ matrix.repo }}:latest   # 如果不想推 latest 就删掉这一行
+            ${{ matrix.repo }}:latest
