@@ -1,0 +1,58 @@
+name: Publish Docker Images
+
+on:
+  release:
+    types: [published]   # 只有发布 Release（点击“Publish release”）才触发
+
+env:
+  # 固定不敏感的仓库级变量，方便后面引用
+  DOCKERHUB_REPO_BE: ridiculousbuffalo/featurequiz-BE
+  DOCKERHUB_REPO_FE: ridiculousbuffalo/featureQuiz-FE
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up QEMU (multi-arch 可选，保留以防后续需要 arm 构建)
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract release tag
+        id: vars
+        run: echo "TAG=${GITHUB_REF#refs/tags/}" >> "$GITHUB_ENV"
+
+      # -------- Backend --------
+      - name: Build & push backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile          # 根目录 Dockerfile
+          push: true
+          tags: |
+            ${{ env.DOCKERHUB_REPO_BE }}:${{ env.TAG }}
+            ${{ env.DOCKERHUB_REPO_BE }}:latest    # 如不想推 latest 可删掉
+
+      # -------- Frontend --------
+      - name: Build & push frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: |
+            ${{ env.DOCKERHUB_REPO_FE }}:${{ env.TAG }}
+            ${{ env.DOCKERHUB_REPO_FE }}:latest
