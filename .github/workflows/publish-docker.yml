@@ -1,3 +1,13 @@
+name: Publish Docker Images
+
+on:
+  release:
+    types: [published]   # 只有发布 Release（点击“Publish release”）才触发
+
+env:
+  # 固定不敏感的仓库级变量，方便后面引用
+  DOCKERHUB_REPO_BE: ridiculousbuffalo/featurequiz-BE
+  DOCKERHUB_REPO_FE: ridiculousbuffalo/featureQuiz-FE
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
