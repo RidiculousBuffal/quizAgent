@@ -1,17 +1,20 @@
-name: Publish Docker Images
-
-on:
-  release:
-    types: [published]   # 只有发布 Release（点击“Publish release”）才触发
-
-env:
-  # 固定不敏感的仓库级变量，方便后面引用
-  DOCKERHUB_REPO_BE: ridiculousbuffalo/featurequiz-BE
-  DOCKERHUB_REPO_FE: ridiculousbuffalo/featureQuiz-FE
-
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          # -------- Backend --------
+          - name: backend
+            context: .
+            dockerfile: ./Dockerfile
+            repo: ridiculousbuffalo/featurequiz-BE
+          # -------- Frontend --------
+          - name: frontend
+            context: ./frontend
+            dockerfile: ./frontend/Dockerfile
+            repo: ridiculousbuffalo/featureQuiz-FE
 
     steps:
       - name: Checkout code
@@ -19,7 +22,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up QEMU (multi-arch 可选，保留以防后续需要 arm 构建)
+      - name: Set up QEMU (optional for multi‑arch)
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
@@ -35,24 +38,12 @@ jobs:
         id: vars
         run: echo "TAG=${GITHUB_REF#refs/tags/}" >> "$GITHUB_ENV"
 
-      # -------- Backend --------
-      - name: Build & push backend image
+      - name: Build & push ${{ matrix.name }} image
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ./Dockerfile          # 根目录 Dockerfile
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
           push: true
           tags: |
-            ${{ env.DOCKERHUB_REPO_BE }}:${{ env.TAG }}
-            ${{ env.DOCKERHUB_REPO_BE }}:latest    # 如不想推 latest 可删掉
-
-      # -------- Frontend --------
-      - name: Build & push frontend image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./frontend
-          file: ./frontend/Dockerfile
-          push: true
-          tags: |
-            ${{ env.DOCKERHUB_REPO_FE }}:${{ env.TAG }}
-            ${{ env.DOCKERHUB_REPO_FE }}:latest
+            ${{ matrix.repo }}:${{ env.TAG }}
+            ${{ matrix.repo }}:latest   # 如果不想推 latest 就删掉这一行
