@@ -6,33 +6,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties(prefix="logto")
-
+@Data
 public class LogtoConfig {
     private String jwksUri;   // JWKS URI
     private String issuer;    // Issuer
     private String appId;     // APP ID
-
-    public String getJwksUri() {
-        return jwksUri;
-    }
-
-    public void setJwksUri(String jwksUri) {
-        this.jwksUri = jwksUri;
-    }
-
-    public String getIssuer() {
-        return issuer;
-    }
-
-    public void setIssuer(String issuer) {
-        this.issuer = issuer;
-    }
-
-    public String getAppId() {
-        return appId;
-    }
-
-    public void setAppId(String appId) {
-        this.appId = appId;
-    }
+    private String frontendUrl;
 }

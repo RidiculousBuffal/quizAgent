@@ -39,7 +39,8 @@ mybatis:
 logto:
   jwks-uri:  # JWKS 公钥 URI
   issuer:       # 发行者 (issuer)
-  app-id:                # APP ID (Audience)
+  app-id:                   # 后端url
+  frontend-url:           # 前端url
 
 server:
   port: 13145

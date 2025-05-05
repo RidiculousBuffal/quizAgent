@@ -1,11 +1,5 @@
-# syntax=docker/dockerfile:1
-########## build ##########
 FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /app
-
-# 安装 chsrc，并静默换源到维护方测速第一
-RUN curl -fsSL https://chsrc.run/posix | bash \
- && chsrc set -no-color -en maven first
 
 # 复制文件 & 编译
 COPY pom.xml .
@@ -16,39 +10,10 @@ RUN mvn -B -DskipTests clean package
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
-ENV SPRING_APPLICATION_NAME=futurequiz
-ENV SPRING_DATASOURCE_URL=''
-ENV SPRING_DATASOURCE_USERNAME=''
-ENV SPRING_DATASOURCE_PASSWORD=''
-ENV SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
-ENV SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE=10000MB
-ENV SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE=10000MB
-ENV SPRING_AI_OPENAI_BASE_URL=''
-ENV SPRING_AI_OPENAI_API_KEY=''
-ENV SPRING_HTTP_CLIENT_CONNECT_TIMEOUT=200s
-ENV SPRING_HTTP_CLIENT_READ_TIMEOUT=200s
-ENV SPRING_DATA_REDIS_DATABASE=''
-ENV SPRING_DATA_REDIS_HOST=''
-ENV SPRING_DATA_REDIS_PORT=''
-ENV SPRING_DATA_REDIS_TIMEOUT=''
-ENV SPRING_DATA_REDIS_LETTUCE_POOL_MAX_ACTIVE=200
-ENV SPRING_DATA_REDIS_LETTUCE_POOL_MAX_WAIT=-1ms
-ENV SPRING_DATA_REDIS_LETTUCE_POOL_MAX_IDLE=10
-ENV SPRING_DATA_REDIS_LETTUCE_POOL_MIN_IDLE=0
-ENV SERVER_PORT=13145
 
-# 其他自定义配置可以通过环境变量的方式映射（例如 logto、sa-token 等）
-ENV LOGTO_JWKS_URI=''
-ENV LOGTO_ISSUER=''
-ENV LOGTO_APP_ID=''
-ENV SA_TOKEN_TOKEN_NAME=satoken
-ENV SA_TOKEN_TIMEOUT=2591000
-ENV SA_TOKEN_ACTIVE_TIMEOUT=-1
-ENV SA_TOKEN_IS_CONCURRENT=true
-ENV SA_TOKEN_IS_SHARE=true
-ENV SA_TOKEN_TOKEN_STYLE=uuid
-ENV SA_TOKEN_IS_LOG=true
-ENV SA_TOKEN_IS_READ_HEADER=true
-ENV LOGGING_LEVEL_CN_DEV33_SATOKEN=debug
+
+RUN mkdir -p /etc/featurequiz \
+    touch /etc/featurequiz/application.yaml
+
 EXPOSE 13145
-ENTRYPOINT ["java","-jar","/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar", "--spring.config.location=file:/etc/featurequiz/application.yaml"]
