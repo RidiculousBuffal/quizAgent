@@ -1,7 +1,8 @@
 import {JobResponse} from "./llamaParseType.ts";
+import {env} from "../../env.ts";
 
-const BASE_URL = import.meta.env.VITE_APP_LLAMA_INDEX_BASE_URL
-const API_KEY = import.meta.env.VITE_APP_LLAMA_INDEX_KEY
+const BASE_URL = env.VITE_APP_LLAMA_INDEX_BASE_URL
+const API_KEY = env.VITE_APP_LLAMA_INDEX_KEY
 
 export async function uploadFileForParsing(file: File): Promise<string> {
     const myHeaders = new Headers();

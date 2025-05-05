@@ -4,9 +4,10 @@ import {useLogto} from '@logto/react';
 import {RobotOutlined, FormOutlined, LineChartOutlined} from '@ant-design/icons';
 import {useNavigate} from "react-router";
 import {logout, useUserStore} from "../../store/user/UserStore.ts";
+import {env} from '../../env.ts'
 
 const {Header, Content, Footer} = Layout;
-const {Title, Paragraph} = Typography;
+const {Title} = Typography;
 
 const HomePage: React.FC = () => {
     const {signIn, signOut, isAuthenticated} = useLogto();
@@ -55,8 +56,8 @@ const HomePage: React.FC = () => {
                         size="large"
                         style={{fontWeight: 500}}
                         onClick={() => isAuthenticated ?
-                            signOut(import.meta.env.VITE_APP_URL).then(logout) :
-                            signIn(`${import.meta.env.VITE_APP_URL}/callback`)}
+                            signOut(env.VITE_APP_URL).then(logout) :
+                            signIn(`${env.VITE_APP_URL}/callback`)}
                     >
                         {isAuthenticated && isSignedBackend ? "Sign Out" : "Sign In"}
                     </Button>

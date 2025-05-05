@@ -1,4 +1,4 @@
-import {StrictMode} from 'react'
+
 import {createRoot} from 'react-dom/client'
 import MyApp from './MyApp.tsx'
 import {logtoConfig} from './config/logtoConfig.ts'

@@ -1,6 +1,8 @@
 import {LogtoConfig} from "@logto/react";
-export const logtoConfig:LogtoConfig={
-    endpoint:import.meta.env.VITE_APP_LOGTO_ENDPOINT,
-    appId:import.meta.env.VITE_APP_LOGTO_APPID,
-    resources:[import.meta.env.VITE_APP_API_URL]
+import {env} from '../env.ts'
+
+export const logtoConfig: LogtoConfig = {
+    endpoint: env.VITE_APP_LOGTO_ENDPOINT,
+    appId: env.VITE_APP_LOGTO_APPID,
+    resources: [env.VITE_APP_API_URL]
 }

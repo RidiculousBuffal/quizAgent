@@ -26,6 +26,7 @@ import {
     StopOutlined
 } from "@ant-design/icons";
 import { QuizDto } from "../../api/types/questionType.ts";
+import {env} from "../../env.ts";
 
 const { Option } = Select;
 const { Text, Title } = Typography;
@@ -59,7 +60,7 @@ const QuizPublishPermissionModal: React.FC<PublishPermissionModalProps> = ({
     const [isQuizEnded, setIsQuizEnded] = useState<boolean>(false);
 
     // 答题链接
-    const answerUrl = `${import.meta.env.VITE_APP_URL}/doQuiz/${quizId}`;
+    const answerUrl = `${env.VITE_APP_URL}/doQuiz/${quizId}`;
 
     // 初始化时拉取权限详情
     useEffect(() => {

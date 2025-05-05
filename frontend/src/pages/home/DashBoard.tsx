@@ -8,6 +8,7 @@ import MySurveys from '../dashboardPages/MySurveys.tsx';
 import QuizAnalysis from '../dashboardPages/QuizAnalysis.tsx';
 import ReceivedQuizzes from '../dashboardPages/ReceivedQuizzes.tsx';
 import MyAccount from '../dashboardPages/MyAccount.tsx';
+import {env} from "../../env.ts";
 
 const {Header, Content, Footer, Sider} = Layout;
 const {Title, Text} = Typography;
@@ -103,7 +104,7 @@ const Dashboard: React.FC = () => {
                     <div style={{marginTop: '30px'}}>
                         <Button
                             danger
-                            onClick={() => signOut(import.meta.env.VITE_APP_URL)}
+                            onClick={() => signOut(env.VITE_APP_URL)}
                             block
                         >
                             退出登录

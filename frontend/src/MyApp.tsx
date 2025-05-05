@@ -4,17 +4,12 @@ import Callback from "./pages/home/callback.tsx";
 import Dashboard from "./pages/home/DashBoard.tsx";
 import HomePage from "./pages/home/HomePage.tsx";
 import ProtectedRoute from "./components/auth/protectedRoute.tsx";
-import {DebugFloater} from "./components/debug/debugButton.tsx";
 import MainDesign from "./pages/quizDesign/MainDesign.tsx";
 import '../index.css'
 import DoQuizPage from "./pages/doQuiz/DoQuizPage.tsx";
 import QuizCompletionPage from "./pages/doQuiz/QuizCompletionPage.tsx";
 import QuizSquare from "./pages/home/QuizSquare.tsx";
-import QuizAnalysisDetail from "./pages/dashboardPages/QuizAnalysisDetail.tsx";
 import QuizAnalysisCenter from "./pages/dashboardPages/QuizAnalysis.tsx";
-import ReceivedQuizzes from "./pages/dashboardPages/ReceivedQuizzes.tsx";
-
-
 function MyApp() {
     return <>
         <Routes>

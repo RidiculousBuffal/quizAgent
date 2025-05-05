@@ -1,7 +1,8 @@
 import message from '../components/globalMessage/index.ts'
 import {useUserStore} from "../store/user/UserStore.ts";
+import {env} from "../env.ts";
 
-export const BASE_URL = import.meta.env.VITE_APP_API_URL
+export const BASE_URL = env.VITE_APP_API_URL
 
 export interface Result<T> {
     code: number;
