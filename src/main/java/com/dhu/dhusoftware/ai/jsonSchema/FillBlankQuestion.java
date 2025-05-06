@@ -3,13 +3,12 @@ package com.dhu.dhusoftware.ai.jsonSchema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 
-import java.time.Year;
 import java.util.List;
 
-public record FillBlank(
+public record FillBlankQuestion(
         @JsonProperty(required = true, defaultValue = "标题") String title,
         @JsonProperty(required = true, defaultValue = "自定义描述") String description,
-        @JsonProperty(required = false, defaultValue = "true") Boolean required,
+        @JsonProperty(required = false, defaultValue = "true") Boolean isRequired,
         @JsonPropertyDescription("一共有几个空,如不开启inline mode则要填写")
         @JsonProperty(required = true, defaultValue = "1") Integer blankCount,
         @JsonPropertyDescription("各个空的标签,如不开启inline mode则要填写")
