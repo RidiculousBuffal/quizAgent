@@ -1,5 +1,5 @@
 alter table aianswerhistory
-    drop column  savedCount;
+    drop column savedCount;
 
 alter table aianswerhistory
     drop foreign key aianswerhistory_ibfk_2;
