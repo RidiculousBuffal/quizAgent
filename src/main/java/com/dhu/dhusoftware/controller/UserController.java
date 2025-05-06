@@ -39,7 +39,6 @@ public class UserController {
 
     @PostMapping("/updateUserAvatar")
     public SaResult updateUserAvatar(@RequestBody String url) {
-        return SaResult.ok().setCode(COMMON.SUCCESS_CODE).setData(userService.updateUserAvatar(url))
-                ;
+        return SaResult.ok().setCode(COMMON.SUCCESS_CODE).setData(userService.updateUserAvatar(url));
     }
 }
