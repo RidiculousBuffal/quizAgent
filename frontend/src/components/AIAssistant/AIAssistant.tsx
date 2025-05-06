@@ -502,7 +502,12 @@ const AIAssistant: React.FC<{ onClose?: () => void }> = ({onClose}) => {
                         <Bubble.List
                             ref={bubbleListRef}
                             roles={roles as any}
-                            items={messages}
+                            items={messages.map((x) => ({
+                                key: x.key,
+                                role: x.role,
+                                content: x.content,
+                                loading: !x.content
+                            }))}
                             autoScroll
                         />
                     )}
