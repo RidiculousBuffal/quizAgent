@@ -17,5 +17,5 @@ export const exportToExcel = (worksheets: WorksheetData[], filename: string): vo
     });
 
     // 导出Excel文件
-    XLSX.writeFile(workbook, `${filename}.xlsx`);
+    XLSX.writeFile(workbook, `${filename.substring(0,10)}.xlsx`);
 };
