@@ -74,6 +74,15 @@
 ## 问卷回答页面
 ![Snipaste_2025-05-05_21-40-19.png](img%2FSnipaste_2025-05-05_21-40-19.png)
 ![img_1.png](img%2Fimg_1.png)
+
+## MCP支持
+- 我们使用`python`的`fastmcp`来连接到我们的服务器，可以在[futureQuizMcp](https://github.com/RidiculousBuffal/futureQuizMcp.git)这个仓库找到我们的mcp服务器
+- 在前端申请apikey 即可在cherry studio中调用
+![img.png](img%2Fmcp%2Fimg.png)
+![img_2.png](img%2Fmcp%2Fimg_2.png)
+![img_1.png](img%2Fmcp%2Fimg_1.png)
+
+
 ## 整体架构
 
 - 前端整体是一个工厂模式,如图
