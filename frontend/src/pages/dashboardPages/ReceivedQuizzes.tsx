@@ -172,18 +172,18 @@ const ReceivedQuizzes = () => {
                         关闭
                     </Button>
                 ]}
+                centered
                 width={800}
                 destroyOnClose={true} // 关闭时销毁组件，避免数据残留
                 maskClosable={false}
-
             >
                 <AIModal modelName={modelName} quizId={selectedQuiz?.quizId}></AIModal>
-
             </Modal>
             {/* 单个回复详情弹窗 */}
             <Modal
                 title="回复详情"
                 open={responseModalVisible}
+                centered
                 onCancel={() => setResponseModalVisible(false)}
                 footer={[
                     <Button key="back" onClick={() => setResponseModalVisible(false)}>

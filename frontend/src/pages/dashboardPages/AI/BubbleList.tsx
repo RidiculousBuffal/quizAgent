@@ -36,6 +36,7 @@ function BubbleList({session}: { session: messageItem[] }) {
                     headerMultiple: 1,
                     lineHeight: 1,
                     marginMultiple: 1,
+                    fontSize: 14,
                     style:{
                         maxWidth:"600px"
                     }
@@ -43,7 +44,8 @@ function BubbleList({session}: { session: messageItem[] }) {
             return {
                 key: x.key,
                 role: x.role,
-                content: <Markdown  {...options}></Markdown>
+                content: <Markdown  {...options}></Markdown>,
+                loading: !x.content
             }
         })}></Bubble.List>
     </>

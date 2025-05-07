@@ -120,7 +120,7 @@ const QuizAnalysisCenter: React.FC = () => {
                             type="link"
                             icon={<ArrowLeftOutlined />}
                             onClick={backToList}
-                            style={{ marginBottom: '16px' }}
+                            style={{ margin: '32px 0 16px -16px' }}
                         >
                             返回问卷列表
                         </Button>
@@ -134,11 +134,11 @@ const QuizAnalysisCenter: React.FC = () => {
                             type="link"
                             icon={<ArrowLeftOutlined />}
                             onClick={backToList}
-                            style={{ marginBottom: '16px' }}
+                            style={{ margin: '32px 0 16px -16px' }}
                         >
                             返回问卷列表
                         </Button>
-                        {selectedQuizId && <ReceivedQuizzes quizId={selectedQuizId} />}
+                        {selectedQuizId && <ReceivedQuizzes />}
                     </div>
                 );
             case 'list':

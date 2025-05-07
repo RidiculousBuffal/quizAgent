@@ -32,7 +32,7 @@ const HomePage: React.FC = () => {
                         color: '#333',
                         transform: 'rotate(-10deg)'
                     }}/>
-                    <Title level={3} style={{margin: 0, color: '#333', fontWeight: 600}}>AI Quiz Agent</Title>
+                    <Title level={3} style={{margin: 0, color: '#333', fontWeight: 600}}>Future Quiz</Title>
                 </div>
                 <Space size="large">
                     <Button
@@ -229,9 +229,9 @@ const HomePage: React.FC = () => {
                 borderTop: '1px solid #333'
             }}>
                 <div style={{maxWidth: '800px', margin: '0 auto'}}>
-                    AI Quiz Agent ©{new Date().getFullYear()} — Intelligent Survey Platform
+                    Future Quiz ©{new Date().getFullYear()} — Intelligent Survey Platform
                     <div style={{marginTop: '16px', fontSize: '12px', letterSpacing: '1px'}}>
-                        THOUGHTFULLY DESIGNED IN NEW YORK
+                        THOUGHTFULLY DESIGNED IN SHANGHAI
                     </div>
                 </div>
             </Footer>
