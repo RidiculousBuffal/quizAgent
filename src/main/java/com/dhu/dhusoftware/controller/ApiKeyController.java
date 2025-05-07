@@ -6,10 +6,7 @@ import cn.dev33.satoken.util.SaResult;
 
 import cn.dev33.satoken.apikey.SaApiKeyUtil;
 import com.dhu.dhusoftware.constant.COMMON;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -91,6 +88,16 @@ public class ApiKeyController {
             return SaResult.ok("API Key删除成功").setCode(COMMON.SUCCESS_CODE).setData(true);
         } catch (Exception e) {
             return SaResult.error("API Key删除失败: " + e.getMessage()).setCode(COMMON.FAILURE_CODE).setData(false);
+        }
+    }
+
+    @PostMapping("/checkapikey")
+    public SaResult checkAPIKey() {
+        try {
+            ApiKeyModel apiKeyModel = SaApiKeyUtil.currentApiKey();
+            return SaResult.ok().setCode(COMMON.SUCCESS_CODE).setData(true);
+        } catch (Exception e) {
+            return SaResult.error().setCode(COMMON.FAILURE_CODE).setData(false);
         }
     }
 }
