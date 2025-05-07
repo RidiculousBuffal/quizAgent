@@ -232,7 +232,7 @@ const QuizAnalysisCenter: React.FC = () => {
     }
 
     return (
-        <div style={{padding: '24px'}}>
+        <div style={{padding: '0'}}>
             <Title level={4}>问卷分析</Title>
             {currentView === 'list' && (
                 <>
