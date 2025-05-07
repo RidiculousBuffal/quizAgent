@@ -97,15 +97,10 @@ public class QuizService {
         if (quiz == null) {
             throw new IllegalArgumentException(QuizConstants.NOT_FOUND);
         }
-        if (!quiz.getCreator().equals(currentUserId) && !StpUtil.hasPermission(PermissionConstants.SCOPE_QUIZ_DELETE)) {
+        if (!quiz.getCreator().equals(currentUserId)) {
             throw new SecurityException(QuizConstants.PERMISSION_DENIED_MSG);
         }
-        //删除相应对的quizPermission相应记录
-        if (quizPermissionService.deleteQuizPermission(quizId)) {
-            return quizMapper.deleteQuiz(quizId) > 0;
-        } else {
-            throw new IllegalArgumentException(QuizConstants.NOT_FOUND);
-        }
+        return quizMapper.deleteQuiz(quizId) > 0;
     }
 
     /**
