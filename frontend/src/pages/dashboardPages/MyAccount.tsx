@@ -57,7 +57,7 @@ const MyAccount: React.FC = () => {
     };
 
     return (
-        <div style={{padding: '24px'}}>
+        <div style={{padding: '0'}}>
             <Title level={4}>我的账户</Title>
             <Card>
                 <Form

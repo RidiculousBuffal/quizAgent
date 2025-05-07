@@ -140,7 +140,7 @@ const HomePage: React.FC = () => {
                                     boxShadow: '0 8px 24px rgba(0,0,0,0.05)'
                                 }}>
                                     <div style={{fontFamily: 'monospace', color: '#666'}}>AI Analysis</div>
-                                    <div style={{fontSize: '24px', fontWeight: 600}}>87%</div>
+                                    <div style={{fontSize: '24px', fontWeight: 600}}>96%</div>
                                 </div>
                             </div>
 
@@ -150,7 +150,7 @@ const HomePage: React.FC = () => {
                                 marginTop: '32px',
                                 color: '#666'
                             }}>
-                                Real-time AI analysis engine with deep learning capabilities
+                                Real-time AI analysis engine with AI Agent
                             </div>
                         </div>
                     </Col>
