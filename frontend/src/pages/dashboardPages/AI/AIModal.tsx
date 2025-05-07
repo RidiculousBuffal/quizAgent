@@ -122,7 +122,7 @@ function AIModal({quizId, modelName}: { quizId?: number, modelName: string }) {
                     </div>
                 }
                 <Sender
-                    style={{width: "740px", position: "relative", bottom: 0}}
+                    style={{width: "740px", position: "absolute", bottom: 0}}
                     loading={loading}
                     value={value}
                     onChange={v => setValue(v)}
