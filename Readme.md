@@ -13,7 +13,9 @@
   ![logto1.png](img%2Flogto1.png)
 - 同时使用Satoken来向前端签发`token`,具体架构如下
   ![logto2.png](img%2Flogto2.png)
-
+- logto 需要使用自定义JWT,设置API端点
+![img.png](img%2Flogto%2Fimg.png)
+![img_1.png](img%2Flogto%2Fimg_1.png)
 ## 问卷中心
 
 - 提供基本的问卷中心管理问卷
