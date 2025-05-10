@@ -114,6 +114,7 @@ docker run -d \
   ridiculousbuffalo/futurequizbe:latest
 ```
 ## 启动前端
+> 🆘🆘🆘注意该系统的`llama_index API_KEY`会直接暴露在前端的环境变量中
 ```bash
 docker run -d --name futurequizfe \
   -p 8080:80 \
