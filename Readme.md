@@ -76,8 +76,7 @@
 ![img_1.png](img%2Fimg_1.png)
 
 ## MCP支持
-- 我们使用`python`的`fastmcp`来连接到我们的服务器，可以在[futureQuizMcp](https://github.com/RidiculousBuffal/futureQuizMcp.git)这个仓库找到我们的mcp服务器
-- 在前端申请apikey 即可在cherry studio中调用
+- 从0.1.7版本以后java客户端内置Mcp服务器,使用java后台地址+`/sse`链接即可
 ![img.png](img%2Fmcp%2Fimg.png)
 ![img_2.png](img%2Fmcp%2Fimg_2.png)
 ![img_1.png](img%2Fmcp%2Fimg_1.png)
