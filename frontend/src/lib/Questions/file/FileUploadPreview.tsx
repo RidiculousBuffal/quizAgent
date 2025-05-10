@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import {Upload, Button, Typography, List, Progress, Modal, Spin} from 'antd';
-import {UploadOutlined, FileOutlined, DeleteOutlined} from '@ant-design/icons';
-import {FileUploadQuestion, FileUploadAnswer} from './FileUploadQuestion.ts';
+import {Button, List, Modal, Progress, Spin, Typography, Upload} from 'antd';
+import {DeleteOutlined, FileOutlined, UploadOutlined} from '@ant-design/icons';
+import {FileUploadAnswer, FileUploadQuestion} from './FileUploadQuestion.ts';
 
 import '../base.css';
 import {uploadFile} from "../../../api/uploadapi.ts";
@@ -192,11 +192,9 @@ const FileUploadPreview: React.FC<FileUploadPreviewProps> = ({
                         最大文件大小: {question.maxFileSize / (1024 * 1024)} MB, 最多上传 {question.maxFiles} 个文件
                     </Text>
 
-                    {question.convertToMarkdown && (
-                        <Text type="secondary" style={{display: 'block'}}>
-                            支持自动将文档内容转换为可检索的文本格式
-                        </Text>
-                    )}
+                    {question.convertToMarkdown == true ? <Text type="secondary" style={{display: 'block'}}>
+                        支持自动将文档内容转换为可检索的文本格式
+                    </Text> : <></>}
                 </div>
             </div>
 

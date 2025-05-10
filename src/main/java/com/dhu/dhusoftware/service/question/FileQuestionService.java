@@ -1,6 +1,6 @@
 package com.dhu.dhusoftware.service.question;
 
-import com.dhu.dhusoftware.ai.jsonSchema.FillBlankQuestion;
+import com.dhu.dhusoftware.ai.jsonSchema.FileQuestion;
 import com.dhu.dhusoftware.mapper.QuestionMapper;
 import com.dhu.dhusoftware.pojo.Question;
 import com.dhu.dhusoftware.pojo.Questiontype;
@@ -12,25 +12,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FillBlankQuestionService {
+public class FileQuestionService {
+
     @Autowired
     private QuestionMapper questionMapper;
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    public String processAndSaveFillBlankQuestion(FillBlankQuestion fillBlank, Long quizId) throws Exception {
+    public String processAndSaveFileQuestion(FileQuestion fileQuestion, Long quizId) throws Exception {
         // Step 1: Add validators field to JSON representation
-        String jsonDetails = JsonRecordProcessor.addValidatorsAndConvertToJson(fillBlank, fillBlank.blankCount());
+        String jsonDetails = mapper.writeValueAsString(fileQuestion);
 
         // Step 2: Save to question table
         Question question = new Question();
-        question.setQuestionName(fillBlank.title());
-        question.setQuestionDescription(fillBlank.description());
+        question.setQuestionName(fileQuestion.title());
+        question.setQuestionDescription(fileQuestion.description());
         question.setQuestionDetails(jsonDetails);
-        question.setQuestionTypeId(3L);
+        question.setQuestionTypeId(5L);
         questionMapper.insertQuestion(question);
 
         // Step 3: Fetch questionType details
-        Questiontype questionType = questionMapper.selectQuestionTypeById(3L);
+        Questiontype questionType = questionMapper.selectQuestionTypeById(5L);
         ObjectNode typeNode = mapper.createObjectNode();
         typeNode.put("typeId", questionType.getTypeId());
         typeNode.put("typeName", questionType.getTypeName());

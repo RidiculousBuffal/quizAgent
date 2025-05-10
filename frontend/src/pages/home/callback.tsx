@@ -4,6 +4,7 @@ import {Spin} from 'antd';
 import {useUserStore} from '../../store/user/UserStore.ts';
 import {BASE_URL} from "../../api/base.ts";
 import {doLogin} from "../../api/loginapi.ts";
+import {getUserInfo} from "../../api/userapi.ts";
 
 
 const Callback = () => {
@@ -16,22 +17,13 @@ const Callback = () => {
             const claims = await getAccessTokenClaims(BASE_URL);
             if (claims) {
                 const userId = claims.sub;
-                const userData = claims.user as {
-                    avatar?: string;
-                    primaryEmail?: string;
-                    username: string
-                };
                 const token = await getAccessToken(BASE_URL)
                 const saToken = await doLogin(token!)
                 if (saToken) {
                     login(saToken)
                     // Store user data in Zustand
-                    setUserData({
-                        userId: userId,
-                        userName: userData.username,
-                        userEmail: userData.primaryEmail,
-                        userAvatar: userData.avatar
-                    });
+                    const userInfo = await getUserInfo(userId?.toString() as string)
+                    setUserData(userInfo);
                     nav('/dashboard');
                 } else {
                     nav('/')

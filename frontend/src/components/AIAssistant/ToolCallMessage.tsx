@@ -33,10 +33,24 @@ const ToolCallMessage: React.FC<ToolCallMessageProps> = ({tool, result}) => {
                 icon: <FormOutlined/>,
                 title: result?.title || '填空题'
             };
+        }else if (tool.includes('Essay')) {
+            return {
+                type: '简答题',
+                color: '#8912ee',
+                icon: <FormOutlined/>,
+                title: result?.title || '简答题'
+            };
+        }else if (tool.includes('File')) {
+            return {
+                type: '文件题',
+                color: '#fa1487',
+                icon: <FormOutlined/>,
+                title: result?.title || '文件题'
+            };
         } else {
             return {
                 type: '题目',
-                color: '#722ed1',
+                color: '#320e8c',
                 icon: <ApiOutlined/>,
                 title: '题目已创建'
             };

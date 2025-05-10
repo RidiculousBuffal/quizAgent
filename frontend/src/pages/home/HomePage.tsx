@@ -32,7 +32,7 @@ const HomePage: React.FC = () => {
                         color: '#333',
                         transform: 'rotate(-10deg)'
                     }}/>
-                    <Title level={3} style={{margin: 0, color: '#333', fontWeight: 600}}>AI Quiz Agent</Title>
+                    <Title level={3} style={{margin: 0, color: '#333', fontWeight: 600}}>Future Quiz</Title>
                 </div>
                 <Space size="large">
                     <Button
@@ -140,7 +140,7 @@ const HomePage: React.FC = () => {
                                     boxShadow: '0 8px 24px rgba(0,0,0,0.05)'
                                 }}>
                                     <div style={{fontFamily: 'monospace', color: '#666'}}>AI Analysis</div>
-                                    <div style={{fontSize: '24px', fontWeight: 600}}>87%</div>
+                                    <div style={{fontSize: '24px', fontWeight: 600}}>96%</div>
                                 </div>
                             </div>
 
@@ -150,7 +150,7 @@ const HomePage: React.FC = () => {
                                 marginTop: '32px',
                                 color: '#666'
                             }}>
-                                Real-time AI analysis engine with deep learning capabilities
+                                Real-time AI analysis engine with AI Agent
                             </div>
                         </div>
                     </Col>
@@ -229,9 +229,9 @@ const HomePage: React.FC = () => {
                 borderTop: '1px solid #333'
             }}>
                 <div style={{maxWidth: '800px', margin: '0 auto'}}>
-                    AI Quiz Agent ©{new Date().getFullYear()} — Intelligent Survey Platform
+                    Future Quiz ©{new Date().getFullYear()} — Intelligent Survey Platform
                     <div style={{marginTop: '16px', fontSize: '12px', letterSpacing: '1px'}}>
-                        THOUGHTFULLY DESIGNED IN NEW YORK
+                        THOUGHTFULLY DESIGNED IN SHANGHAI
                     </div>
                 </div>
             </Footer>

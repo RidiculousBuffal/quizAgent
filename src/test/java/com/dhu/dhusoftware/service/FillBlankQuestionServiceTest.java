@@ -1,7 +1,7 @@
 package com.dhu.dhusoftware.service;
 
 import com.dhu.dhusoftware.ai.jsonSchema.AnswerType;
-import com.dhu.dhusoftware.ai.jsonSchema.FillBlank;
+import com.dhu.dhusoftware.ai.jsonSchema.FillBlankQuestion;
 import com.dhu.dhusoftware.mapper.QuestionMapper;
 import com.dhu.dhusoftware.pojo.Question;
 import com.dhu.dhusoftware.pojo.Questiontype;
@@ -34,7 +34,7 @@ public class FillBlankQuestionServiceTest {
     @InjectMocks
     private FillBlankQuestionService fillBlankQuestionService;
 
-    private FillBlank fillBlank;
+    private FillBlankQuestion fillBlank;
     private Questiontype questionType;
     private final Long quizId = 1L;
     private final Long questionId = 1001L;
@@ -44,7 +44,7 @@ public class FillBlankQuestionServiceTest {
     @BeforeEach
     void setUp() {
         // 初始化 FillBlank 对象
-        fillBlank = new FillBlank(
+        fillBlank = new FillBlankQuestion(
                 "完成句子",
                 "请在空白处填入适当的词语",
                 true,
@@ -94,7 +94,7 @@ public class FillBlankQuestionServiceTest {
         doNothing().when(questionMapper).insertQuizQuestion(any(Quizquestion.class));
 
         // 调用服务方法
-        String resultJson = fillBlankQuestionService.processAndSaveFillBlank(fillBlank, quizId);
+        String resultJson = fillBlankQuestionService.processAndSaveFillBlankQuestion(fillBlank, quizId);
 
         System.out.println(resultJson);
         // 验证结果
@@ -117,8 +117,8 @@ public class FillBlankQuestionServiceTest {
         // 此测试需要修改 JsonRecordProcessor 或其他逻辑以模拟 JSON 解析错误
         // 这里简单验证异常处理，实际可根据需求添加
         assertThrows(Exception.class, () -> {
-            FillBlank invalidFillBlank = new FillBlank("", "", false, -1, null, null, null, "", false, "");
-            fillBlankQuestionService.processAndSaveFillBlank(invalidFillBlank, quizId);
+            FillBlankQuestion invalidFillBlank = new FillBlankQuestion("", "", false, -1, null, null, null, "", false, "");
+            fillBlankQuestionService.processAndSaveFillBlankQuestion(invalidFillBlank, quizId);
         });
     }
 }

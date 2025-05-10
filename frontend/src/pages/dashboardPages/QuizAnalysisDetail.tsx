@@ -59,7 +59,7 @@ const QuizAnalysisDetail = ({quizId}:{quizId:number}) => {
     const quizName = quizInfo?.quizName || `问卷 #${quizId}`;
 
     return (
-        <div style={{padding: '24px'}}>
+        <div style={{padding: '0'}}>
             <Card variant={"borderless"}>
                 <QuizStatistics
                     quizId={quizId}

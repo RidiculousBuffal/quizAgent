@@ -117,7 +117,7 @@ function AIModal({quizId, modelName}: { quizId?: number, modelName: string }) {
                         type={"info"}
                         message={"可在下方输入框中对该问卷的回收情况进行提问"}
                     /> :
-                    <div style={{height: "720px", minWidth: "770px", overflowY: "scroll"}}>
+                    <div style={{height: "720px", minWidth: "770px", overflowY: "auto"}}>
                         <BubbleList session={messageItemList}/>
                     </div>
                 }
@@ -128,7 +128,7 @@ function AIModal({quizId, modelName}: { quizId?: number, modelName: string }) {
                     onChange={v => setValue(v)}
                     onSubmit={handleSubmit}
                     onCancel={() => setLoading(false)}
-                    autoSize={{minRows: 2, maxRows: 6}}
+                    autoSize={{minRows: 1, maxRows: 6}}
                 />
             </Space>
         </>

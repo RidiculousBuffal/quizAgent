@@ -153,7 +153,7 @@ const Dashboard: React.FC = () => {
                     padding: '0',
                     flexShrink: 0
                 }}>
-                    AI Quiz Agent ©{new Date().getFullYear()} - Intelligent Survey Platform
+                    Future Quiz ©{new Date().getFullYear()} - Intelligent Survey Platform
                 </Footer>
             </Layout>
         </Layout>

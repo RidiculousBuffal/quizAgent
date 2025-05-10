@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Typography, Card, Button, Space, Modal, Alert, Select} from 'antd';
 import {DownloadOutlined} from '@ant-design/icons';
-
+import message from '../../components/globalMessage/index.ts'
 import {getAnswerList, getQuizzesHasResp, getTotalResponseByQuizId} from '../../api/quizQuestionAnswerApi';
 import QuizList from './receiveQuizes/QuizList';
 import ResponseList from './receiveQuizes/ResponseList';
@@ -104,11 +104,7 @@ const ReceivedQuizzes = () => {
     };
 
     // 导出回复数据
-    const exportResponses = () => {
-        // 实现导出功能，可以是CSV或Excel格式
-        console.log("导出问卷回复数据");
-        // 实际实现应调用API或前端生成文件下载
-    };
+
 
     return (
         <div style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
@@ -135,13 +131,6 @@ const ReceivedQuizzes = () => {
                         <Space>
                             <Button onClick={() => setAIModal(true)}>AI助手</Button>
                             <Button onClick={() => setSelectedQuiz(null)}>返回问卷列表</Button>
-                            <Button
-                                type="primary"
-                                icon={<DownloadOutlined/>}
-                                onClick={exportResponses}
-                            >
-                                导出回复
-                            </Button>
                         </Space>
                     }
                     style={{flex: 1, overflowY: 'auto'}}
@@ -172,18 +161,18 @@ const ReceivedQuizzes = () => {
                         关闭
                     </Button>
                 ]}
+                centered
                 width={800}
                 destroyOnClose={true} // 关闭时销毁组件，避免数据残留
                 maskClosable={false}
-
             >
                 <AIModal modelName={modelName} quizId={selectedQuiz?.quizId}></AIModal>
-
             </Modal>
             {/* 单个回复详情弹窗 */}
             <Modal
                 title="回复详情"
                 open={responseModalVisible}
+                centered
                 onCancel={() => setResponseModalVisible(false)}
                 footer={[
                     <Button key="back" onClick={() => setResponseModalVisible(false)}>
