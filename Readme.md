@@ -9,6 +9,10 @@
 
 > PPT下载链接:[【金山文档 | WPS云文档】 FutureQuiz ](https://kdocs.cn/l/cdnORUBURMQn)
 
+> 视频演示:
+
+[![视频标题](https://zlcminio.ridiculousbuffal.com/dhu/cover.png)](https://zlcminio.ridiculousbuffal.com/dhu/futurequiz.mp4)
+
 ## Logto 单点登录
 
 - 系统集成基本的`logto`单点登录，支持在`logto`中使用邮箱登录,`github`登录等.
