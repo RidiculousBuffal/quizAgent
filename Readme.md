@@ -6,7 +6,9 @@
 > 🆘 该系统旨在服务东华大学2025年软件工程实训课程,旨在探索AI在问卷领域的应用,我们给系统配备了基本的安全认证功能,但部分功能尚未完善，切勿直接用于生产环境。
 
 # 项目展示
->PPT下载链接:[【金山文档 | WPS云文档】 FutureQuiz ](https://kdocs.cn/l/cdnORUBURMQn)
+
+> PPT下载链接:[【金山文档 | WPS云文档】 FutureQuiz ](https://kdocs.cn/l/cdnORUBURMQn)
+
 ## Logto 单点登录
 
 - 系统集成基本的`logto`单点登录，支持在`logto`中使用邮箱登录,`github`登录等.
@@ -14,8 +16,9 @@
 - 同时使用Satoken来向前端签发`token`,具体架构如下
   ![logto2.png](img%2Flogto2.png)
 - logto 需要使用自定义JWT,设置API端点
-![img.png](img%2Flogto%2Fimg.png)
-![img_1.png](img%2Flogto%2Fimg_1.png)
+  ![img.png](img%2Flogto%2Fimg.png)
+  ![img_1.png](img%2Flogto%2Fimg_1.png)
+
 ## 问卷中心
 
 - 提供基本的问卷中心管理问卷
@@ -74,21 +77,21 @@
   ![Snipaste_2025-05-05_21-26-54.png](img%2Fquizdesign%2Fanalysis%2FSnipaste_2025-05-05_21-26-54.png)
 
 ## 问卷回答页面
+
 ![Snipaste_2025-05-05_21-40-19.png](img%2FSnipaste_2025-05-05_21-40-19.png)
 ![img_1.png](img%2Fimg_1.png)
 
 ## MCP支持
-- 从0.1.7版本以后java客户端内置Mcp服务器,使用java后台地址+`/sse`链接即可
-![img.png](img%2Fmcp%2Fimg.png)
-![img_2.png](img%2Fmcp%2Fimg_2.png)
-![img_1.png](img%2Fmcp%2Fimg_1.png)
 
+- 从0.1.7版本以后java客户端内置Mcp服务器,使用java后台地址+`/sse`链接即可
+  ![img.png](img%2Fmcp%2Fimg.png)
+  ![img_2.png](img%2Fmcp%2Fimg_2.png)
+  ![img_1.png](img%2Fmcp%2Fimg_1.png)
 
 ## 整体架构
 
 - 前端整体是一个工厂模式,如图
   ![img.png](img%2Fquizdesign%2Fimg.png)
-
 
 ## 用户头像修改
 
@@ -96,25 +99,36 @@
   ![img.png](img%2Fimg.png)
 
 # 构建和部署
+
 ## 前提条件
+
 - 一个logto实例
 - 一个mysql实例
 - 一个minioS3实例
 - Aihubmix API-KEY
-## 数据库 
+- 一个redis实例
+
+## 数据库
+
 - 使用[full-0505.sql](src%2Fmain%2Fresources%2Fsql%2Ffull-0505.sql)创建数据库
+
 ## 启动后端
+
 - 首先准备`application.yaml`参考:
-[application.example.yaml](src%2Fmain%2Fresources%2Fapplication.example.yaml)
+  [application.example.yaml](src%2Fmain%2Fresources%2Fapplication.example.yaml)
 - 可以使用我们构建的`docker`镜像
+
 ```bash
 docker run -d \
   --name futurequizbe \
   -v /path/to/your/application.yaml:/etc/featurequiz/application.yaml \
   ridiculousbuffalo/futurequizbe:latest
 ```
+
 ## 启动前端
+
 > 🆘🆘🆘注意该系统的`llama_index API_KEY`会直接暴露在前端的环境变量中
+
 ```bash
 docker run -d --name futurequizfe \
   -p 8080:80 \

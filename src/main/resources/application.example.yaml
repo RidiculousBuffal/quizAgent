@@ -14,6 +14,13 @@ spring:
     openai:
       base-url:
       api-key:
+    mcp:
+      server:
+        name: futureQuiz
+        type: sync
+        sse-endpoint: /sse
+        sse-message-endpoint: /mcp/message
+        version: 1.0.0
   http:
     client:
       connect-timeout: 200s
