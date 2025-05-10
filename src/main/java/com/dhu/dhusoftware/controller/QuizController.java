@@ -1,6 +1,7 @@
 package com.dhu.dhusoftware.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import com.dhu.dhusoftware.constant.COMMON;
 import com.dhu.dhusoftware.constant.QuizConstants;
@@ -39,7 +40,8 @@ public class QuizController {
     @PostMapping("/save")
     public SaResult saveQuiz(@RequestBody QuizDto quizDto) {
         try {
-            QuizDto resultDto = quizService.saveOrUpdateQuiz(quizDto);
+            String currentUserId = StpUtil.getLoginIdAsString();
+            QuizDto resultDto = quizService.saveOrUpdateQuiz(quizDto, currentUserId);
             return SaResult.ok()
                     .setCode(COMMON.SUCCESS_CODE)
                     .setMsg(quizDto.getQuizId() == null ? QuizConstants.CREATE_SUCCESS : QuizConstants.UPDATE_SUCCESS)
@@ -100,9 +102,9 @@ public class QuizController {
             QuizDto quizDto = quizService.getQuizById(quizId);
             return Result.success(QuizConstants.SUCCESS_MSG, quizDto);
         } catch (IllegalArgumentException e) {
-            return  Result.error(QuizConstants.FAILURE_MSG, null);
+            return Result.error(QuizConstants.FAILURE_MSG, null);
         } catch (Exception e) {
-            return  Result.error(QuizConstants.FAILURE_MSG, null);
+            return Result.error(QuizConstants.FAILURE_MSG, null);
         }
     }
 

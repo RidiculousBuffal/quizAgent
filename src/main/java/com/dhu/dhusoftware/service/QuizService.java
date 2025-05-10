@@ -53,8 +53,7 @@ public class QuizService {
      * @return QuizDto 更新后的问卷数据
      */
     @Transactional(rollbackFor = Exception.class)
-    public QuizDto saveOrUpdateQuiz(QuizDto quizDto) {
-        String currentUserId = StpUtil.getLoginIdAsString();
+    public QuizDto saveOrUpdateQuiz(QuizDto quizDto,String currentUserId) {
         Quiz quiz = new Quiz();
         BeanUtils.copyProperties(quizDto, quiz);
 
