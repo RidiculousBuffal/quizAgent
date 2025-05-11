@@ -144,3 +144,28 @@ docker run -d --name futurequizfe \
   -e VITE_APP_LLAMA_INDEX_KEY=sk-demo... \
   ridiculousbuffalo/futurequizfe:latest
 ```
+
+## 代码行统计
+`.\cloc-2.02.exe . --exclude-dir=.venv,node_modules,.idea,.git,.mvn,dist --exclude-ext=xml,json`
+```markdown
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+TypeScript                     110           1316            535          10863
+Java                            99            722            476           3589
+SQL                             17            145              0            817
+CSS                              8             73             23            379
+Bourne Shell                     2             27             49            196
+YAML                             4             24             16            188
+Maven                            1              7             24            187
+Markdown                         3             59              0            174
+DOS Batch                        1             15              0            134
+JavaScript                       2              1              1             30
+Dockerfile                       2             13             11             26
+HTML                             1              0              0             15
+XML                              1              0              0              8
+SVG                              2              0              0              4
+-------------------------------------------------------------------------------
+SUM:                           253           2402           1135          16610
+-------------------------------------------------------------------------------
+```
