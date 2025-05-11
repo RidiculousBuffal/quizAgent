@@ -5,6 +5,8 @@
 
 > 🆘 该系统旨在服务东华大学2025年软件工程实训课程,旨在探索AI在问卷领域的应用,我们给系统配备了基本的安全认证功能,但部分功能尚未完善，切勿直接用于生产环境。
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/RidiculousBuffal/quizAgent)
+
 # 项目展示
 
 > PPT下载链接:[【金山文档 | WPS云文档】 FutureQuiz ](https://kdocs.cn/l/cdnORUBURMQn)
