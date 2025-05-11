@@ -74,9 +74,30 @@ public class QuizQuestionAnswerService {
         Map<String, Object> questionAnswers = new HashMap<>();
         if (!specificAnswerDTOS.isEmpty()) {
             Long quizId = specificAnswerDTOS.getFirst().getQuizId();
+            // 查询所有题目详情
             List<Map<String, Object>> questions = questionService.getQuizQuestionDetailsByQuizId(quizId);
-            List<String> answers = specificAnswerDTOS.stream().map(SpecificAnswerDTO::getDetails).toList();
-            questionAnswers.put("question", questions);
+
+            // 用questionId做映射，便于查找
+            Map<Long, Map<String, Object>> questionIdToDetails = questions.stream()
+                    .filter(q -> q.get("id") != null)
+                    .collect(Collectors.toMap(
+                            q -> ((Number) q.get("id")).longValue(),
+                            q -> q
+                    ));
+
+            // 构建保证顺序和answers顺序相同的questions与answers
+            List<Map<String, Object>> filteredQuestions = new ArrayList<>();
+            List<String> answers = new ArrayList<>();
+            for (SpecificAnswerDTO dto : specificAnswerDTOS) {
+                Map<String, Object> qDetail = questionIdToDetails.get(dto.questionId);
+                if (qDetail != null) {
+                    filteredQuestions.add(qDetail);
+                    answers.add(dto.getDetails());
+                }
+                // 否则跳过此DTO
+            }
+
+            questionAnswers.put("question", filteredQuestions);
             questionAnswers.put("answer", answers);
             questionAnswers.put("user", specificAnswerDTOS.getFirst().getUserName());
         } else {

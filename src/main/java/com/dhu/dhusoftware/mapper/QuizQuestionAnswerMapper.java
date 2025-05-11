@@ -36,7 +36,7 @@ public interface QuizQuestionAnswerMapper {
 
     @Select("select distinct(quiz.quizId),quiz.status,quiz.quizDescription,quiz.quizEndTime,quiz.quizStartTime,quiz.quizName from quizquestionanswer left join quiz on quizquestionanswer.quizId = quiz.quizId where quiz.creator = #{userId}")
     List<QuizDto> getQuizzesHasResp(String userId);
-    @Select("select quizquestionanswer.quizId,quizquestionanswer.details,user.userName from  quizquestionanswer left join user on quizquestionanswer.answerUser = user.userId  where quizquestionanswer.uniqueSubmitId=#{uniqueSubmitId}")
+    @Select("select quizquestionanswer.quizId,quizquestionanswer.details,user.userName,quizquestionanswer.questionId from  quizquestionanswer left join user on quizquestionanswer.answerUser = user.userId  where quizquestionanswer.uniqueSubmitId=#{uniqueSubmitId}")
     List<SpecificAnswerDTO> getAnswerByUniqueSubmitId(String uniqueSubmitId);
 
     @Select("select user.userName,quizquestionanswer.details from quizquestionanswer left join  user on quizquestionanswer.answerUser = user.userId where quizquestionanswer.quizId=#{quizId} and questionId=#{questionId} ")

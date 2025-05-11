@@ -8,4 +8,5 @@ public class SpecificAnswerDTO {
     public String details;
     public Long quizId;
     public String userName;
+    public Long questionId;
 }
